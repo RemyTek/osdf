@@ -73,7 +73,7 @@ endif
 export CROSS_COMPILING
 
 #ifndef MOD_CFLAGS
-#MOD_CFLAGS= -std=c99 -g -O0
+#MOD_CFLAGS= -std=c99
 #endif
 
 ifndef BUILD_DIR

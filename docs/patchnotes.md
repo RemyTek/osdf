@@ -11,15 +11,26 @@
 # Unreleased
 2022.08.31
 _v0.2.5-r0_
+chg : moved b3a speedmeter closer to the center of the screen
+... : changed `cg_drawSpeed 2` to mean `not centered`
+... : removed "ups" from the string
+chg : Default cg_fov from 90 to 105
 chg : com_blood and cg_gibs now default to 0
 new : Math function: VectorMAM
 new : phy_movetype cvars for cg_ and g_
+new : Added surface type SURF_NOOB, to support the OBfix code ported from osdf-gpl
+new : Added STAT_TIME_LASTJUMP to the pm_stats enum, to support jump timer control
 new : New file bg_pmove.h, contains declarations needed in bg_phy
 chg : Changed the codeflow at the end of Pmove() from PmoveSingle to phy_PmoveSingle
-new : added code/game/bg_phy files, for storing the custom movement functions outside of bg_pmove.c
-fix : `ED_vsprintf()`: Changed all calls to `va_arg` that contained `char` type, into `int` instead, to fix the compiler correcting undefined behavior on native
+new : Added code/game/bg_phy files, for storing custom movement functions outside of bg_pmove.c
+new : Added Lumia's LLVM based clang-format file to the project. Changed its linewidth to 160, to not break q3 code standards
+new : Added a simple nimscript compiling script, for automated building for both platforms (win/lnx x64)
+chg : Added ifndef guard to COMPILE_FLAGS in the linux makefile, to allow cross compiling from cli arguments
+fix : `ED_vsprintf()`: Changed all calls to `va_arg` that contained `char` type, into `int` instead, to fix the compiler correcting undefined behavior on native (-Wvarargs)
 ... : First build of the code didn't launch with native libraries. Had to fix this char promotion bug to make it launch
 
+```md
+```
 ... :  
 
 
