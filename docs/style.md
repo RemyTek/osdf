@@ -24,7 +24,7 @@
 - Line size  
   A screen that can contain more than 150 or 160 characters easily with huge characters. Don't restrict it to 80.  
 - Tab size  
-  Indentation width of 4 spaces.
+  Indent with tabs, with a width of 4 spaces.
 - Everything else:
   Use the `clang-format` file.
 ```
@@ -47,7 +47,7 @@ And yours might be simple, but the engine isn't. At all.
 Like the previous paragraph implies, this engine can be an absolute B to work with.  
 Assuming that you wrote this code, it would take you literally two seconds to turn this:  
 ```c
-// Code from:   src/engine/rendc/tr_font.c
+// Code from:   quake3e/renderercommon/tr_font.c
 buffer = ri.Malloc(width*height*4 + 18);
 Com_Memset (buffer, 0, 18);
 buffer[2] = 2;    // uncompressed type
@@ -115,12 +115,13 @@ Document your change properly, and rely on your explanation, patchnotes and git 
 Duplicated commented out code everywhere, plus a complex codeflow, will turn any codebase into a mess. And this engine is already difficult enough to follow. We don't need any more of that.  
 
 ### Compact, but Intuitive Wording
-- 1 letter words are extremely undesirable
-Unless it is painfully obvious what the variable is doing.
-_r referring to result/return in a short function_
-2 letter words are slightly better, but not by much. Both of them should always be commented to avoid confusion.
+- 1 letter words are extremely undesirable  
+Unless it is painfully obvious what the variable is doing.  
+_r referring to result/return in a short function_  
+2 letter words are slightly better, but not by much. Both of them should always be commented to avoid confusion.  
+They could be project-wide language, depending on the use (like `nk` meaning `nuklearUI`). But 3letter words are preferred for that.  
 
-- 3 letter words are immediately project wide language
+- 3 letter words are immediately project wide language  
 If you name something `trg`, referring to `target`, then that shortening MUST mean target **everywhere else** in the project. Not just in your code.  
 This includes words that are part of multi words _(such as trgBuild, where trg must also mean target)_  
 
@@ -128,9 +129,9 @@ This includes words that are part of multi words _(such as trgBuild, where trg m
 Respect original Q3 code standards as much as possible
 
 ### Others:
-The project's `clang-format` file can take care of all of this for you.  
+The project's `clang-format` file can take care of most of the styling for you.  
 
 ##### Line size
 You have a screen that can contain more than 150 or 160 characters easily with huge characters. Don't restrict it to 80.
 #### Tab size
-Indent with tabs, width of 4 spaces
+Indent with tabs, with a width of 4 spaces.
