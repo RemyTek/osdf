@@ -1,0 +1,73 @@
+**Legend**
+> new : New features  
+> chg : Change in existing functionality  
+> dep : Soon-to-be removed feature  
+> rmv : Removed feature  
+> fix : Bug fixes.  
+> sec : Security, in case of vulnerabilities.  
+> ... : Part of the feature listed above it
+
+
+# Unreleased
+2022.08.31
+_v0.2.5-r0_
+chg : com_blood and cg_gibs now default to 0
+new : Math function: VectorMAM
+new : phy_movetype cvars for cg_ and g_
+new : New file bg_pmove.h, contains declarations needed in bg_phy
+chg : Changed the codeflow at the end of Pmove() from PmoveSingle to phy_PmoveSingle
+new : added code/game/bg_phy files, for storing the custom movement functions outside of bg_pmove.c
+fix : `ED_vsprintf()`: Changed all calls to `va_arg` that contained `char` type, into `int` instead, to fix the compiler correcting undefined behavior on native
+... : First build of the code didn't launch with native libraries. Had to fix this char promotion bug to make it launch
+
+... :  
+
+
+# Ported from osdf-gpl
+## 0.3.0
+2022.07.14  
+```
+new : (CQ3) New physics: VQ3 aircontrol, with CPM tech (dj/ramps/slick/etc)  
+```
+
+2022.07.12  
+```
+fix : (VQ3) Fixed upramps giving the wrong amount of velocity on jump  
+```
+
+## 0.2.0
+2022.06.21  
+_v0.2.0-r0_  
+```
+new : OBfix. Applied on SURF_NOOB surfaces (cvar to be done)
+chg : bg_pmove restructure. Moved all custom code to bg_phy.* files
+new : (code) VectorReflectOS. Sets backoff = 0 when facing away from the surface
+```
+
+## 0.0.2
+```
+new : Full cpm strafing (double jumps, slick haste, telejumps, stairjumps, rampjumps, etc)  
+new : CPM weapon behavior  
+... : Instant weapon switch on CPM  
+new : Physics type Selection (phy_movetype NUMBER :: 0=CPM, 1=VQ3, 2=CQ3)  
+```
+
+## 0.0.1
+```
+new : Basic cpm strafing (Correct accel, aircontrol and A/D strafing)  
+```
+
+## 0.0.0 (Mod Compiling Basics)  
+```
+new : Initial setup & compilation (manual)  
+```
+```
+:: Worked by default  
+: Surface flags (uses shader properties)  
+: Vq3 movement (`pmove_fixed 1`)  
+: Vq3 Weapons  
+: Vq3 Teleports  
+: vq3 Hurt Trigger  
+: target_score  
+: Map loading  
+```

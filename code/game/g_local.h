@@ -808,6 +808,11 @@ extern	vmCvar_t	g_enableDust;
 extern	vmCvar_t	g_enableBreath;
 extern	vmCvar_t	g_singlePlayer;
 extern	vmCvar_t	g_proxMineTimeout;
+// New variables
+extern	vmCvar_t	phy_movetype; // When active, changes the flow of the player movement code towards osdf_ code. 1=enabled, 0=disabled
+#define CPM  0
+#define VQ3  1
+#define CQ3  2
 
 void	trap_Print( const char *text );
 void	trap_Error( const char *text );

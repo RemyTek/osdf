@@ -1154,6 +1154,11 @@ void Vector4Scale( const vec4_t in, vec_t scale, vec4_t out ) {
 	out[3] = in[3]*scale;
 }
 
+void VectorMAM(float scale1, vec3_t b1, float scale2, vec3_t b2, vec3_t c) {
+		c[0] = scale1 * b1[0] + scale2 * b2[0];
+		c[1] = scale1 * b1[1] + scale2 * b2[1];
+		c[2] = scale1 * b1[2] + scale2 * b2[2];
+}
 
 int Q_log2( int val ) {
 	int answer;

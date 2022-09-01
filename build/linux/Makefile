@@ -4,7 +4,9 @@
 # GNU Make required
 #
 
-COMPILE_PLATFORM=$(shell uname | sed -e 's/_.*//' | tr '[:upper:]' '[:lower:]' | sed -e 's/\//_/g')
+ifndef COMPILE_PLATFORM
+	COMPILE_PLATFORM=$(shell uname | sed -e 's/_.*//' | tr '[:upper:]' '[:lower:]' | sed -e 's/\//_/g')
+endif
 COMPILE_ARCH=$(shell uname -m | sed -e 's/i.86/x86/' | sed -e 's/^arm.*/arm/')
 
 ifeq ($(COMPILE_PLATFORM),mingw32)
@@ -71,7 +73,7 @@ endif
 export CROSS_COMPILING
 
 #ifndef MOD_CFLAGS
-#MOD_CFLAGS= -std=c99
+#MOD_CFLAGS= -std=c99 -g -O0
 #endif
 
 ifndef BUILD_DIR
@@ -334,6 +336,7 @@ CGOBJ_ = \
   $(B)/$(MOD)/cgame/bg_lib.o \
   $(B)/$(MOD)/cgame/bg_misc.o \
   $(B)/$(MOD)/cgame/bg_pmove.o \
+  $(B)/$(MOD)/cgame/bg_phy.o \
   $(B)/$(MOD)/cgame/bg_slidemove.o \
   $(B)/$(MOD)/cgame/cg_consolecmds.o \
   $(B)/$(MOD)/cgame/cg_draw.o \
@@ -378,6 +381,7 @@ QAOBJ_ = \
   $(B)/$(MOD)/game/bg_lib.o \
   $(B)/$(MOD)/game/bg_misc.o \
   $(B)/$(MOD)/game/bg_pmove.o \
+  $(B)/$(MOD)/game/bg_phy.o \
   $(B)/$(MOD)/game/bg_slidemove.o \
   $(B)/$(MOD)/game/g_active.o \
   $(B)/$(MOD)/game/g_arenas.o \

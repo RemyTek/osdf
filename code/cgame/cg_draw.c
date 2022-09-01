@@ -821,15 +821,15 @@ static float CG_DrawSpeedMeter( float y ) {
 		return y;
 	}
 
-	s = va( "%1.0fups", cg.xyspeed );
+	s = va( "%1.0f", cg.xyspeed );
 
-	if ( cg_drawSpeed.integer == 1 ) {
+	if ( cg_drawSpeed.integer == 2 ) {
 		/* top left-hand corner of screen */
 		CG_DrawString( cgs.screenXmax - 4, y + 2, s, colorWhite, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0, DS_SHADOW | DS_RIGHT | DS_PROPORTIONAL );
 		return y + BIGCHAR_HEIGHT + 4;
 	} else {
 		/* center of screen */
-		CG_DrawString( 320, 300, s, colorWhite, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0, DS_SHADOW | DS_CENTER | DS_PROPORTIONAL );
+		CG_DrawString( 320, 260, s, colorWhite, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0, DS_SHADOW | DS_CENTER | DS_PROPORTIONAL );
 		return y;
 	}
 }

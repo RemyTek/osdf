@@ -204,6 +204,8 @@ vmCvar_t	cg_deadBodyDarken;
 vmCvar_t	cg_fovAdjust;
 vmCvar_t	cg_followKiller;
 
+vmCvar_t	phy_movetype;
+
 typedef struct {
 	vmCvar_t	*vmCvar;
 	const char	*cvarName;
@@ -216,10 +218,10 @@ static const cvarTable_t cvarTable[] = {
 	{ &cg_autoswitch, "cg_autoswitch", "1", CVAR_ARCHIVE },
 	{ &cg_drawGun, "cg_drawGun", "1", CVAR_ARCHIVE },
 	{ &cg_zoomFov, "cg_zoomfov", "22.5", CVAR_ARCHIVE },
-	{ &cg_fov, "cg_fov", "90", CVAR_ARCHIVE },
+	{ &cg_fov, "cg_fov", "105", CVAR_ARCHIVE },
 	{ &cg_viewsize, "cg_viewsize", "100", CVAR_ARCHIVE },
 	{ &cg_shadows, "cg_shadows", "1", CVAR_ARCHIVE },
-	{ &cg_gibs, "cg_gibs", "1", CVAR_ARCHIVE },
+	{ &cg_gibs, "cg_gibs", "0", CVAR_ARCHIVE },
 	{ &cg_draw2D, "cg_draw2D", "1", CVAR_ARCHIVE },
 	{ &cg_drawStatus, "cg_drawStatus", "1", CVAR_ARCHIVE },
 	{ &cg_drawTimer, "cg_drawTimer", "0", CVAR_ARCHIVE },
@@ -329,7 +331,8 @@ static const cvarTable_t cvarTable[] = {
 	{ &cg_teamColors, "cg_teamColors", "", CVAR_ARCHIVE},
 	{ &cg_deadBodyDarken, "cg_deadBodyDarken", "1", CVAR_ARCHIVE},
 	{ &cg_fovAdjust, "cg_fovAdjust", "0", CVAR_ARCHIVE},
-	{ &cg_followKiller, "cg_followKiller", "0", CVAR_ARCHIVE}
+	{ &cg_followKiller, "cg_followKiller", "0", CVAR_ARCHIVE},
+	{ &phy_movetype, "phy_movetype", "0", CVAR_SYSTEMINFO},
 };
 
 
