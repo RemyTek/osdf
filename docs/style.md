@@ -14,7 +14,7 @@
 - 1 letter words are extremely undesirable
   2 letter words are slightly better, but not by much.
 - 3 letter words are immediately project wide language
-  If you name something `trg`, referring to `target`, it MUST mean target **everywhere else** in the project. 
+  If you name something `trg`, referring to `target`, it must mean target **everywhere else** in the project. 
   This includes multiword names, such as `trgBuild`.
 - Overall styling and naming:
   Respect original Q3 code standards as much as possible
@@ -44,7 +44,7 @@ Because the person won't just be dealing with your code. They will be dealing wi
 And yours might be simple, but the engine isn't. At all.  
 
 ## Document. ALWAYS. And Excessively.
-Like the previous paragraph implies, this engine can be an absolute B to work with.  
+Like the previous paragraph implies, this engine can sometimes be an absolute B to work with.  
 Assuming that you wrote this code, it would take you literally two seconds to turn this:  
 ```c
 // Code from:   quake3e/renderercommon/tr_font.c
@@ -91,10 +91,10 @@ Not everyone has such memory, or such good logical deduction skills, that they w
 This engine is extremely guilty of this mentality.  
 
 This project, instead, is built assuming that the person reading has no memory of what the code does.  
-You should respect that. Always.  
+Please respect that.
 
 The engine has hundreds of thousands lines of code written without respecting this at all.  
-Don't make this even worse than it already is.  
+Don't make it even worse than it already is.  
 Explain what everything in your code does. It takes two minutes to do it in place, and hundreds of hours to do it "later"  
 _(read as: never actually do it because its a gigantic pain in the ass)_.  
 
@@ -117,12 +117,12 @@ Duplicated commented out code everywhere, plus a complex codeflow, will turn any
 ### Compact, but Intuitive Wording
 - 1 letter words are extremely undesirable  
 Unless it is painfully obvious what the variable is doing.  
-_r referring to result/return in a short function_  
+_e.g:  r referring to result/return in a short function_  
 2 letter words are slightly better, but not by much. Both of them should always be commented to avoid confusion.  
 They could be project-wide language, depending on the use (like `nk` meaning `nuklearUI`). But 3letter words are preferred for that.  
 
 - 3 letter words are immediately project wide language  
-If you name something `trg`, referring to `target`, then that shortening MUST mean target **everywhere else** in the project. Not just in your code.  
+If you name something `trg`, referring to `target`, then that shortening must mean target **everywhere else** in the project.  
 This includes words that are part of multi words _(such as trgBuild, where trg must also mean target)_  
 
 ### Overall styling and naming:

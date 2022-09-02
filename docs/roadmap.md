@@ -1,16 +1,15 @@
 # Roadmap:
 
 ## Port from osdf-gpl to osdf-sdk (0.2.5)
-- [ ] Ported physics to baseq3a: CPM, VQ3 and CQ3
-- [ ] Instant respawn (g_combat.c/player_die()/line608  & some other spots to switch timer to ms and make 1 mean immediate )
-- [ ] Gamemode "run"
-- [ ] Timer (local, best per session, all maps have TimeReset)
-- [ ] Gamemode "run" (basic)
-  - [ ] Definition in code (replaced FFA, g_gametype 0)
+- [x] Ported physics to baseq3a: CPM, VQ3 and CQ3
 - [ ] CPM specific weapon/items changes
   - [ ] Rocket Launcher speed increased from 900 to 1000
   - [ ] Rocket Launcher knockback increased from 1 to 1.2
   - [ ] Item pickup size increased (from 36 to 66)
+- [ ] Instant respawn (g_combat.c/player_die()/line608  & some other spots to switch timer to ms and make 1 mean immediate )
+- [ ] Gamemode "run" (basic)
+  - [ ] Definition in code (replaced FFA, g_gametype 0)
+- [ ] Timer (local, best per session, all maps have TimeReset)
 
 ## Strafehud and velocity pads (0.3.0)
 - [ ] Proxymod strafehud
