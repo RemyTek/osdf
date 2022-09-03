@@ -554,7 +554,6 @@ void phy_move(pmove_t *pmove) {
     case VQ3: vq3_move(pmove); break;
     case CQ3: cq3_move(pmove); break;
     default:  Com_Printf("::ERR phy_movetype %i not recognized\n", pmove->movetype); break;
-    // case VQ2: vq2_move(pmove); break;
   }
 }
 

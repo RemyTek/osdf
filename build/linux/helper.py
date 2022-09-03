@@ -48,7 +48,7 @@ def writeStr(string, file, type='w'):
   f.write(string)
   f.close()
 #.....................................
-def bash(cmd, type='print', dir=""):
+def bash(cmd, dir="", type='print'):
   import subprocess
   com = " ".join(list(filter(None, cmd.split(";")))).split(" ")
   match type:
@@ -68,6 +68,11 @@ def getOpt(kw):
   for (key,value) in vars(opts).items():
     if kw == key and value: return True
   return False
+def getArg(idx):
+  global _parser
+  (opts,args) = _parser.parse_args()
+  try:    return args[idx] 
+  except: return None
 #.....................................
 def Zip(src,trg,rel=None):
   from os.path import join, relpath, basename, dirname, isfile, isdir

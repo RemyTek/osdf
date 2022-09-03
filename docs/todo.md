@@ -49,7 +49,6 @@ new : Velocity pads
 new : Proxymod support  
 new : Hud element: Current map & Internal version  
 new : Map loader UI  
-new : Launcher / Updater / Downloader
 new : New hud for Player state configuration (health, ammo, powerups, etc)  
 
 #:::::::::::::::

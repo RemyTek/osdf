@@ -1,5 +1,6 @@
 ---
-ColumnLimit:     160
+ColumnLimit:       160
+BreakBeforeBraces: Attach
 
 Language:        Cpp
 # BasedOnStyle:  LLVM
@@ -51,7 +52,6 @@ BraceWrapping:
   SplitEmptyNamespace: true
 BreakBeforeBinaryOperators: None
 BreakBeforeConceptDeclarations: true
-BreakBeforeBraces: Allman
 BreakBeforeInheritanceComma: false
 BreakInheritanceList: BeforeColon
 BreakBeforeTernaryOperators: true

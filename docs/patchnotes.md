@@ -9,7 +9,14 @@
 
 
 # Unreleased
+```md
+
+```
+... :  
+
+## 0.2.5
 _v0.2.5-r0_
+```md
 2022.09.02
 chg : cg_drawSpeed now defaults to 1
 chg : Bob cvars now default to 0
@@ -45,11 +52,7 @@ new : Added a simple nimscript compiling script, for automated building for both
 chg : Added ifndef guard to COMPILE_FLAGS in the linux makefile, to allow cross compiling from cli arguments
 fix : `ED_vsprintf()`: Changed all calls to `va_arg` that contained `char` type, into `int` instead, to fix the compiler correcting undefined behavior on native (-Wvarargs)
 ... : First build of the code didn't launch with native libraries. Had to fix this char promotion bug to make it launch
-
-```md
 ```
-... :  
-
 
 # Ported from osdf-gpl
 ## 0.3.0

@@ -2,20 +2,20 @@
 
 Opensource Defrag is a project that aims to remake defrag, true to the original mod, using modern id-Tech3 engine and technology.  
 ## Goals:
-### Code & License:
-- Respect OSS philosophy. Open source and community focus.  
-- Rewrite the code 1:1, with the aid of reverse-engineered code only where strictly necessary.  
-- Community based, where anyone can become a contributor.  
+### Improvement & Modernizing:
+By using id-Tech3 engine, gameplay can stay true to the original.  
+But, by using modern tools and technology, the game can be modernized and extended beyond its current limitations.  
+See the [Roadmap](docs/roadmap.md) file for an overview of the project's future.  
 
 ### Gameplay:
 - Maintain gameplay 1:1.  
 - Achieve compatibility with existing maps. Avoid requiring any form of map porting for existing content.  
 - Community collaboration in bug-fixing and further development of the mod.  
 
-### Improvement & Modernizing:
-By using id-Tech3 engine, gameplay can stay true to the original.  
-But, by using modern tools and technology, the game can be modernized and extended beyond its current limitations.  
-See the [Roadmap](docs/roadmap.md) file for an overview of the project's future.  
+### Code & License:
+- Respect OSS philosophy. Open source and community focus.  
+- Rewrite the code 1:1, with the aid of reverse-engineered code only where strictly necessary.  
+- Community based, where anyone can become a contributor.  
 
 
 ---
