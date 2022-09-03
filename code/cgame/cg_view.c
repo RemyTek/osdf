@@ -60,7 +60,7 @@ void CG_TestModel_f(void) {
 
 	if (trap_Argc() == 3) {
 		cg.testModelEntity.backlerp = atof(CG_Argv(2));
-		cg.testModelEntity.frame = 1;
+		cg.testModelEntity.frame    = 1;
 		cg.testModelEntity.oldframe = 0;
 	}
 
@@ -72,8 +72,8 @@ void CG_TestModel_f(void) {
 	VectorMA(cg.refdef.vieworg, 100, cg.refdef.viewaxis[0], cg.testModelEntity.origin);
 
 	angles[PITCH] = 0;
-	angles[YAW] = 180 + cg.refdefViewAngles[1];
-	angles[ROLL] = 0;
+	angles[YAW]   = 180 + cg.refdefViewAngles[1];
+	angles[ROLL]  = 0;
 
 	AnglesToAxis(angles, cg.testModelEntity.axis);
 	cg.testGun = qfalse;
@@ -88,7 +88,7 @@ Replaces the current view weapon with the given model
 */
 void CG_TestGun_f(void) {
 	CG_TestModel_f();
-	cg.testGun = qtrue;
+	cg.testGun                  = qtrue;
 	cg.testModelEntity.renderfx = RF_MINLIGHT | RF_DEPTHHACK | RF_FIRST_PERSON;
 }
 
@@ -209,12 +209,12 @@ static void CG_OffsetThirdPersonView(void) {
 
 	// if dead, look at killer
 	if (cg.predictedPlayerState.stats[STAT_HEALTH] <= 0) {
-		focusAngles[YAW] = cg.predictedPlayerState.stats[STAT_DEAD_YAW];
+		focusAngles[YAW]         = cg.predictedPlayerState.stats[STAT_DEAD_YAW];
 		cg.refdefViewAngles[YAW] = cg.predictedPlayerState.stats[STAT_DEAD_YAW];
 	}
 
 	if (focusAngles[PITCH] > 45) {
-		focusAngles[PITCH] = 45; // don't go too far overhead
+		focusAngles[PITCH] = 45;  // don't go too far overhead
 	}
 	AngleVectors(focusAngles, forward, NULL, NULL);
 
@@ -229,7 +229,7 @@ static void CG_OffsetThirdPersonView(void) {
 	AngleVectors(cg.refdefViewAngles, forward, right, up);
 
 	forwardScale = cos(cg_thirdPersonAngle.value / 180 * M_PI);
-	sideScale = sin(cg_thirdPersonAngle.value / 180 * M_PI);
+	sideScale    = sin(cg_thirdPersonAngle.value / 180 * M_PI);
 	VectorMA(view, -cg_thirdPersonRange.value * forwardScale, forward, view);
 	VectorMA(view, -cg_thirdPersonRange.value * sideScale, right, view);
 
@@ -256,7 +256,7 @@ static void CG_OffsetThirdPersonView(void) {
 	VectorSubtract(focusPoint, cg.refdef.vieworg, focusPoint);
 	focusDist = sqrt(focusPoint[0] * focusPoint[0] + focusPoint[1] * focusPoint[1]);
 	if (focusDist < 1) {
-		focusDist = 1; // should never happen
+		focusDist = 1;  // should never happen
 	}
 	cg.refdefViewAngles[PITCH] = -180 / M_PI * atan2(focusPoint[2], focusDist);
 	cg.refdefViewAngles[YAW] -= cg_thirdPersonAngle.value;
@@ -280,8 +280,8 @@ CG_OffsetFirstPersonView
 ===============
 */
 static void CG_OffsetFirstPersonView(void) {
-	float *origin;
-	float *angles;
+	float* origin;
+	float* angles;
 	float  bob;
 	float  ratio;
 	float  delta;
@@ -299,9 +299,9 @@ static void CG_OffsetFirstPersonView(void) {
 
 	// if dead, fix the angle and don't add any kick
 	if (cg.snap->ps.stats[STAT_HEALTH] <= 0) {
-		angles[ROLL] = 40;
+		angles[ROLL]  = 40;
 		angles[PITCH] = -15;
-		angles[YAW] = cg.snap->ps.stats[STAT_DEAD_YAW];
+		angles[YAW]   = cg.snap->ps.stats[STAT_DEAD_YAW];
 		origin[2] += cg.predictedPlayerState.viewheight;
 		return;
 	}
@@ -349,11 +349,11 @@ static void CG_OffsetFirstPersonView(void) {
 
 	delta = cg.bobfracsin * cg_bobpitch.value * speed;
 	if (cg.predictedPlayerState.pm_flags & PMF_DUCKED)
-		delta *= 3; // crouching
+		delta *= 3;  // crouching
 	angles[PITCH] += delta;
 	delta = cg.bobfracsin * cg_bobroll.value * speed;
 	if (cg.predictedPlayerState.pm_flags & PMF_DUCKED)
-		delta *= 3; // crouching accentuates roll
+		delta *= 3;  // crouching accentuates roll
 	if (cg.bobcycle & 1)
 		delta = -delta;
 	angles[ROLL] += delta;
@@ -415,7 +415,7 @@ void CG_ZoomDown_f(void) {
 	if (cg.zoomed) {
 		return;
 	}
-	cg.zoomed = qtrue;
+	cg.zoomed   = qtrue;
 	cg.zoomTime = cg.time;
 }
 
@@ -423,7 +423,7 @@ void CG_ZoomUp_f(void) {
 	if (!cg.zoomed) {
 		return;
 	}
-	cg.zoomed = qfalse;
+	cg.zoomed   = qfalse;
 	cg.zoomTime = cg.time;
 }
 
@@ -489,14 +489,14 @@ static int CG_CalcFov(void) {
 	if (cg_fovAdjust.integer) {
 		// Based on LordHavoc's code for Darkplaces
 		// http://www.quakeworld.nu/forum/topic/53/what-does-your-qw-look-like/page/30
-		const float baseAspect = 0.75f; // 3/4
-		const float aspect = (float)cg.refdef.width / (float)cg.refdef.height;
+		const float baseAspect = 0.75f;  // 3/4
+		const float aspect     = (float)cg.refdef.width / (float)cg.refdef.height;
 		const float desiredFov = fov_x;
 
 		fov_x = atan2(tan(desiredFov * M_PI / 360.0f) * baseAspect * aspect, 1) * 360.0f / M_PI;
 	}
 
-	x = cg.refdef.width / tan(fov_x / 360 * M_PI);
+	x     = cg.refdef.width / tan(fov_x / 360 * M_PI);
 	fov_y = atan2(cg.refdef.height, x);
 	fov_y = fov_y * 360 / M_PI;
 
@@ -505,7 +505,7 @@ static int CG_CalcFov(void) {
 	if (contents & (CONTENTS_WATER | CONTENTS_SLIME | CONTENTS_LAVA)) {
 		// phase = cg.time / 1000.0 * WAVE_FREQUENCY * M_PI * 2;
 		// v = WAVE_AMPLITUDE * sin( phase );
-		v = WAVE_AMPLITUDE * sin((cg.time % 16419587) / 397.87735f); // result is very close to original
+		v = WAVE_AMPLITUDE * sin((cg.time % 16419587) / 397.87735f);  // result is very close to original
 		fov_x += v;
 		fov_y -= v;
 		inwater = qtrue;
@@ -555,21 +555,21 @@ static void CG_DamageBlendBlob(void) {
 	}
 
 	maxTime = DAMAGE_TIME;
-	t = cg.time - cg.damageTime;
+	t       = cg.time - cg.damageTime;
 	if (t <= 0 || t >= maxTime) {
 		return;
 	}
 
 	memset(&ent, 0, sizeof(ent));
-	ent.reType = RT_SPRITE;
+	ent.reType   = RT_SPRITE;
 	ent.renderfx = RF_FIRST_PERSON;
 
 	VectorMA(cg.refdef.vieworg, 8, cg.refdef.viewaxis[0], ent.origin);
 	VectorMA(ent.origin, cg.damageX * -8, cg.refdef.viewaxis[1], ent.origin);
 	VectorMA(ent.origin, cg.damageY * 8, cg.refdef.viewaxis[2], ent.origin);
 
-	ent.radius = cg.damageValue * 3;
-	ent.customShader = cgs.media.viewBloodShader;
+	ent.radius        = cg.damageValue * 3;
+	ent.customShader  = cgs.media.viewBloodShader;
 	ent.shaderRGBA[0] = 255;
 	ent.shaderRGBA[1] = 255;
 	ent.shaderRGBA[2] = 255;
@@ -585,7 +585,7 @@ Sets cg.refdef view values
 ===============
 */
 static int CG_CalcViewValues(void) {
-	playerState_t *ps;
+	playerState_t* ps;
 
 	memset(&cg.refdef, 0, sizeof(cg.refdef));
 
@@ -619,9 +619,9 @@ static int CG_CalcViewValues(void) {
 		return CG_CalcFov();
 	}
 
-	cg.bobcycle = (ps->bobCycle & 128) >> 7;
+	cg.bobcycle   = (ps->bobCycle & 128) >> 7;
 	cg.bobfracsin = fabs(sin((ps->bobCycle & 127) / 127.0 * M_PI));
-	cg.xyspeed = sqrt(ps->velocity[0] * ps->velocity[0] + ps->velocity[1] * ps->velocity[1]);
+	cg.xyspeed    = sqrt(ps->velocity[0] * ps->velocity[0] + ps->velocity[1] * ps->velocity[1]);
 
 	VectorCopy(ps->origin, cg.refdef.vieworg);
 	VectorCopy(ps->viewangles, cg.refdefViewAngles);
@@ -700,14 +700,14 @@ void CG_AddBufferedSound(sfxHandle_t sfx) {
 
 	// clear all buffered sounds
 	if (sfx == -1) {
-		cg.soundBufferIn = 0;
+		cg.soundBufferIn  = 0;
 		cg.soundBufferOut = 0;
 		memset(cg.soundBuffer, 0, sizeof(cg.soundBuffer));
 		return;
 	}
 
 	cg.soundBuffer[cg.soundBufferIn] = sfx;
-	cg.soundBufferIn = (cg.soundBufferIn + 1) % MAX_SOUNDBUFFER;
+	cg.soundBufferIn                 = (cg.soundBufferIn + 1) % MAX_SOUNDBUFFER;
 	if (cg.soundBufferIn == cg.soundBufferOut) {
 		// cg.soundBufferOut++;
 		cg.soundBufferOut = (cg.soundBufferOut + 1) % MAX_SOUNDBUFFER;
@@ -725,8 +725,8 @@ static void CG_PlayBufferedSounds(void) {
 			cg.soundPlaying = cg.soundBuffer[cg.soundBufferOut];
 			trap_S_StartLocalSound(cg.soundPlaying, CHAN_ANNOUNCER);
 			cg.soundBuffer[cg.soundBufferOut] = 0;
-			cg.soundBufferOut = (cg.soundBufferOut + 1) % MAX_SOUNDBUFFER;
-			cg.soundTime = cg.time + 750;
+			cg.soundBufferOut                 = (cg.soundBufferOut + 1) % MAX_SOUNDBUFFER;
+			cg.soundTime                      = cg.time + 750;
 		} else {
 			cg.soundPlaying = 0;
 		}
@@ -746,8 +746,8 @@ static void CG_FirstFrame(void) {
 	CG_SetConfigValues();
 
 	cgs.voteTime = atoi(CG_ConfigString(CS_VOTE_TIME));
-	cgs.voteYes = atoi(CG_ConfigString(CS_VOTE_YES));
-	cgs.voteNo = atoi(CG_ConfigString(CS_VOTE_NO));
+	cgs.voteYes  = atoi(CG_ConfigString(CS_VOTE_YES));
+	cgs.voteNo   = atoi(CG_ConfigString(CS_VOTE_NO));
 	Q_strncpyz(cgs.voteString, CG_ConfigString(CS_VOTE_STRING), sizeof(cgs.voteString));
 
 	if (cgs.voteTime)
@@ -766,7 +766,7 @@ Generates and draws a game scene and status information at the given time.
 void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoPlayback) {
 	int inwater;
 
-	cg.time = serverTime;
+	cg.time         = serverTime;
 	cg.demoPlayback = demoPlayback;
 
 	// update cvars
@@ -828,7 +828,7 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 
 	// build the render lists
 	if (!cg.hyperspace) {
-		CG_AddPacketEntities(); // alter calcViewValues, so predicted player state is correct
+		CG_AddPacketEntities();  // alter calcViewValues, so predicted player state is correct
 		CG_AddMarks();
 		CG_AddParticles();
 		CG_AddLocalEntities();

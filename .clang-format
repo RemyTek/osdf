@@ -9,20 +9,22 @@ BreakBeforeBraces:                              Attach
 AlignAfterOpenBracket:                          AlwaysBreak
 AlignOperands:                                  AlignAfterOperator
 AllowShortFunctionsOnASingleLine:               Inline
-AlignConsecutiveDeclarations:                   Consecutive
+AlignConsecutiveDeclarations:                   AcrossEmptyLines
+AlignConsecutiveMacros:                         AcrossComments
+AlignConsecutiveAssignments:                    Consecutive
+PointerAlignment:                               Left 
+SpacesBeforeTrailingComments:                   2
 
 # BasedOnStyle:                                 LLVM
 Language:                                       Cpp
 AccessModifierOffset:                           -2
-AlignConsecutiveMacros:                         None
-AlignConsecutiveAssignments:                    None
 AlignConsecutiveBitFields:                      None
 AlignEscapedNewlines:                           Right
 AlignTrailingComments:                          true
 AllowAllArgumentsOnNextLine:                    true
 AllowAllConstructorInitializersOnNextLine:      true
 AllowAllParametersOfDeclarationOnNextLine:      true
-AllowShortEnumsOnASingleLine:                   true
+AllowShortEnumsOnASingleLine:                   false
 AllowShortBlocksOnASingleLine:                  Never
 AllowShortCaseLabelsOnASingleLine:              false
 AllowShortLambdasOnASingleLine:                 All
@@ -128,7 +130,6 @@ PenaltyBreakTemplateDeclaration:                10
 PenaltyExcessCharacter:                         1000000
 PenaltyReturnTypeOnItsOwnLine:                  60
 PenaltyIndentedWhitespace:                      0
-PointerAlignment:                               Right
 ReflowComments:                                 true
 SortJavaStaticImport:                           Before
 SortUsingDeclarations:                          true
@@ -145,7 +146,6 @@ SpaceAroundPointerQualifiers:                   Default
 SpaceBeforeRangeBasedForLoopColon:              true
 SpaceInEmptyBlock:                              false
 SpaceInEmptyParentheses:                        false
-SpacesBeforeTrailingComments:                   1
 SpacesInAngles:                                 false
 SpacesInConditionalStatement:                   false
 SpacesInContainerLiterals:                      true

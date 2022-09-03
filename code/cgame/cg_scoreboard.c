@@ -6,35 +6,35 @@
 #define SCOREBOARD_X (0)
 
 #define SB_HEADER 86
-#define SB_TOP (SB_HEADER + 32)
+#define SB_TOP    (SB_HEADER + 32)
 
 // Where the status bar starts, so we don't overwrite it
 #define SB_STATUSBAR 420
 
 #define SB_NORMAL_HEIGHT 40
-#define SB_INTER_HEIGHT 16 // interleaved height
+#define SB_INTER_HEIGHT  16  // interleaved height
 
 #define SB_MAXCLIENTS_NORMAL ((SB_STATUSBAR - SB_TOP) / SB_NORMAL_HEIGHT)
-#define SB_MAXCLIENTS_INTER ((SB_STATUSBAR - SB_TOP) / SB_INTER_HEIGHT - 1)
+#define SB_MAXCLIENTS_INTER  ((SB_STATUSBAR - SB_TOP) / SB_INTER_HEIGHT - 1)
 
 // Used when interleaved
 
-#define SB_LEFT_BOTICON_X (SCOREBOARD_X + 0)
-#define SB_LEFT_HEAD_X (SCOREBOARD_X + 32)
+#define SB_LEFT_BOTICON_X  (SCOREBOARD_X + 0)
+#define SB_LEFT_HEAD_X     (SCOREBOARD_X + 32)
 #define SB_RIGHT_BOTICON_X (SCOREBOARD_X + 64)
-#define SB_RIGHT_HEAD_X (SCOREBOARD_X + 96)
+#define SB_RIGHT_HEAD_X    (SCOREBOARD_X + 96)
 // Normal
-#define SB_BOTICON_X (SCOREBOARD_X + 32)
-#define SB_HEAD_X (SCOREBOARD_X + 64)
+#define SB_BOTICON_X       (SCOREBOARD_X + 32)
+#define SB_HEAD_X          (SCOREBOARD_X + 64)
 
 #define SB_SCORELINE_X 112
 
-#define SB_RATING_WIDTH (6 * BIGCHAR_WIDTH)                 // width 6
-#define SB_SCORE_X (SB_SCORELINE_X + BIGCHAR_WIDTH)         // width 6
-#define SB_RATING_X (SB_SCORELINE_X + 6 * BIGCHAR_WIDTH)    // width 6
-#define SB_PING_X (SB_SCORELINE_X + 12 * BIGCHAR_WIDTH + 8) // width 5
-#define SB_TIME_X (SB_SCORELINE_X + 17 * BIGCHAR_WIDTH + 8) // width 5
-#define SB_NAME_X (SB_SCORELINE_X + 22 * BIGCHAR_WIDTH)     // width 15
+#define SB_RATING_WIDTH (6 * BIGCHAR_WIDTH)                        // width 6
+#define SB_SCORE_X      (SB_SCORELINE_X + BIGCHAR_WIDTH)           // width 6
+#define SB_RATING_X     (SB_SCORELINE_X + 6 * BIGCHAR_WIDTH)       // width 6
+#define SB_PING_X       (SB_SCORELINE_X + 12 * BIGCHAR_WIDTH + 8)  // width 5
+#define SB_TIME_X       (SB_SCORELINE_X + 17 * BIGCHAR_WIDTH + 8)  // width 5
+#define SB_NAME_X       (SB_SCORELINE_X + 22 * BIGCHAR_WIDTH)      // width 15
 
 // The new and improved score board
 //
@@ -47,17 +47,17 @@
 //
 //  wins/losses are drawn on bot icon now
 
-static qboolean localClient; // true if local client has been displayed
+static qboolean localClient;  // true if local client has been displayed
 
 /*
 =================
 CG_DrawScoreboard
 =================
 */
-static void CG_DrawClientScore(int y, score_t *score, float *color, float fade, qboolean largeFormat) {
+static void CG_DrawClientScore(int y, score_t* score, float* color, float fade, qboolean largeFormat) {
 	char          string[64];
 	vec3_t        headAngles;
-	clientInfo_t *ci;
+	clientInfo_t* ci;
 	int           iconx, headx;
 	vec4_t        c;
 
@@ -215,7 +215,7 @@ CG_ScoreboardClick
 =================
 */
 void CG_ScoreboardClick(void) {
-	score_t *score;
+	score_t* score;
 	int      i;
 
 	if (cg.intermissionStarted)
@@ -250,18 +250,18 @@ CG_TeamScoreboard
 */
 static int CG_TeamScoreboard(int y, team_t team, float fade, int maxClients, int lineHeight) {
 	int           i;
-	score_t      *score;
+	score_t*      score;
 	float         color[4];
 	int           count;
-	clientInfo_t *ci;
+	clientInfo_t* ci;
 
 	color[0] = color[1] = color[2] = 1.0;
-	color[3] = fade;
+	color[3]                       = fade;
 
 	count = 0;
 	for (i = 0; i < cg.numScores && count < maxClients; i++) {
 		score = &cg.scores[i];
-		ci = &cgs.clientinfo[score->client];
+		ci    = &cgs.clientinfo[score->client];
 
 		if (team != ci->team || !ci->infoValid) {
 			continue;
@@ -285,8 +285,8 @@ Draw the normal in-game scoreboard
 qboolean CG_DrawOldScoreboard(void) {
 	int    y, i, n1, n2;
 	float  fade;
-	float *fadeColor;
-	char  *s;
+	float* fadeColor;
+	char*  s;
 	int    maxClients;
 	int    lineHeight;
 	int    topBorderSize, bottomBorderSize;
@@ -308,7 +308,7 @@ qboolean CG_DrawOldScoreboard(void) {
 	}
 
 	if (cg.showScores || cg.predictedPlayerState.pm_type == PM_DEAD || cg.predictedPlayerState.pm_type == PM_INTERMISSION) {
-		fade = 1.0;
+		fade      = 1.0;
 		fadeColor = colorWhite;
 	} else {
 		fadeColor = CG_FadeColor(cg.scoreFadeTime, FADE_TIME);
@@ -316,7 +316,7 @@ qboolean CG_DrawOldScoreboard(void) {
 		if (!fadeColor) {
 			// next time scoreboard comes up, don't print killer
 			cg.deferredPlayerLoading = 0;
-			cg.killerName[0] = 0;
+			cg.killerName[0]         = 0;
 			return qfalse;
 		}
 		fade = fadeColor[3];
@@ -359,14 +359,14 @@ qboolean CG_DrawOldScoreboard(void) {
 
 	// If there are more than SB_MAXCLIENTS_NORMAL, use the interleaved scores
 	if (cg.numScores > SB_MAXCLIENTS_NORMAL) {
-		maxClients = SB_MAXCLIENTS_INTER;
-		lineHeight = SB_INTER_HEIGHT;
-		topBorderSize = 8;
+		maxClients       = SB_MAXCLIENTS_INTER;
+		lineHeight       = SB_INTER_HEIGHT;
+		topBorderSize    = 8;
 		bottomBorderSize = 16;
 	} else {
-		maxClients = SB_MAXCLIENTS_NORMAL;
-		lineHeight = SB_NORMAL_HEIGHT;
-		topBorderSize = 16;
+		maxClients       = SB_MAXCLIENTS_NORMAL;
+		lineHeight       = SB_NORMAL_HEIGHT;
+		topBorderSize    = 16;
 		bottomBorderSize = 16;
 	}
 
@@ -438,10 +438,10 @@ Draw the oversize scoreboard for tournements
 =================
 */
 void CG_DrawOldTourneyScoreboard(void) {
-	const char   *s;
+	const char*   s;
 	vec4_t        color;
 	int           min, sec;
-	clientInfo_t *ci;
+	clientInfo_t* ci;
 	int           y;
 	int           i;
 
@@ -453,7 +453,7 @@ void CG_DrawOldTourneyScoreboard(void) {
 
 	// draw the dialog background
 	color[0] = color[1] = color[2] = 0.2f;
-	color[3] = 1;
+	color[3]                       = 1;
 	CG_FillScreen(color);
 
 	// print the mesage of the day

@@ -3,13 +3,13 @@
 
 #define PI 3.1415926535897932384
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
 	double err, divide, e0;
 	double v0, v1;
 	int    mod, n, times;
 
 	if (argc < 2) {
-		divide = 1000; // default value
+		divide = 1000;  // default value
 	} else {
 		divide = atof(argv[1]);
 		if (divide == 0)
@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
 		if (mod > 16 * 1024 * 1024)
 			break;
 
-		times = (0x7FFFFFFF / mod) + 1; // times we should multiply phase error
+		times = (0x7FFFFFFF / mod) + 1;  // times we should multiply phase error
 
 		v0 = (double)n * divide * 2.0 * PI;
 		v1 = mod;

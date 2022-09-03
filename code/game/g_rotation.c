@@ -2,7 +2,7 @@
 
 #include "g_local.h"
 
-qboolean G_MapExist(const char *map) {
+qboolean G_MapExist(const char* map) {
 	fileHandle_t fh;
 	int          len;
 
@@ -19,14 +19,14 @@ qboolean G_MapExist(const char *map) {
 	return (len >= 144) ? qtrue : qfalse;
 }
 
-void G_LoadMap(const char *map) {
+void G_LoadMap(const char* map) {
 	char cmd[MAX_CVAR_VALUE_STRING];
 	char ver[16];
 	int  version;
 
 	trap_Cvar_VariableStringBuffer("version", ver, sizeof(ver));
 	if (!Q_strncmp(ver, "Q3 1.32 ", 8) || !Q_strncmp(ver, "Q3 1.32b ", 9) || !Q_strncmp(ver, "Q3 1.32c ", 9))
-		version = 0; // buggy vanilla binaries
+		version = 0;  // buggy vanilla binaries
 	else
 		version = 1;
 
@@ -36,7 +36,7 @@ void G_LoadMap(const char *map) {
 		else
 			Q_strcpy(cmd, "map_restart 0\n");
 	} else {
-		if (!G_MapExist(map)) // required map doesn't exists, reload existing
+		if (!G_MapExist(map))  // required map doesn't exists, reload existing
 			BG_sprintf(cmd, "map \"%s\"\n", g_mapname.string);
 		else
 			BG_sprintf(cmd, "map \"%s\"\n", map);
@@ -50,12 +50,12 @@ qboolean ParseMapRotation(void) {
 	char         buf[4096];
 	char         cvar[256];
 	char         map[256];
-	char        *s;
+	char*        s;
 	fileHandle_t fh;
 	int          len;
-	char        *tk;
+	char*        tk;
 	int          reqIndex;
-	int          curIndex = 0;
+	int          curIndex   = 0;
 	int          scopeLevel = 0;
 
 	if (g_gametype.integer == GT_SINGLE_PLAYER || !g_rotation.string[0])
@@ -74,7 +74,7 @@ qboolean ParseMapRotation(void) {
 	buf[len] = '\0';
 	trap_FS_FCloseFile(fh);
 
-	Com_InitSeparators(); // needed for COM_ParseSep()
+	Com_InitSeparators();  // needed for COM_ParseSep()
 
 	reqIndex = trap_Cvar_VariableIntegerValue(SV_ROTATION);
 	if (reqIndex == 0)
@@ -84,7 +84,7 @@ __rescan:
 
 	COM_BeginParseSession(g_rotation.string);
 
-	s = buf; // initialize token parsing
+	s      = buf;  // initialize token parsing
 	map[0] = '\0';
 
 	while (1) {
@@ -92,7 +92,7 @@ __rescan:
 		if (tk[0] == '\0')
 			break;
 
-		if (tk[0] == '$' && tk[1] != '\0') // cvar name
+		if (tk[0] == '$' && tk[1] != '\0')  // cvar name
 		{
 			// save cvar name
 			strcpy(cvar, tk + 1);
@@ -138,16 +138,16 @@ __rescan:
 		}
 	}
 
-	if (curIndex == 0) // no maps in rotation file
+	if (curIndex == 0)  // no maps in rotation file
 	{
 		Com_Printf(S_COLOR_YELLOW "%s: no maps in rotation file.\n", g_rotation.string);
 		trap_Cvar_Set(SV_ROTATION, "1");
 		return qfalse;
 	}
 
-	if (!map[0]) // map at required index not found?
+	if (!map[0])  // map at required index not found?
 	{
-		if (reqIndex > 1) // try to rescan with lower index
+		if (reqIndex > 1)  // try to rescan with lower index
 		{
 			Com_Printf(S_COLOR_CYAN "%s: map at index %i not found, rescan\n", g_rotation.integer, reqIndex);
 			reqIndex = 1;

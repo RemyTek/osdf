@@ -28,10 +28,10 @@
 #include "ai_dmnet.h"
 #include "ai_team.h"
 // data file headers
-#include "chars.h" //characteristics
-#include "inv.h"   //indexes into the inventory
-#include "syn.h"   //synonyms
-#include "match.h" //string matching types and vars
+#include "chars.h"  //characteristics
+#include "inv.h"    //indexes into the inventory
+#include "syn.h"    //synonyms
+#include "match.h"  //string matching types and vars
 
 // for the voice chats
 #ifdef MISSIONPACK
@@ -60,7 +60,7 @@ void BotResetNodeSwitches(void) {
 BotDumpNodeSwitches
 ==================
 */
-void BotDumpNodeSwitches(bot_state_t *bs) {
+void BotDumpNodeSwitches(bot_state_t* bs) {
 	int  i;
 	char netname[MAX_NETNAME];
 
@@ -77,7 +77,7 @@ void BotDumpNodeSwitches(bot_state_t *bs) {
 BotRecordNodeSwitch
 ==================
 */
-void BotRecordNodeSwitch(bot_state_t *bs, char *node, char *str, char *s) {
+void BotRecordNodeSwitch(bot_state_t* bs, char* node, char* str, char* s) {
 	char netname[MAX_NETNAME];
 
 	ClientName(bs->client, netname, sizeof(netname));
@@ -86,7 +86,7 @@ void BotRecordNodeSwitch(bot_state_t *bs, char *node, char *str, char *s) {
 	if (0) {
 		BotAI_Print(PRT_MESSAGE, "%s", nodeswitch[numnodeswitches]);
 	}
-#endif // DEBUG
+#endif  // DEBUG
 	numnodeswitches++;
 }
 
@@ -95,7 +95,7 @@ void BotRecordNodeSwitch(bot_state_t *bs, char *node, char *str, char *s) {
 BotGetAirGoal
 ==================
 */
-int BotGetAirGoal(bot_state_t *bs, bot_goal_t *goal) {
+int BotGetAirGoal(bot_state_t* bs, bot_goal_t* goal) {
 	bsp_trace_t bsptrace;
 	vec3_t      end, mins = {-15, -15, -2}, maxs = {15, 15, 2};
 	int         areanum;
@@ -113,16 +113,16 @@ int BotGetAirGoal(bot_state_t *bs, bot_goal_t *goal) {
 		if (areanum) {
 			VectorCopy(bsptrace.endpos, goal->origin);
 			goal->origin[2] -= 2;
-			goal->areanum = areanum;
-			goal->mins[0] = -15;
-			goal->mins[1] = -15;
-			goal->mins[2] = -1;
-			goal->maxs[0] = 15;
-			goal->maxs[1] = 15;
-			goal->maxs[2] = 1;
-			goal->flags = GFL_AIR;
-			goal->number = 0;
-			goal->iteminfo = 0;
+			goal->areanum   = areanum;
+			goal->mins[0]   = -15;
+			goal->mins[1]   = -15;
+			goal->mins[2]   = -1;
+			goal->maxs[0]   = 15;
+			goal->maxs[1]   = 15;
+			goal->maxs[2]   = 1;
+			goal->flags     = GFL_AIR;
+			goal->number    = 0;
+			goal->iteminfo  = 0;
 			goal->entitynum = 0;
 			return qtrue;
 		}
@@ -135,7 +135,7 @@ int BotGetAirGoal(bot_state_t *bs, bot_goal_t *goal) {
 BotGoForAir
 ==================
 */
-int BotGoForAir(bot_state_t *bs, int tfl, bot_goal_t *ltg, float range) {
+int BotGoForAir(bot_state_t* bs, int tfl, bot_goal_t* ltg, float range) {
 	bot_goal_t goal;
 
 	// if the bot needs air
@@ -143,8 +143,8 @@ int BotGoForAir(bot_state_t *bs, int tfl, bot_goal_t *ltg, float range) {
 		//
 #ifdef DEBUG
 		// BotAI_Print(PRT_MESSAGE, "going for air\n");
-#endif // DEBUG
-       // if we can find an air goal
+#endif  // DEBUG
+        // if we can find an air goal
 		if (BotGetAirGoal(bs, &goal)) {
 			trap_BotPushGoal(bs->gs, &goal);
 			return qtrue;
@@ -169,7 +169,7 @@ int BotGoForAir(bot_state_t *bs, int tfl, bot_goal_t *ltg, float range) {
 BotNearbyGoal
 ==================
 */
-int BotNearbyGoal(bot_state_t *bs, int tfl, bot_goal_t *ltg, float range) {
+int BotNearbyGoal(bot_state_t* bs, int tfl, bot_goal_t* ltg, float range) {
 	int ret;
 
 	// check if the bot should go for air
@@ -207,7 +207,7 @@ int BotNearbyGoal(bot_state_t *bs, int tfl, bot_goal_t *ltg, float range) {
 BotReachedGoal
 ==================
 */
-int BotReachedGoal(bot_state_t *bs, bot_goal_t *goal) {
+int BotReachedGoal(bot_state_t* bs, bot_goal_t* goal) {
 	if (goal->flags & GFL_ITEM) {
 		// if touching the goal
 		if (trap_BotTouchingGoal(bs->origin, goal)) {
@@ -261,7 +261,7 @@ int BotReachedGoal(bot_state_t *bs, bot_goal_t *goal) {
 BotGetItemLongTermGoal
 ==================
 */
-int BotGetItemLongTermGoal(bot_state_t *bs, int tfl, bot_goal_t *goal) {
+int BotGetItemLongTermGoal(bot_state_t* bs, int tfl, bot_goal_t* goal) {
 	// if the bot has no goal
 	if (!trap_BotGetTopGoal(bs->gs, goal)) {
 		// BotAI_Print(PRT_MESSAGE, "no ltg on stack\n");
@@ -288,8 +288,8 @@ int BotGetItemLongTermGoal(bot_state_t *bs, int tfl, bot_goal_t *goal) {
 			BotAI_Print(PRT_MESSAGE, "%1.1f: new long term goal %s\n", FloatTime(), buf);
 			*/
 			bs->ltg_time = FloatTime() + 20;
-		} else { // the bot gets sorta stuck with all the avoid timings, shouldn't happen though
-			//
+		} else {  // the bot gets sorta stuck with all the avoid timings, shouldn't happen though
+			      //
 #ifdef DEBUG
 			char netname[128];
 
@@ -314,14 +314,14 @@ we could also create a seperate AI node for every long term goal type
 however this saves us a lot of code
 ==================
 */
-int BotGetLongTermGoal(bot_state_t *bs, int tfl, int retreat, bot_goal_t *goal) {
+int BotGetLongTermGoal(bot_state_t* bs, int tfl, int retreat, bot_goal_t* goal) {
 	vec3_t           target, dir, dir2;
 	char             netname[MAX_NETNAME];
 	char             buf[MAX_MESSAGE_SIZE];
 	int              areanum;
 	float            croucher;
 	aas_entityinfo_t entinfo, botinfo;
-	bot_waypoint_t  *wp;
+	bot_waypoint_t*  wp;
 
 	if (bs->ltgtype == LTG_TEAMHELP && !retreat) {
 		// check for bot typing status message
@@ -360,7 +360,7 @@ int BotGetLongTermGoal(bot_state_t *bs, int tfl, int retreat, bot_goal_t *goal) 
 			if (areanum && trap_AAS_AreaReachability(areanum)) {
 				// update team goal
 				bs->teamgoal.entitynum = bs->teammate;
-				bs->teamgoal.areanum = areanum;
+				bs->teamgoal.areanum   = areanum;
 				VectorCopy(entinfo.origin, bs->teamgoal.origin);
 				VectorSet(bs->teamgoal.mins, -8, -8, -8);
 				VectorSet(bs->teamgoal.maxs, 8, 8, 8);
@@ -490,7 +490,7 @@ int BotGetLongTermGoal(bot_state_t *bs, int tfl, int retreat, bot_goal_t *goal) 
 			if (areanum && trap_AAS_AreaReachability(areanum)) {
 				// update team goal
 				bs->teamgoal.entitynum = bs->teammate;
-				bs->teamgoal.areanum = areanum;
+				bs->teamgoal.areanum   = areanum;
 				VectorCopy(entinfo.origin, bs->teamgoal.origin);
 				VectorSet(bs->teamgoal.mins, -8, -8, -8);
 				VectorSet(bs->teamgoal.maxs, 8, 8, 8);
@@ -851,7 +851,7 @@ int BotGetLongTermGoal(bot_state_t *bs, int tfl, int retreat, bot_goal_t *goal) 
 			return qtrue;
 		}
 	}
-#endif // CTF
+#endif  // CTF
 #ifdef MISSIONPACK
 	else if (gametype == GT_1FCTF) {
 		if (bs->ltgtype == LTG_GETFLAG) {
@@ -1082,7 +1082,7 @@ int BotGetLongTermGoal(bot_state_t *bs, int tfl, int retreat, bot_goal_t *goal) 
 BotLongTermGoal
 ==================
 */
-int BotLongTermGoal(bot_state_t *bs, int tfl, int retreat, bot_goal_t *goal) {
+int BotLongTermGoal(bot_state_t* bs, int tfl, int retreat, bot_goal_t* goal) {
 	aas_entityinfo_t entinfo;
 	char             teammate[MAX_MESSAGE_SIZE];
 	float            squaredist;
@@ -1113,7 +1113,7 @@ int BotLongTermGoal(bot_state_t *bs, int tfl, int retreat, bot_goal_t *goal) {
 			if (areanum && trap_AAS_AreaReachability(areanum)) {
 				// update team goal
 				bs->lead_teamgoal.entitynum = bs->lead_teammate;
-				bs->lead_teamgoal.areanum = areanum;
+				bs->lead_teamgoal.areanum   = areanum;
 				VectorCopy(entinfo.origin, bs->lead_teamgoal.origin);
 				VectorSet(bs->lead_teamgoal.mins, -8, -8, -8);
 				VectorSet(bs->lead_teamgoal.maxs, 8, 8, 8);
@@ -1169,7 +1169,7 @@ int BotLongTermGoal(bot_state_t *bs, int tfl, int retreat, bot_goal_t *goal) {
 AIEnter_Intermission
 ==================
 */
-void AIEnter_Intermission(bot_state_t *bs, char *s) {
+void AIEnter_Intermission(bot_state_t* bs, char* s) {
 	BotRecordNodeSwitch(bs, "intermission", "", s);
 	// reset the bot state
 	BotResetState(bs);
@@ -1185,7 +1185,7 @@ void AIEnter_Intermission(bot_state_t *bs, char *s) {
 AINode_Intermission
 ==================
 */
-int AINode_Intermission(bot_state_t *bs) {
+int AINode_Intermission(bot_state_t* bs) {
 	// if the intermission ended
 	if (!BotIntermission(bs)) {
 		if (BotChat_StartLevel(bs)) {
@@ -1203,7 +1203,7 @@ int AINode_Intermission(bot_state_t *bs) {
 AIEnter_Observer
 ==================
 */
-void AIEnter_Observer(bot_state_t *bs, char *s) {
+void AIEnter_Observer(bot_state_t* bs, char* s) {
 	BotRecordNodeSwitch(bs, "observer", "", s);
 	// reset the bot state
 	BotResetState(bs);
@@ -1215,7 +1215,7 @@ void AIEnter_Observer(bot_state_t *bs, char *s) {
 AINode_Observer
 ==================
 */
-int AINode_Observer(bot_state_t *bs) {
+int AINode_Observer(bot_state_t* bs) {
 	// if the bot left observer mode
 	if (!BotIsObserver(bs)) {
 		AIEnter_Stand(bs, "observer: left observer");
@@ -1228,10 +1228,10 @@ int AINode_Observer(bot_state_t *bs) {
 AIEnter_Stand
 ==================
 */
-void AIEnter_Stand(bot_state_t *bs, char *s) {
+void AIEnter_Stand(bot_state_t* bs, char* s) {
 	BotRecordNodeSwitch(bs, "stand", "", s);
 	bs->standfindenemy_time = FloatTime() + 1;
-	bs->ainode = AINode_Stand;
+	bs->ainode              = AINode_Stand;
 }
 
 /*
@@ -1239,13 +1239,13 @@ void AIEnter_Stand(bot_state_t *bs, char *s) {
 AINode_Stand
 ==================
 */
-int AINode_Stand(bot_state_t *bs) {
+int AINode_Stand(bot_state_t* bs) {
 
 	// if the bot's health decreased
 	if (bs->lastframe_health > bs->inventory[INVENTORY_HEALTH]) {
 		if (BotChat_HitTalking(bs)) {
 			bs->standfindenemy_time = FloatTime() + BotChatTime(bs) + 0.1;
-			bs->stand_time = FloatTime() + BotChatTime(bs) + 0.1;
+			bs->stand_time          = FloatTime() + BotChatTime(bs) + 0.1;
 		}
 	}
 	if (bs->standfindenemy_time < FloatTime()) {
@@ -1272,7 +1272,7 @@ int AINode_Stand(bot_state_t *bs) {
 AIEnter_Respawn
 ==================
 */
-void AIEnter_Respawn(bot_state_t *bs, char *s) {
+void AIEnter_Respawn(bot_state_t* bs, char* s) {
 	BotRecordNodeSwitch(bs, "respawn", "", s);
 	// reset some states
 	trap_BotResetMoveState(bs->ms);
@@ -1281,15 +1281,15 @@ void AIEnter_Respawn(bot_state_t *bs, char *s) {
 	trap_BotResetAvoidReach(bs->ms);
 	// if the bot wants to chat
 	if (BotChat_Death(bs)) {
-		bs->respawn_time = FloatTime() + BotChatTime(bs);
+		bs->respawn_time     = FloatTime() + BotChatTime(bs);
 		bs->respawnchat_time = FloatTime();
 	} else {
-		bs->respawn_time = FloatTime() + 1 + random();
+		bs->respawn_time     = FloatTime() + 1 + random();
 		bs->respawnchat_time = 0;
 	}
 	// set respawn state
 	bs->respawn_wait = qfalse;
-	bs->ainode = AINode_Respawn;
+	bs->ainode       = AINode_Respawn;
 }
 
 /*
@@ -1297,7 +1297,7 @@ void AIEnter_Respawn(bot_state_t *bs, char *s) {
 AINode_Respawn
 ==================
 */
-int AINode_Respawn(bot_state_t *bs) {
+int AINode_Respawn(bot_state_t* bs) {
 	// if waiting for the actual respawn
 	if (bs->respawn_wait) {
 		if (!BotIsDead(bs)) {
@@ -1328,7 +1328,7 @@ int AINode_Respawn(bot_state_t *bs) {
 BotSelectActivateWeapon
 ==================
 */
-int BotSelectActivateWeapon(bot_state_t *bs) {
+int BotSelectActivateWeapon(bot_state_t* bs) {
 	//
 	if (bs->inventory[INVENTORY_MACHINEGUN] > 0 && bs->inventory[INVENTORY_BULLETS] > 0)
 		return WEAPONINDEX_MACHINEGUN;
@@ -1366,7 +1366,7 @@ BotClearPath
  try to deactivate obstacles like proximity mines on the bot's path
 ==================
 */
-void BotClearPath(bot_state_t *bs, bot_moveresult_t *moveresult) {
+void BotClearPath(bot_state_t* bs, bot_moveresult_t* moveresult) {
 	int           i, bestmine;
 	float         dist, bestdist;
 	vec3_t        target, dir;
@@ -1471,7 +1471,7 @@ void BotClearPath(bot_state_t *bs, bot_moveresult_t *moveresult) {
 AIEnter_Seek_ActivateEntity
 ==================
 */
-void AIEnter_Seek_ActivateEntity(bot_state_t *bs, char *s) {
+void AIEnter_Seek_ActivateEntity(bot_state_t* bs, char* s) {
 	BotRecordNodeSwitch(bs, "activate entity", "", s);
 	bs->ainode = AINode_Seek_ActivateEntity;
 }
@@ -1481,8 +1481,8 @@ void AIEnter_Seek_ActivateEntity(bot_state_t *bs, char *s) {
 AINode_Seek_Activate_Entity
 ==================
 */
-int AINode_Seek_ActivateEntity(bot_state_t *bs) {
-	bot_goal_t      *goal;
+int AINode_Seek_ActivateEntity(bot_state_t* bs) {
+	bot_goal_t*      goal;
 	vec3_t           target, dir, ideal_viewangles;
 	bot_moveresult_t moveresult;
 	int              targetvisible;
@@ -1553,7 +1553,7 @@ int AINode_Seek_ActivateEntity(bot_state_t *bs) {
 		if (!VectorCompare(bs->activatestack->origin, entinfo.origin)) {
 #ifdef DEBUG
 			BotAI_Print(PRT_MESSAGE, "hit shootable button or trigger\n");
-#endif // DEBUG
+#endif  // DEBUG
 			bs->activatestack->time = 0;
 		}
 		// if the activate goal has been activated or the bot takes too long
@@ -1570,7 +1570,7 @@ int AINode_Seek_ActivateEntity(bot_state_t *bs) {
 		memset(&moveresult, 0, sizeof(bot_moveresult_t));
 	} else {
 		// if the bot has no goal
-		if (!goal) { // FIXME: always false?
+		if (!goal) {  // FIXME: always false?
 			bs->activatestack->time = 0;
 		}
 		// if the bot does not have a shoot goal
@@ -1579,7 +1579,7 @@ int AINode_Seek_ActivateEntity(bot_state_t *bs) {
 			if (trap_BotTouchingGoal(bs->origin, goal)) {
 #ifdef DEBUG
 				BotAI_Print(PRT_MESSAGE, "touched button or trigger\n");
-#endif // DEBUG
+#endif  // DEBUG
 				bs->activatestack->time = 0;
 			}
 		}
@@ -1679,7 +1679,7 @@ int AINode_Seek_ActivateEntity(bot_state_t *bs) {
 AIEnter_Seek_NBG
 ==================
 */
-void AIEnter_Seek_NBG(bot_state_t *bs, char *s) {
+void AIEnter_Seek_NBG(bot_state_t* bs, char* s) {
 	bot_goal_t goal;
 	char       buf[144];
 
@@ -1697,7 +1697,7 @@ void AIEnter_Seek_NBG(bot_state_t *bs, char *s) {
 AINode_Seek_NBG
 ==================
 */
-int AINode_Seek_NBG(bot_state_t *bs) {
+int AINode_Seek_NBG(bot_state_t* bs) {
 	bot_goal_t       goal;
 	vec3_t           target, dir;
 	bot_moveresult_t moveresult;
@@ -1815,7 +1815,7 @@ int AINode_Seek_NBG(bot_state_t *bs) {
 AIEnter_Seek_LTG
 ==================
 */
-void AIEnter_Seek_LTG(bot_state_t *bs, char *s) {
+void AIEnter_Seek_LTG(bot_state_t* bs, char* s) {
 	bot_goal_t goal;
 	char       buf[144];
 
@@ -1833,7 +1833,7 @@ void AIEnter_Seek_LTG(bot_state_t *bs, char *s) {
 AINode_Seek_LTG
 ==================
 */
-int AINode_Seek_LTG(bot_state_t *bs) {
+int AINode_Seek_LTG(bot_state_t* bs) {
 	bot_goal_t       goal;
 	vec3_t           target, dir;
 	bot_moveresult_t moveresult;
@@ -1920,7 +1920,7 @@ int AINode_Seek_LTG(bot_state_t *bs) {
 			if (BotCTFCarryingFlag(bs))
 				range = 50;
 		}
-#endif // CTF
+#endif  // CTF
 #ifdef MISSIONPACK
 		else if (gametype == GT_1FCTF) {
 			if (Bot1FCTFCarryingFlag(bs))
@@ -2001,7 +2001,7 @@ int AINode_Seek_LTG(bot_state_t *bs) {
 AIEnter_Battle_Fight
 ==================
 */
-void AIEnter_Battle_Fight(bot_state_t *bs, char *s) {
+void AIEnter_Battle_Fight(bot_state_t* bs, char* s) {
 	BotRecordNodeSwitch(bs, "battle fight", "", s);
 	trap_BotResetLastAvoidReach(bs->ms);
 	bs->ainode = AINode_Battle_Fight;
@@ -2013,7 +2013,7 @@ void AIEnter_Battle_Fight(bot_state_t *bs, char *s) {
 AIEnter_Battle_SuicidalFight
 ==================
 */
-void AIEnter_Battle_SuicidalFight(bot_state_t *bs, char *s) {
+void AIEnter_Battle_SuicidalFight(bot_state_t* bs, char* s) {
 	BotRecordNodeSwitch(bs, "battle fight", "", s);
 	trap_BotResetLastAvoidReach(bs->ms);
 	bs->ainode = AINode_Battle_Fight;
@@ -2025,7 +2025,7 @@ void AIEnter_Battle_SuicidalFight(bot_state_t *bs, char *s) {
 AINode_Battle_Fight
 ==================
 */
-int AINode_Battle_Fight(bot_state_t *bs) {
+int AINode_Battle_Fight(bot_state_t* bs) {
 	int              areanum;
 	vec3_t           target;
 	aas_entityinfo_t entinfo;
@@ -2185,10 +2185,10 @@ int AINode_Battle_Fight(bot_state_t *bs) {
 AIEnter_Battle_Chase
 ==================
 */
-void AIEnter_Battle_Chase(bot_state_t *bs, char *s) {
+void AIEnter_Battle_Chase(bot_state_t* bs, char* s) {
 	BotRecordNodeSwitch(bs, "battle chase", "", s);
 	bs->chase_time = FloatTime();
-	bs->ainode = AINode_Battle_Chase;
+	bs->ainode     = AINode_Battle_Chase;
 }
 
 /*
@@ -2196,7 +2196,7 @@ void AIEnter_Battle_Chase(bot_state_t *bs, char *s) {
 AINode_Battle_Chase
 ==================
 */
-int AINode_Battle_Chase(bot_state_t *bs) {
+int AINode_Battle_Chase(bot_state_t* bs) {
 	bot_goal_t       goal;
 	vec3_t           target, dir;
 	bot_moveresult_t moveresult;
@@ -2251,7 +2251,7 @@ int AINode_Battle_Chase(bot_state_t *bs) {
 	BotMapScripts(bs);
 	// create the chase goal
 	goal.entitynum = bs->enemy;
-	goal.areanum = bs->lastenemyareanum;
+	goal.areanum   = bs->lastenemyareanum;
 	VectorCopy(bs->lastenemyorigin, goal.origin);
 	VectorSet(goal.mins, -8, -8, -8);
 	VectorSet(goal.maxs, 8, 8, 8);
@@ -2266,7 +2266,7 @@ int AINode_Battle_Chase(bot_state_t *bs) {
 	// check for nearby goals periodicly
 	if (bs->check_time < FloatTime()) {
 		bs->check_time = FloatTime() + 1;
-		range = 150;
+		range          = 150;
 		//
 		if (BotNearbyGoal(bs, bs->tfl, &goal, range)) {
 			// the bot gets 5 seconds to pick up the nearby goal item
@@ -2326,7 +2326,7 @@ int AINode_Battle_Chase(bot_state_t *bs) {
 AIEnter_Battle_Retreat
 ==================
 */
-void AIEnter_Battle_Retreat(bot_state_t *bs, char *s) {
+void AIEnter_Battle_Retreat(bot_state_t* bs, char* s) {
 	BotRecordNodeSwitch(bs, "battle retreat", "", s);
 	bs->ainode = AINode_Battle_Retreat;
 }
@@ -2336,7 +2336,7 @@ void AIEnter_Battle_Retreat(bot_state_t *bs, char *s) {
 AINode_Battle_Retreat
 ==================
 */
-int AINode_Battle_Retreat(bot_state_t *bs) {
+int AINode_Battle_Retreat(bot_state_t* bs) {
 	bot_goal_t       goal;
 	aas_entityinfo_t entinfo;
 	bot_moveresult_t moveresult;
@@ -2439,14 +2439,14 @@ int AINode_Battle_Retreat(bot_state_t *bs) {
 	// check for nearby goals periodicly
 	if (bs->check_time < FloatTime()) {
 		bs->check_time = FloatTime() + 1;
-		range = 150;
+		range          = 150;
 #ifdef CTF
 		if (gametype == GT_CTF) {
 			// if carrying a flag the bot shouldn't be distracted too much
 			if (BotCTFCarryingFlag(bs))
 				range = 50;
 		}
-#endif // CTF
+#endif  // CTF
 #ifdef MISSIONPACK
 		else if (gametype == GT_1FCTF) {
 			if (Bot1FCTFCarryingFlag(bs))
@@ -2512,7 +2512,7 @@ int AINode_Battle_Retreat(bot_state_t *bs) {
 AIEnter_Battle_NBG
 ==================
 */
-void AIEnter_Battle_NBG(bot_state_t *bs, char *s) {
+void AIEnter_Battle_NBG(bot_state_t* bs, char* s) {
 	BotRecordNodeSwitch(bs, "battle NBG", "", s);
 	bs->ainode = AINode_Battle_NBG;
 }
@@ -2522,7 +2522,7 @@ void AIEnter_Battle_NBG(bot_state_t *bs, char *s) {
 AINode_Battle_NBG
 ==================
 */
-int AINode_Battle_NBG(bot_state_t *bs) {
+int AINode_Battle_NBG(bot_state_t* bs) {
 	int              areanum;
 	bot_goal_t       goal;
 	aas_entityinfo_t entinfo;

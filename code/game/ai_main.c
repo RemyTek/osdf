@@ -12,7 +12,7 @@
 
 #include "g_local.h"
 #include "q_shared.h"
-#include "botlib.h" //bot lib interface
+#include "botlib.h"  //bot lib interface
 #include "be_aas.h"
 #include "be_ea.h"
 #include "be_ai_char.h"
@@ -37,7 +37,7 @@
 #define MAX_PATH 144
 
 // bot states
-bot_state_t *botstates[MAX_CLIENTS];
+bot_state_t* botstates[MAX_CLIENTS];
 // number of bots
 int numbots;
 // floating point time
@@ -61,16 +61,16 @@ vmCvar_t bot_interbreedbots;
 vmCvar_t bot_interbreedcycle;
 vmCvar_t bot_interbreedwrite;
 
-char mapname[MAX_QPATH];
+char     mapname[MAX_QPATH];
 
-void ExitLevel(void);
+void     ExitLevel(void);
 
 /*
 ==================
 BotAI_Print
 ==================
 */
-void QDECL BotAI_Print(int type, const char *fmt, ...) {
+void QDECL BotAI_Print(int type, const char* fmt, ...) {
 	char    str[2048];
 	va_list ap;
 
@@ -111,25 +111,25 @@ void QDECL BotAI_Print(int type, const char *fmt, ...) {
 BotAI_Trace
 ==================
 */
-void BotAI_Trace(bsp_trace_t *bsptrace, vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, int passent, int contentmask) {
+void BotAI_Trace(bsp_trace_t* bsptrace, vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, int passent, int contentmask) {
 	trace_t trace;
 
 	trap_Trace(&trace, start, mins, maxs, end, passent, contentmask);
 	// copy the trace information
-	bsptrace->allsolid = trace.allsolid;
+	bsptrace->allsolid   = trace.allsolid;
 	bsptrace->startsolid = trace.startsolid;
-	bsptrace->fraction = trace.fraction;
+	bsptrace->fraction   = trace.fraction;
 	VectorCopy(trace.endpos, bsptrace->endpos);
 	bsptrace->plane.dist = trace.plane.dist;
 	VectorCopy(trace.plane.normal, bsptrace->plane.normal);
 	bsptrace->plane.signbits = trace.plane.signbits;
-	bsptrace->plane.type = trace.plane.type;
-	bsptrace->surface.value = 0;
-	bsptrace->surface.flags = trace.surfaceFlags;
-	bsptrace->ent = trace.entityNum;
-	bsptrace->exp_dist = 0;
-	bsptrace->sidenum = 0;
-	bsptrace->contents = trace.contents;
+	bsptrace->plane.type     = trace.plane.type;
+	bsptrace->surface.value  = 0;
+	bsptrace->surface.flags  = trace.surfaceFlags;
+	bsptrace->ent            = trace.entityNum;
+	bsptrace->exp_dist       = 0;
+	bsptrace->sidenum        = 0;
+	bsptrace->contents       = trace.contents;
 }
 
 /*
@@ -137,8 +137,8 @@ void BotAI_Trace(bsp_trace_t *bsptrace, vec3_t start, vec3_t mins, vec3_t maxs, 
 BotAI_GetClientState
 ==================
 */
-int BotAI_GetClientState(int clientNum, playerState_t *state) {
-	gentity_t *ent;
+int BotAI_GetClientState(int clientNum, playerState_t* state) {
+	gentity_t* ent;
 
 	ent = &g_entities[clientNum];
 	if (!ent->inuse) {
@@ -157,8 +157,8 @@ int BotAI_GetClientState(int clientNum, playerState_t *state) {
 BotAI_GetEntityState
 ==================
 */
-qboolean BotAI_GetEntityState(int entityNum, entityState_t *state) {
-	const gentity_t *ent;
+qboolean BotAI_GetEntityState(int entityNum, entityState_t* state) {
+	const gentity_t* ent;
 
 	ent = g_entities + entityNum;
 
@@ -181,7 +181,7 @@ qboolean BotAI_GetEntityState(int entityNum, entityState_t *state) {
 BotAI_GetSnapshotEntity
 ==================
 */
-int BotAI_GetSnapshotEntity(int clientNum, int sequence, entityState_t *state) {
+int BotAI_GetSnapshotEntity(int clientNum, int sequence, entityState_t* state) {
 	int entNum;
 
 	entNum = trap_BotGetSnapshotEntity(clientNum, sequence);
@@ -200,21 +200,21 @@ int BotAI_GetSnapshotEntity(int clientNum, int sequence, entityState_t *state) {
 BotAI_BotInitialChat
 ==================
 */
-void QDECL BotAI_BotInitialChat(bot_state_t *bs, char *type, ...) {
+void QDECL BotAI_BotInitialChat(bot_state_t* bs, char* type, ...) {
 	int     i, mcontext;
 	va_list ap;
-	char   *p;
-	char   *vars[MAX_MATCHVARIABLES];
+	char*   p;
+	char*   vars[MAX_MATCHVARIABLES];
 
 	memset(vars, 0, sizeof(vars));
 	va_start(ap, type);
-	p = va_arg(ap, char *);
+	p = va_arg(ap, char*);
 	for (i = 0; i < MAX_MATCHVARIABLES; i++) {
 		if (!p) {
 			break;
 		}
 		vars[i] = p;
-		p = va_arg(ap, char *);
+		p       = va_arg(ap, char*);
 	}
 	va_end(ap);
 
@@ -260,7 +260,7 @@ void BotTestAAS(vec3_t origin) {
 BotReportStatus
 ==================
 */
-void BotReportStatus(bot_state_t *bs) {
+void BotReportStatus(bot_state_t* bs) {
 	char  goalname[MAX_MESSAGE_SIZE];
 	char  netname[MAX_MESSAGE_SIZE];
 	char *leader, flagstatus[32];
@@ -406,11 +406,11 @@ void BotTeamplayReport(void) {
 BotSetInfoConfigString
 ==================
 */
-void BotSetInfoConfigString(bot_state_t *bs) {
+void BotSetInfoConfigString(bot_state_t* bs) {
 	char       goalname[MAX_MESSAGE_SIZE];
 	char       netname[MAX_MESSAGE_SIZE];
 	char       action[MAX_MESSAGE_SIZE];
-	char      *leader, carrying[32], *cs;
+	char *     leader, carrying[32], *cs;
 	bot_goal_t goal;
 	//
 	ClientName(bs->client, netname, sizeof(netname));
@@ -554,7 +554,7 @@ void BotInterbreedBots(void) {
 	// reset the kills and deaths
 	for (i = 0; i < MAX_CLIENTS; i++) {
 		if (botstates[i] && botstates[i]->inuse) {
-			botstates[i]->num_kills = 0;
+			botstates[i]->num_kills  = 0;
 			botstates[i]->num_deaths = 0;
 		}
 	}
@@ -565,12 +565,12 @@ void BotInterbreedBots(void) {
 BotWriteInterbreeded
 ==============
 */
-void BotWriteInterbreeded(char *filename) {
+void BotWriteInterbreeded(char* filename) {
 	float rank, bestrank;
 	int   i, bestbot;
 
 	bestrank = 0;
-	bestbot = -1;
+	bestbot  = -1;
 	// get the best bot
 	for (i = 0; i < MAX_CLIENTS; i++) {
 		if (botstates[i] && botstates[i]->inuse) {
@@ -580,7 +580,7 @@ void BotWriteInterbreeded(char *filename) {
 		}
 		if (rank > bestrank) {
 			bestrank = rank;
-			bestbot = i;
+			bestbot  = i;
 		}
 	}
 	if (bestbot >= 0) {
@@ -652,7 +652,7 @@ void BotInterbreeding(void) {
 BotEntityInfo
 ==============
 */
-void BotEntityInfo(int entnum, aas_entityinfo_t *info) {
+void BotEntityInfo(int entnum, aas_entityinfo_t* info) {
 	trap_AAS_EntityInfo(entnum, info);
 }
 
@@ -670,7 +670,7 @@ int NumBots(void) {
 BotTeamLeader
 ==============
 */
-int BotTeamLeader(bot_state_t *bs) {
+int BotTeamLeader(bot_state_t* bs) {
 	int leader;
 
 	leader = ClientFromName(bs->teamleader);
@@ -708,7 +708,7 @@ BotChangeViewAngle
 float BotChangeViewAngle(float angle, float ideal_angle, float speed) {
 	float move;
 
-	angle = AngleMod(angle);
+	angle       = AngleMod(angle);
 	ideal_angle = AngleMod(ideal_angle);
 	if (angle == ideal_angle)
 		return angle;
@@ -735,7 +735,7 @@ float BotChangeViewAngle(float angle, float ideal_angle, float speed) {
 BotChangeViewAngles
 ==============
 */
-void BotChangeViewAngles(bot_state_t *bs, float thinktime) {
+void BotChangeViewAngles(bot_state_t* bs, float thinktime) {
 	float diff, factor, maxchange, anglespeed, disired_speed;
 	int   i;
 
@@ -743,10 +743,10 @@ void BotChangeViewAngles(bot_state_t *bs, float thinktime) {
 		bs->ideal_viewangles[PITCH] -= 360;
 	//
 	if (bs->enemy >= 0) {
-		factor = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_VIEW_FACTOR, 0.01f, 1);
+		factor    = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_VIEW_FACTOR, 0.01f, 1);
 		maxchange = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_VIEW_MAXCHANGE, 1, 1800);
 	} else {
-		factor = 0.05f;
+		factor    = 0.05f;
 		maxchange = 360;
 	}
 	if (maxchange < 240)
@@ -756,17 +756,17 @@ void BotChangeViewAngles(bot_state_t *bs, float thinktime) {
 		//
 		if (bot_challenge.integer) {
 			// smooth slowdown view model
-			diff = fabs(AngleDifference(bs->viewangles[i], bs->ideal_viewangles[i]));
+			diff       = fabs(AngleDifference(bs->viewangles[i], bs->ideal_viewangles[i]));
 			anglespeed = diff * factor;
 			if (anglespeed > maxchange)
 				anglespeed = maxchange;
 			bs->viewangles[i] = BotChangeViewAngle(bs->viewangles[i], bs->ideal_viewangles[i], anglespeed);
 		} else {
 			// over reaction view model
-			bs->viewangles[i] = AngleMod(bs->viewangles[i]);
+			bs->viewangles[i]       = AngleMod(bs->viewangles[i]);
 			bs->ideal_viewangles[i] = AngleMod(bs->ideal_viewangles[i]);
-			diff = AngleDifference(bs->viewangles[i], bs->ideal_viewangles[i]);
-			disired_speed = diff * factor;
+			diff                    = AngleDifference(bs->viewangles[i], bs->ideal_viewangles[i]);
+			disired_speed           = diff * factor;
 			bs->viewanglespeed[i] += (bs->viewanglespeed[i] - disired_speed);
 			if (bs->viewanglespeed[i] > 180)
 				bs->viewanglespeed[i] = maxchange;
@@ -797,7 +797,7 @@ void BotChangeViewAngles(bot_state_t *bs, float thinktime) {
 BotInputToUserCommand
 ==============
 */
-void BotInputToUserCommand(bot_input_t *bi, usercmd_t *ucmd, int delta_angles[3], int time) {
+void BotInputToUserCommand(bot_input_t* bi, usercmd_t* ucmd, int delta_angles[3], int time) {
 	vec3_t angles, forward, right;
 	short  temp;
 	int    j;
@@ -844,8 +844,8 @@ void BotInputToUserCommand(bot_input_t *bi, usercmd_t *ucmd, int delta_angles[3]
 	// set the view angles
 	// NOTE: the ucmd->angles are the angles WITHOUT the delta angles
 	ucmd->angles[PITCH] = ANGLE2SHORT(bi->viewangles[PITCH]);
-	ucmd->angles[YAW] = ANGLE2SHORT(bi->viewangles[YAW]);
-	ucmd->angles[ROLL] = ANGLE2SHORT(bi->viewangles[ROLL]);
+	ucmd->angles[YAW]   = ANGLE2SHORT(bi->viewangles[YAW]);
+	ucmd->angles[ROLL]  = ANGLE2SHORT(bi->viewangles[ROLL]);
 	// subtract the delta angles
 	for (j = 0; j < 3; j++) {
 		temp = ucmd->angles[j] - delta_angles[j];
@@ -865,7 +865,7 @@ void BotInputToUserCommand(bot_input_t *bi, usercmd_t *ucmd, int delta_angles[3]
 		angles[PITCH] = bi->viewangles[PITCH];
 	else
 		angles[PITCH] = 0;
-	angles[YAW] = bi->viewangles[YAW];
+	angles[YAW]  = bi->viewangles[YAW];
 	angles[ROLL] = 0;
 	AngleVectors(angles, forward, right, NULL);
 	// bot input speed is in the range [0, 400]
@@ -892,8 +892,8 @@ void BotInputToUserCommand(bot_input_t *bi, usercmd_t *ucmd, int delta_angles[3]
 	}
 
 	ucmd->forwardmove = f;
-	ucmd->rightmove = r;
-	ucmd->upmove = u;
+	ucmd->rightmove   = r;
+	ucmd->upmove      = u;
 
 	if (bi->actionflags & ACTION_MOVEFORWARD)
 		ucmd->forwardmove = 127;
@@ -916,7 +916,7 @@ void BotInputToUserCommand(bot_input_t *bi, usercmd_t *ucmd, int delta_angles[3]
 BotUpdateInput
 ==============
 */
-void BotUpdateInput(bot_state_t *bs, int time, int elapsed_time) {
+void BotUpdateInput(bot_state_t* bs, int time, int elapsed_time) {
 	bot_input_t bi;
 	int         j;
 
@@ -958,7 +958,7 @@ void BotAIRegularUpdate(void) {
 RemoveColorEscapeSequences
 ==============
 */
-void RemoveColorEscapeSequences(char *text) {
+void RemoveColorEscapeSequences(char* text) {
 	int i, l;
 
 	l = 0;
@@ -980,7 +980,7 @@ BotAI
 ==============
 */
 int BotAI(int client, float thinktime) {
-	bot_state_t *bs;
+	bot_state_t* bs;
 	char         buf[1024], *args;
 	int          j;
 
@@ -1089,9 +1089,9 @@ void BotScheduleBotThink(void) {
 BotWriteSessionData
 ==============
 */
-void BotWriteSessionData(bot_state_t *bs) {
-	const char *s;
-	const char *var;
+void BotWriteSessionData(bot_state_t* bs) {
+	const char* s;
+	const char* var;
 
 	s =
 		va("%i %i %i %i %i %i %i %i"
@@ -1113,9 +1113,9 @@ void BotWriteSessionData(bot_state_t *bs) {
 BotReadSessionData
 ==============
 */
-void BotReadSessionData(bot_state_t *bs) {
+void BotReadSessionData(bot_state_t* bs) {
 	char        s[MAX_STRING_CHARS];
-	const char *var;
+	const char* var;
 
 	var = va("botsession%i", bs->client);
 	trap_Cvar_VariableStringBuffer(var, s, sizeof(s));
@@ -1137,9 +1137,9 @@ void BotReadSessionData(bot_state_t *bs) {
 BotAISetupClient
 ==============
 */
-qboolean BotAISetupClient(int client, struct bot_settings_s *settings, qboolean restart) {
+qboolean BotAISetupClient(int client, struct bot_settings_s* settings, qboolean restart) {
 	char         filename[MAX_PATH], name[MAX_PATH], gender[MAX_PATH];
-	bot_state_t *bs;
+	bot_state_t* bs;
 	int          errnum;
 
 	if (!botstates[client])
@@ -1208,13 +1208,13 @@ qboolean BotAISetupClient(int client, struct bot_settings_s *settings, qboolean 
 	else
 		trap_BotSetChatGender(bs->cs, CHAT_GENDERLESS);
 
-	bs->inuse = qtrue;
-	bs->client = client;
-	bs->entitynum = client;
-	bs->setupcount = 4;
+	bs->inuse          = qtrue;
+	bs->client         = client;
+	bs->entitynum      = client;
+	bs->setupcount     = 4;
 	bs->entergame_time = FloatTime();
-	bs->ms = trap_BotAllocMoveState();
-	bs->walker = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_WALKER, 0, 1);
+	bs->ms             = trap_BotAllocMoveState();
+	bs->walker         = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_WALKER, 0, 1);
 	numbots++;
 
 	if (trap_Cvar_VariableIntegerValue("bot_testichat")) {
@@ -1241,7 +1241,7 @@ BotAIShutdownClient
 ==============
 */
 int BotAIShutdownClient(int client, qboolean restart) {
-	bot_state_t *bs;
+	bot_state_t* bs;
 
 	bs = botstates[client];
 	if (!bs || !bs->inuse) {
@@ -1289,25 +1289,25 @@ called when a bot enters the intermission or observer mode and
 when the level is changed
 ==============
 */
-void BotResetState(bot_state_t *bs) {
+void BotResetState(bot_state_t* bs) {
 	int            client, entitynum, inuse;
 	int            movestate, goalstate, chatstate, weaponstate;
 	bot_settings_t settings;
 	int            character;
-	playerState_t  ps; // current player state
+	playerState_t  ps;  // current player state
 	float          entergame_time;
 
 	// save some things that should not be reset here
 	memcpy(&settings, &bs->settings, sizeof(bot_settings_t));
 	memcpy(&ps, &bs->cur_ps, sizeof(playerState_t));
-	inuse = bs->inuse;
-	client = bs->client;
-	entitynum = bs->entitynum;
-	character = bs->character;
-	movestate = bs->ms;
-	goalstate = bs->gs;
-	chatstate = bs->cs;
-	weaponstate = bs->ws;
+	inuse          = bs->inuse;
+	client         = bs->client;
+	entitynum      = bs->entitynum;
+	character      = bs->character;
+	movestate      = bs->ms;
+	goalstate      = bs->gs;
+	chatstate      = bs->cs;
+	weaponstate    = bs->ws;
 	entergame_time = bs->entergame_time;
 	// free checkpoints and patrol points
 	BotFreeWaypoints(bs->checkpoints);
@@ -1321,10 +1321,10 @@ void BotResetState(bot_state_t *bs) {
 	bs->ws = weaponstate;
 	memcpy(&bs->cur_ps, &ps, sizeof(playerState_t));
 	memcpy(&bs->settings, &settings, sizeof(bot_settings_t));
-	bs->inuse = inuse;
-	bs->client = client;
-	bs->entitynum = entitynum;
-	bs->character = character;
+	bs->inuse          = inuse;
+	bs->client         = client;
+	bs->entitynum      = entitynum;
+	bs->character      = character;
 	bs->entergame_time = entergame_time;
 	// reset several states
 	if (bs->ms)
@@ -1368,7 +1368,7 @@ int BotAILoadMap(int restart) {
 }
 
 #ifdef MISSIONPACK
-void ProximityMine_Trigger(gentity_t *trigger, gentity_t *other, trace_t *trace);
+void ProximityMine_Trigger(gentity_t* trigger, gentity_t* other, trace_t* trace);
 #endif
 
 /*
@@ -1378,7 +1378,7 @@ BotAIStartFrame
 */
 int BotAIStartFrame(int time) {
 	int               i;
-	gentity_t        *ent;
+	gentity_t*        ent;
 	bot_entitystate_t state;
 	int               elapsed_time, thinktime;
 	static int        local_time;
@@ -1415,10 +1415,10 @@ int BotAIStartFrame(int time) {
 				continue;
 			}
 			botstates[i]->lastucmd.forwardmove = 0;
-			botstates[i]->lastucmd.rightmove = 0;
-			botstates[i]->lastucmd.upmove = 0;
-			botstates[i]->lastucmd.buttons = 0;
-			botstates[i]->lastucmd.serverTime = time;
+			botstates[i]->lastucmd.rightmove   = 0;
+			botstates[i]->lastucmd.upmove      = 0;
+			botstates[i]->lastucmd.buttons     = 0;
+			botstates[i]->lastucmd.serverTime  = time;
 			trap_BotUserCommand(botstates[i]->client, &botstates[i]->lastucmd);
 		}
 		return qtrue;
@@ -1445,7 +1445,7 @@ int BotAIStartFrame(int time) {
 	}
 
 	elapsed_time = time - local_time;
-	local_time = time;
+	local_time   = time;
 
 	botlib_residual += elapsed_time;
 
@@ -1464,7 +1464,7 @@ int BotAIStartFrame(int time) {
 			return qfalse;
 
 		// update entities in the botlib
-		s = skip;
+		s   = skip;
 		ent = g_entities;
 		for (i = 0; i < level.num_entities; i++, s++, ent++) {
 			ent = &g_entities[i];
@@ -1512,22 +1512,22 @@ int BotAIStartFrame(int time) {
 			VectorCopy(ent->s.origin2, state.old_origin);
 			VectorCopy(ent->r.mins, state.mins);
 			VectorCopy(ent->r.maxs, state.maxs);
-			state.type = ent->s.eType;
+			state.type  = ent->s.eType;
 			state.flags = ent->s.eFlags;
 			if (ent->r.bmodel)
 				state.solid = SOLID_BSP;
 			else
 				state.solid = SOLID_BBOX;
-			state.groundent = ent->s.groundEntityNum;
-			state.modelindex = ent->s.modelindex;
+			state.groundent   = ent->s.groundEntityNum;
+			state.modelindex  = ent->s.modelindex;
 			state.modelindex2 = ent->s.modelindex2;
-			state.frame = ent->s.frame;
-			state.event = ent->s.event;
-			state.eventParm = ent->s.eventParm;
-			state.powerups = ent->s.powerups;
-			state.legsAnim = ent->s.legsAnim;
-			state.torsoAnim = ent->s.torsoAnim;
-			state.weapon = ent->s.weapon;
+			state.frame       = ent->s.frame;
+			state.event       = ent->s.event;
+			state.eventParm   = ent->s.eventParm;
+			state.powerups    = ent->s.powerups;
+			state.legsAnim    = ent->s.legsAnim;
+			state.torsoAnim   = ent->s.torsoAnim;
+			state.weapon      = ent->s.weapon;
 			//
 			*s = qfalse;
 			trap_BotLibUpdateEntity(i, &state);

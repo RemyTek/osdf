@@ -6,7 +6,7 @@
 #include "cg_local.h"
 #ifdef MISSIONPACK
 #include "../ui/ui_shared.h"
-extern menuDef_t *menuScoreboard;
+extern menuDef_t* menuScoreboard;
 #endif
 
 /*
@@ -75,7 +75,7 @@ static void CG_ScoresDown_f(void) {
 		// displayed, but if this is the first hit, clear them out
 		if (!cg.showScores) {
 			cg.showScores = qtrue;
-			cg.numScores = 0;
+			cg.numScores  = 0;
 		}
 	} else {
 		// show the cached contents even if they just pressed if it
@@ -94,7 +94,7 @@ static void CG_ScoresUp_f(void) {
 	}
 
 	if (cg.showScores) {
-		cg.showScores = qfalse;
+		cg.showScores    = qfalse;
 		cg.scoreFadeTime = cg.time;
 	}
 
@@ -102,25 +102,25 @@ static void CG_ScoresUp_f(void) {
 }
 
 #ifdef MISSIONPACK
-extern menuDef_t *menuScoreboard;
-void              Menu_Reset(void); // FIXME: add to right include file
+extern menuDef_t* menuScoreboard;
+void              Menu_Reset(void);  // FIXME: add to right include file
 
-static void CG_LoadHud_f(void) {
-	char        buff[1024];
-	const char *hudSet;
-	memset(buff, 0, sizeof(buff));
+static void       CG_LoadHud_f(void) {
+		  char        buff[1024];
+		  const char* hudSet;
+		  memset(buff, 0, sizeof(buff));
 
-	String_Init();
-	Menu_Reset();
+		  String_Init();
+		  Menu_Reset();
 
-	trap_Cvar_VariableStringBuffer("cg_hudFiles", buff, sizeof(buff));
-	hudSet = buff;
-	if (hudSet[0] == '\0') {
-		hudSet = "ui/hud.txt";
-	}
+		  trap_Cvar_VariableStringBuffer("cg_hudFiles", buff, sizeof(buff));
+		  hudSet = buff;
+		  if (hudSet[0] == '\0') {
+			  hudSet = "ui/hud.txt";
+    }
 
-	CG_LoadMenus(hudSet);
-	menuScoreboard = NULL;
+		  CG_LoadMenus(hudSet);
+		  menuScoreboard = NULL;
 }
 
 static void CG_scrollScoresDown_f(void) {
@@ -255,7 +255,7 @@ static void CG_PrevTeamMember_f(void) {
 // ASS U ME's enumeration order as far as task specific orders, OFFENSE is zero, CAMP is last
 //
 static void CG_NextOrder_f(void) {
-	clientInfo_t *ci = cgs.clientinfo + cg.snap->ps.clientNum;
+	clientInfo_t* ci = cgs.clientinfo + cg.snap->ps.clientNum;
 	if (ci) {
 		if (!ci->teamLeader && sortedTeamPlayers[cg_currentSelectedPlayer.integer] != cg.snap->ps.clientNum) {
 			return;
@@ -280,7 +280,7 @@ static void CG_NextOrder_f(void) {
 		cgs.currentOrder = TEAMTASK_OFFENSE;
 	}
 	cgs.orderPending = qtrue;
-	cgs.orderTime = cg.time + 3000;
+	cgs.orderTime    = cg.time + 3000;
 }
 
 static void CG_ConfirmOrder_f(void) {
@@ -445,7 +445,7 @@ static void CG_Camera_f( void ) {
 */
 
 typedef struct {
-	const char *cmd;
+	const char* cmd;
 	void (*function)(void);
 } consoleCommand_t;
 
@@ -511,7 +511,7 @@ Cmd_Argc() / Cmd_Argv()
 =================
 */
 qboolean CG_ConsoleCommand(void) {
-	const char *cmd;
+	const char* cmd;
 	int         i;
 
 	cmd = CG_Argv(0);
@@ -573,5 +573,5 @@ void CG_InitConsoleCommands(void) {
 	trap_AddCommand("teamvote");
 	trap_AddCommand("stats");
 	trap_AddCommand("teamtask");
-	trap_AddCommand("loaddefered"); // spelled wrong, but not changing for demo
+	trap_AddCommand("loaddefered");  // spelled wrong, but not changing for demo
 }

@@ -15,26 +15,26 @@ typedef struct {
 int           remapCount = 0;
 shaderRemap_t remappedShaders[MAX_SHADER_REMAPS];
 
-void AddRemap(const char *oldShader, const char *newShader, float timeOffset) {
-	int i;
+void          AddRemap(const char* oldShader, const char* newShader, float timeOffset) {
+			 int i;
 
-	for (i = 0; i < remapCount; i++) {
-		if (Q_stricmp(oldShader, remappedShaders[i].oldShader) == 0) {
-			// found it, just update this one
-			strcpy(remappedShaders[i].newShader, newShader);
-			remappedShaders[i].timeOffset = timeOffset;
-			return;
-		}
-	}
-	if (remapCount < MAX_SHADER_REMAPS) {
-		strcpy(remappedShaders[remapCount].newShader, newShader);
-		strcpy(remappedShaders[remapCount].oldShader, oldShader);
-		remappedShaders[remapCount].timeOffset = timeOffset;
-		remapCount++;
-	}
+			 for (i = 0; i < remapCount; i++) {
+				 if (Q_stricmp(oldShader, remappedShaders[i].oldShader) == 0) {
+					 // found it, just update this one
+            strcpy(remappedShaders[i].newShader, newShader);
+            remappedShaders[i].timeOffset = timeOffset;
+            return;
+        }
+    }
+			 if (remapCount < MAX_SHADER_REMAPS) {
+				 strcpy(remappedShaders[remapCount].newShader, newShader);
+				 strcpy(remappedShaders[remapCount].oldShader, oldShader);
+				 remappedShaders[remapCount].timeOffset = timeOffset;
+				 remapCount++;
+    }
 }
 
-const char *BuildShaderStateConfig(void) {
+const char* BuildShaderStateConfig(void) {
 	static char buff[MAX_STRING_CHARS * 4];
 	char        out[(MAX_QPATH * 2) + 5];
 	int         i;
@@ -61,7 +61,7 @@ G_FindConfigstringIndex
 
 ================
 */
-int G_FindConfigstringIndex(const char *name, int start, int max, qboolean create) {
+int G_FindConfigstringIndex(const char* name, int start, int max, qboolean create) {
 	int  i;
 	char s[MAX_STRING_CHARS];
 
@@ -92,11 +92,11 @@ int G_FindConfigstringIndex(const char *name, int start, int max, qboolean creat
 	return i;
 }
 
-int G_ModelIndex(const char *name) {
+int G_ModelIndex(const char* name) {
 	return G_FindConfigstringIndex(name, CS_MODELS, MAX_MODELS, qtrue);
 }
 
-int G_SoundIndex(const char *name) {
+int G_SoundIndex(const char* name) {
 	return G_FindConfigstringIndex(name, CS_SOUNDS, MAX_SOUNDS, qtrue);
 }
 
@@ -109,7 +109,7 @@ G_TeamCommand
 Broadcasts a command to only a specific team
 ================
 */
-void G_TeamCommand(team_t team, const char *cmd) {
+void G_TeamCommand(team_t team, const char* cmd) {
 	int i;
 
 	for (i = 0; i < level.maxclients; i++) {
@@ -133,9 +133,9 @@ NULL will be returned if the end of the list is reached.
 
 =============
 */
-gentity_t *G_Find(gentity_t *from, int fieldofs, const char *match) {
-	const gentity_t *to;
-	char            *s;
+gentity_t* G_Find(gentity_t* from, int fieldofs, const char* match) {
+	const gentity_t* to;
+	char*            s;
 
 	if (!from)
 		from = g_entities;
@@ -147,7 +147,7 @@ gentity_t *G_Find(gentity_t *from, int fieldofs, const char *match) {
 	for (; from < to; from++) {
 		if (!from->inuse)
 			continue;
-		s = *(char **)((byte *)from + fieldofs);
+		s = *(char**)((byte*)from + fieldofs);
 		if (!s)
 			continue;
 		if (!Q_stricmp(s, match))
@@ -166,9 +166,9 @@ Selects a random entity from among the targets
 */
 #define MAXCHOICES 32
 
-gentity_t *G_PickTarget(const char *targetname) {
-	gentity_t *choice[MAXCHOICES];
-	gentity_t *ent;
+gentity_t* G_PickTarget(const char* targetname) {
+	gentity_t* choice[MAXCHOICES];
+	gentity_t* ent;
 	int        num_choices;
 
 	if (!targetname) {
@@ -176,7 +176,7 @@ gentity_t *G_PickTarget(const char *targetname) {
 		return NULL;
 	}
 
-	ent = NULL;
+	ent         = NULL;
 	num_choices = 0;
 	while (1) {
 		ent = G_Find(ent, FOFS(targetname), targetname);
@@ -206,8 +206,8 @@ match (string)self.target and call their .use function
 
 ==============================
 */
-void G_UseTargets(gentity_t *ent, gentity_t *activator) {
-	gentity_t *t;
+void G_UseTargets(gentity_t* ent, gentity_t* activator) {
+	gentity_t* t;
 	float      f;
 
 	if (!ent) {
@@ -248,14 +248,14 @@ This is just a convenience function
 for making temporary vectors for function calls
 =============
 */
-float *tv(float x, float y, float z) {
+float* tv(float x, float y, float z) {
 	static int    index;
 	static vec3_t vecs[8];
-	float        *v;
+	float*        v;
 
 	// use an array so that multiple tempvectors won't collide
 	// for a while
-	v = vecs[index];
+	v     = vecs[index];
 	index = (index + 1) & 7;
 
 	v[0] = x;
@@ -273,13 +273,13 @@ This is just a convenience function
 for printing vectors
 =============
 */
-char *vtos(const vec3_t v) {
+char* vtos(const vec3_t v) {
 	static int  index;
 	static char str[8][32];
-	char       *s;
+	char*       s;
 
 	// use an array so that multiple vtos won't collide
-	s = str[index];
+	s     = str[index];
 	index = (index + 1) & 7;
 
 	Com_sprintf(s, 32, "(%i %i %i)", (int)v[0], (int)v[1], (int)v[2]);
@@ -298,9 +298,9 @@ instead of an orientation.
 ===============
 */
 void G_SetMovedir(vec3_t angles, vec3_t movedir) {
-	static vec3_t VEC_UP = {0, -1, 0};
-	static vec3_t MOVEDIR_UP = {0, 0, 1};
-	static vec3_t VEC_DOWN = {0, -2, 0};
+	static vec3_t VEC_UP       = {0, -1, 0};
+	static vec3_t MOVEDIR_UP   = {0, 0, 1};
+	static vec3_t VEC_DOWN     = {0, -2, 0};
 	static vec3_t MOVEDIR_DOWN = {0, 0, -1};
 
 	if (VectorCompare(angles, VEC_UP)) {
@@ -334,12 +334,12 @@ float vectoyaw(const vec3_t vec) {
 	return yaw;
 }
 
-void G_InitGentity(gentity_t *e) {
-	e->inuse = qtrue;
-	e->classname = "noclass";
-	e->s.number = e - g_entities;
+void G_InitGentity(gentity_t* e) {
+	e->inuse      = qtrue;
+	e->classname  = "noclass";
+	e->s.number   = e - g_entities;
 	e->r.ownerNum = ENTITYNUM_NONE;
-	e->tag = TAG_NONE;
+	e->tag        = TAG_NONE;
 }
 
 /*
@@ -357,11 +357,11 @@ instead of being removed and recreated, which can cause interpolated
 angles and bad trails.
 =================
 */
-gentity_t *G_Spawn(void) {
+gentity_t* G_Spawn(void) {
 	int        i, timeout;
-	gentity_t *e;
+	gentity_t* e;
 
-	e = NULL; // shut up warning
+	e = NULL;  // shut up warning
 	// try to release oldest items first
 	for (timeout = 1000; timeout >= 0; timeout -= 250) {
 		// if we go through all entities and can't find one to free,
@@ -412,7 +412,7 @@ G_EntitiesFree
 */
 qboolean G_EntitiesFree(void) {
 	int        i;
-	gentity_t *e;
+	gentity_t* e;
 
 	e = &g_entities[MAX_CLIENTS];
 	for (i = MAX_CLIENTS; i < level.num_entities; i++, e++) {
@@ -432,8 +432,8 @@ G_FreeEntity
 Marks the entity as free
 =================
 */
-void G_FreeEntity(gentity_t *ed) {
-	trap_UnlinkEntity(ed); // unlink from world
+void G_FreeEntity(gentity_t* ed) {
+	trap_UnlinkEntity(ed);  // unlink from world
 
 	if (ed->neverFree) {
 		return;
@@ -441,8 +441,8 @@ void G_FreeEntity(gentity_t *ed) {
 
 	memset(ed, 0, sizeof(*ed));
 	ed->classname = "freed";
-	ed->freetime = level.time;
-	ed->inuse = qfalse;
+	ed->freetime  = level.time;
+	ed->inuse     = qfalse;
 }
 
 /*
@@ -454,19 +454,19 @@ The origin will be snapped to save net bandwidth, so care
 must be taken if the origin is right on a surface (snap towards start vector first)
 =================
 */
-gentity_t *G_TempEntity(vec3_t origin, int event) {
-	gentity_t *e;
+gentity_t* G_TempEntity(vec3_t origin, int event) {
+	gentity_t* e;
 	vec3_t     snapped;
 
-	e = G_Spawn();
+	e          = G_Spawn();
 	e->s.eType = ET_EVENTS + event;
 
-	e->classname = "tempEntity";
-	e->eventTime = level.time;
+	e->classname      = "tempEntity";
+	e->eventTime      = level.time;
 	e->freeAfterEvent = qtrue;
 
 	VectorCopy(origin, snapped);
-	SnapVector(snapped); // save network bandwidth
+	SnapVector(snapped);  // save network bandwidth
 	G_SetOrigin(e, snapped);
 
 	// find cluster for PVS
@@ -491,10 +491,10 @@ Kills all entities that would touch the proposed new positioning
 of ent.  Ent should be unlinked before calling this!
 =================
 */
-void G_KillBox(gentity_t *ent) {
+void G_KillBox(gentity_t* ent) {
 	int        i, num;
 	int        touch[MAX_GENTITIES];
-	gentity_t *hit;
+	gentity_t* hit;
 	vec3_t     mins, maxs;
 
 	VectorAdd(ent->client->ps.origin, ent->r.mins, mins);
@@ -523,7 +523,7 @@ client side: jumppads and item pickups
 Adds an event+parm and twiddles the event counter
 ===============
 */
-void G_AddPredictableEvent(gentity_t *ent, entity_event_t event, int eventParm) {
+void G_AddPredictableEvent(gentity_t* ent, entity_event_t event, int eventParm) {
 	if (!ent->client) {
 		return;
 	}
@@ -537,9 +537,9 @@ G_AddEvent
 Adds an event+parm and twiddles the event counter
 ===============
 */
-void G_AddEvent(gentity_t *ent, int event, int eventParm) {
+void G_AddEvent(gentity_t* ent, int event, int eventParm) {
 	int        bits;
-	gclient_t *client;
+	gclient_t* client;
 
 	if (!event) {
 		G_Printf("G_AddEvent: zero event added for entity %i\n", ent->s.number);
@@ -548,16 +548,16 @@ void G_AddEvent(gentity_t *ent, int event, int eventParm) {
 
 	// clients need to add the event in playerState_t instead of entityState_t
 	if (ent->client) {
-		client = ent->client;
-		bits = client->ps.externalEvent & EV_EVENT_BITS;
-		bits = (bits + EV_EVENT_BIT1) & EV_EVENT_BITS;
-		client->ps.externalEvent = event | bits;
+		client                       = ent->client;
+		bits                         = client->ps.externalEvent & EV_EVENT_BITS;
+		bits                         = (bits + EV_EVENT_BIT1) & EV_EVENT_BITS;
+		client->ps.externalEvent     = event | bits;
 		client->ps.externalEventParm = eventParm;
 		client->ps.externalEventTime = level.time;
 	} else {
-		bits = ent->s.event & EV_EVENT_BITS;
-		bits = (bits + EV_EVENT_BIT1) & EV_EVENT_BITS;
-		ent->s.event = event | bits;
+		bits             = ent->s.event & EV_EVENT_BITS;
+		bits             = (bits + EV_EVENT_BIT1) & EV_EVENT_BITS;
+		ent->s.event     = event | bits;
 		ent->s.eventParm = eventParm;
 	}
 	ent->eventTime = level.time;
@@ -568,10 +568,10 @@ void G_AddEvent(gentity_t *ent, int event, int eventParm) {
 G_Sound
 =============
 */
-void G_Sound(gentity_t *ent, int channel, int soundIndex) {
-	gentity_t *te;
+void G_Sound(gentity_t* ent, int channel, int soundIndex) {
+	gentity_t* te;
 
-	te = G_TempEntity(ent->r.currentOrigin, EV_GENERAL_SOUND);
+	te              = G_TempEntity(ent->r.currentOrigin, EV_GENERAL_SOUND);
 	te->s.eventParm = soundIndex;
 }
 
@@ -584,10 +584,10 @@ G_SetOrigin
 Sets the pos trajectory for a fixed position
 ================
 */
-void G_SetOrigin(gentity_t *ent, vec3_t origin) {
+void G_SetOrigin(gentity_t* ent, vec3_t origin) {
 	VectorCopy(origin, ent->s.pos.trBase);
-	ent->s.pos.trType = TR_STATIONARY;
-	ent->s.pos.trTime = 0;
+	ent->s.pos.trType     = TR_STATIONARY;
+	ent->s.pos.trTime     = 0;
 	ent->s.pos.trDuration = 0;
 	VectorClear(ent->s.pos.trDelta);
 

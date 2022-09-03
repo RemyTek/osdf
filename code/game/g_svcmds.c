@@ -54,7 +54,7 @@ static int        numIPFilters;
 StringToFilter
 =================
 */
-static qboolean StringToFilter(char *s, ipFilter_t *f) {
+static qboolean StringToFilter(char* s, ipFilter_t* f) {
 	char num[128];
 	int  i, j;
 	byte b[4];
@@ -67,7 +67,7 @@ static qboolean StringToFilter(char *s, ipFilter_t *f) {
 
 	for (i = 0; i < 4; i++) {
 		if (*s < '0' || *s > '9') {
-			if (*s == '*') // 'match any'
+			if (*s == '*')  // 'match any'
 			{
 				// b[i] and m[i] to 0
 				s++;
@@ -85,16 +85,16 @@ static qboolean StringToFilter(char *s, ipFilter_t *f) {
 			num[j++] = *s++;
 		}
 		num[j] = 0;
-		b[i] = atoi(num);
-		m[i] = 255;
+		b[i]   = atoi(num);
+		m[i]   = 255;
 
 		if (!*s)
 			break;
 		s++;
 	}
 
-	f->mask = *(unsigned *)m;
-	f->compare = *(unsigned *)b;
+	f->mask    = *(unsigned*)m;
+	f->compare = *(unsigned*)b;
 
 	return qtrue;
 }
@@ -116,9 +116,9 @@ static void UpdateIPBans(void) {
 		if (ipFilters[i].compare == 0xffffffff)
 			continue;
 
-		*(unsigned *)b = ipFilters[i].compare;
-		*(unsigned *)m = ipFilters[i].mask;
-		*ip = 0;
+		*(unsigned*)b = ipFilters[i].compare;
+		*(unsigned*)m = ipFilters[i].mask;
+		*ip           = 0;
 		for (j = 0; j < 4; j++) {
 			if (m[j] != 255)
 				Q_strcat(ip, sizeof(ip), "*");
@@ -142,11 +142,11 @@ static void UpdateIPBans(void) {
 G_FilterPacket
 =================
 */
-qboolean G_FilterPacket(char *from) {
+qboolean G_FilterPacket(char* from) {
 	int      i;
 	unsigned in;
 	byte     m[4];
-	char    *p;
+	char*    p;
 
 	i = 0;
 	p = from;
@@ -161,7 +161,7 @@ qboolean G_FilterPacket(char *from) {
 		i++, p++;
 	}
 
-	in = *(unsigned *)m;
+	in = *(unsigned*)m;
 
 	for (i = 0; i < numIPFilters; i++)
 		if ((in & ipFilters[i].mask) == ipFilters[i].compare)
@@ -175,12 +175,12 @@ qboolean G_FilterPacket(char *from) {
 AddIP
 =================
 */
-static void AddIP(char *str) {
+static void AddIP(char* str) {
 	int i;
 
 	for (i = 0; i < numIPFilters; i++)
 		if (ipFilters[i].compare == 0xffffffff)
-			break; // free spot
+			break;  // free spot
 	if (i == numIPFilters) {
 		if (numIPFilters == MAX_IPFILTERS) {
 			G_Printf("IP filter list is full\n");
@@ -276,7 +276,7 @@ Svcmd_EntityList_f
 */
 void Svcmd_EntityList_f(void) {
 	int        e;
-	gentity_t *check;
+	gentity_t* check;
 
 	check = g_entities;
 	for (e = 0; e < level.num_entities; e++, check++) {
@@ -333,8 +333,8 @@ void Svcmd_EntityList_f(void) {
 	}
 }
 
-gclient_t *ClientForString(const char *s) {
-	gclient_t *cl;
+gclient_t* ClientForString(const char* s) {
+	gclient_t* cl;
 	int        i;
 	int        idnum;
 
@@ -378,7 +378,7 @@ forceteam <player> <team>
 ===================
 */
 void Svcmd_ForceTeam_f(void) {
-	gclient_t *cl;
+	gclient_t* cl;
 	char       str[MAX_TOKEN_CHARS];
 
 	if (trap_Argc() < 3) {
@@ -420,7 +420,7 @@ void Svcmd_Rotate_f(void) {
 	}
 }
 
-char *ConcatArgs(int start);
+char* ConcatArgs(int start);
 
 /*
 =================

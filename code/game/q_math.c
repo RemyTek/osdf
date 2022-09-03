@@ -3,24 +3,24 @@
 // q_math.c -- stateless support routines that are included in each code module
 #include "q_shared.h"
 
-vec3_t vec3_origin = {0, 0, 0};
+vec3_t vec3_origin    = {0, 0, 0};
 vec3_t axisDefault[3] = {
 	{1, 0, 0},
     {0, 1, 0},
     {0, 0, 1}
 };
 
-vec4_t colorBlack = {0, 0, 0, 1};
-vec4_t colorRed = {1, 0, 0, 1};
-vec4_t colorGreen = {0, 1, 0, 1};
-vec4_t colorBlue = {0, 0, 1, 1};
-vec4_t colorYellow = {1, 1, 0, 1};
+vec4_t colorBlack   = {0, 0, 0, 1};
+vec4_t colorRed     = {1, 0, 0, 1};
+vec4_t colorGreen   = {0, 1, 0, 1};
+vec4_t colorBlue    = {0, 0, 1, 1};
+vec4_t colorYellow  = {1, 1, 0, 1};
 vec4_t colorMagenta = {1, 0, 1, 1};
-vec4_t colorCyan = {0, 1, 1, 1};
-vec4_t colorWhite = {1, 1, 1, 1};
-vec4_t colorLtGrey = {0.75, 0.75, 0.75, 1};
-vec4_t colorMdGrey = {0.5, 0.5, 0.5, 1};
-vec4_t colorDkGrey = {0.25, 0.25, 0.25, 1};
+vec4_t colorCyan    = {0, 1, 1, 1};
+vec4_t colorWhite   = {1, 1, 1, 1};
+vec4_t colorLtGrey  = {0.75, 0.75, 0.75, 1};
+vec4_t colorMdGrey  = {0.5, 0.5, 0.5, 1};
+vec4_t colorDkGrey  = {0.25, 0.25, 0.25, 1};
 
 vec4_t g_color_table[8] = {
 	{0.0, 0.0, 0.0, 1.0},
@@ -200,16 +200,16 @@ vec3_t bytedirs[NUMVERTEXNORMALS] = {
 
 //==============================================================
 
-int Q_rand(int *seed) {
+int Q_rand(int* seed) {
 	*seed = (69069 * *seed + 1);
 	return *seed;
 }
 
-float Q_random(int *seed) {
+float Q_random(int* seed) {
 	return (Q_rand(seed) & 0xffff) / (float)0x10000;
 }
 
-float Q_crandom(int *seed) {
+float Q_crandom(int* seed) {
 	return 2.0 * (Q_random(seed) - 0.5);
 }
 
@@ -301,12 +301,12 @@ int DirToByte(vec3_t dir) {
 	}
 
 	bestd = 0;
-	best = 0;
+	best  = 0;
 	for (i = 0; i < NUMVERTEXNORMALS; i++) {
 		d = DotProduct(dir, bytedirs[i]);
 		if (d > bestd) {
 			bestd = d;
-			best = i;
+			best  = i;
 		}
 	}
 
@@ -324,9 +324,9 @@ void ByteToDir(int b, vec3_t dir) {
 unsigned ColorBytes3(float r, float g, float b) {
 	unsigned i;
 
-	((byte *)&i)[0] = r * 255;
-	((byte *)&i)[1] = g * 255;
-	((byte *)&i)[2] = b * 255;
+	((byte*)&i)[0] = r * 255;
+	((byte*)&i)[1] = g * 255;
+	((byte*)&i)[2] = b * 255;
 
 	return i;
 }
@@ -334,10 +334,10 @@ unsigned ColorBytes3(float r, float g, float b) {
 unsigned ColorBytes4(float r, float g, float b, float a) {
 	unsigned i;
 
-	((byte *)&i)[0] = r * 255;
-	((byte *)&i)[1] = g * 255;
-	((byte *)&i)[2] = b * 255;
-	((byte *)&i)[3] = a * 255;
+	((byte*)&i)[0] = r * 255;
+	((byte*)&i)[1] = g * 255;
+	((byte*)&i)[2] = b * 255;
+	((byte*)&i)[3] = a * 255;
 
 	return i;
 }
@@ -433,7 +433,7 @@ void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point, f
 	memset(zrot, 0, sizeof(zrot));
 	zrot[0][0] = zrot[1][1] = zrot[2][2] = 1.0F;
 
-	rad = DEG2RAD(degrees);
+	rad        = DEG2RAD(degrees);
 	zrot[0][0] = cos(rad);
 	zrot[0][1] = sin(rad);
 	zrot[1][0] = -sin(rad);
@@ -493,15 +493,15 @@ void vectoangles(const vec3_t value1, vec3_t angles) {
 		}
 
 		forward = sqrt(value1[0] * value1[0] + value1[1] * value1[1]);
-		pitch = (atan2(value1[2], forward) * 180 / M_PI);
+		pitch   = (atan2(value1[2], forward) * 180 / M_PI);
 		if (pitch < 0) {
 			pitch += 360;
 		}
 	}
 
 	angles[PITCH] = -pitch;
-	angles[YAW] = yaw;
-	angles[ROLL] = 0;
+	angles[YAW]   = yaw;
+	angles[ROLL]  = 0;
 }
 
 /*
@@ -602,20 +602,20 @@ float Q_rsqrt(float number) {
 	const float threehalfs = 1.5F;
 
 	x2 = number * 0.5F;
-	y = number;
-	i = *(long *)&y;           // evil floating point bit level hacking
-	i = 0x5f3759df - (i >> 1); // what the fuck?
-	y = *(float *)&i;
-	y = y * (threehalfs - (x2 * y * y)); // 1st iteration
-										 //	y  = y * ( threehalfs - ( x2 * y * y ) );   // 2nd iteration, this can be removed
+	y  = number;
+	i  = *(long*)&y;             // evil floating point bit level hacking
+	i  = 0x5f3759df - (i >> 1);  // what the fuck?
+	y  = *(float*)&i;
+	y  = y * (threehalfs - (x2 * y * y));  // 1st iteration
+	                                       //	y  = y * ( threehalfs - ( x2 * y * y ) );   // 2nd iteration, this can be removed
 
 	return y;
 }
 
 float Q_fabs(float f) {
-	int tmp = *(int *)&f;
+	int tmp = *(int*)&f;
 	tmp &= 0x7FFFFFFF;
-	return *(float *)&tmp;
+	return *(float*)&tmp;
 }
 #endif
 
@@ -716,7 +716,7 @@ float AngleDelta(float angle1, float angle2) {
 SetPlaneSignbits
 =================
 */
-void SetPlaneSignbits(cplane_t *out) {
+void SetPlaneSignbits(cplane_t* out) {
 	int bits, j;
 
 	// for fast box on planeside test
@@ -770,74 +770,74 @@ int BoxOnPlaneSide2 (vec3_t emins, vec3_t emaxs, struct cplane_s *p)
 ==================
 */
 
-#if !((defined __linux__ || __FreeBSD__) && (defined __i386__) && (!defined C_ONLY)) // rb010123
+#if !((defined __linux__ || __FreeBSD__) && (defined __i386__) && (!defined C_ONLY))  // rb010123
 
 #if defined __LCC__ || defined C_ONLY || !id386 || defined __VECTORC
 
-int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *p) {
-	float dist1, dist2;
-	int   sides;
+int                                                        BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s* p) {
+														   float dist1, dist2;
+														   int   sides;
 
-	// fast axial cases
-	if (p->type < 3) {
-		if (p->dist <= emins[p->type])
-			return 1;
-		if (p->dist >= emaxs[p->type])
-			return 2;
-		return 3;
-	}
+														   // fast axial cases
+														   if (p->type < 3) {
+															   if (p->dist <= emins[p->type])
+            return 1;
+        if (p->dist >= emaxs[p->type])
+            return 2;
+        return 3;
+    }
 
-	// general case
-	switch (p->signbits) {
-	case 0:
-		dist1 = p->normal[0] * emaxs[0] + p->normal[1] * emaxs[1] + p->normal[2] * emaxs[2];
-		dist2 = p->normal[0] * emins[0] + p->normal[1] * emins[1] + p->normal[2] * emins[2];
-		break;
-	case 1:
-		dist1 = p->normal[0] * emins[0] + p->normal[1] * emaxs[1] + p->normal[2] * emaxs[2];
-		dist2 = p->normal[0] * emaxs[0] + p->normal[1] * emins[1] + p->normal[2] * emins[2];
-		break;
-	case 2:
-		dist1 = p->normal[0] * emaxs[0] + p->normal[1] * emins[1] + p->normal[2] * emaxs[2];
-		dist2 = p->normal[0] * emins[0] + p->normal[1] * emaxs[1] + p->normal[2] * emins[2];
-		break;
-	case 3:
-		dist1 = p->normal[0] * emins[0] + p->normal[1] * emins[1] + p->normal[2] * emaxs[2];
-		dist2 = p->normal[0] * emaxs[0] + p->normal[1] * emaxs[1] + p->normal[2] * emins[2];
-		break;
-	case 4:
-		dist1 = p->normal[0] * emaxs[0] + p->normal[1] * emaxs[1] + p->normal[2] * emins[2];
-		dist2 = p->normal[0] * emins[0] + p->normal[1] * emins[1] + p->normal[2] * emaxs[2];
-		break;
-	case 5:
-		dist1 = p->normal[0] * emins[0] + p->normal[1] * emaxs[1] + p->normal[2] * emins[2];
-		dist2 = p->normal[0] * emaxs[0] + p->normal[1] * emins[1] + p->normal[2] * emaxs[2];
-		break;
-	case 6:
-		dist1 = p->normal[0] * emaxs[0] + p->normal[1] * emins[1] + p->normal[2] * emins[2];
-		dist2 = p->normal[0] * emins[0] + p->normal[1] * emaxs[1] + p->normal[2] * emaxs[2];
-		break;
-	case 7:
-		dist1 = p->normal[0] * emins[0] + p->normal[1] * emins[1] + p->normal[2] * emins[2];
-		dist2 = p->normal[0] * emaxs[0] + p->normal[1] * emaxs[1] + p->normal[2] * emaxs[2];
-		break;
-	default:
-		dist1 = dist2 = 0; // shut up compiler
-		break;
-	}
+														   // general case
+														   switch (p->signbits) {
+														   case 0:
+        dist1 = p->normal[0] * emaxs[0] + p->normal[1] * emaxs[1] + p->normal[2] * emaxs[2];
+        dist2 = p->normal[0] * emins[0] + p->normal[1] * emins[1] + p->normal[2] * emins[2];
+        break;
+														   case 1:
+        dist1 = p->normal[0] * emins[0] + p->normal[1] * emaxs[1] + p->normal[2] * emaxs[2];
+        dist2 = p->normal[0] * emaxs[0] + p->normal[1] * emins[1] + p->normal[2] * emins[2];
+        break;
+														   case 2:
+        dist1 = p->normal[0] * emaxs[0] + p->normal[1] * emins[1] + p->normal[2] * emaxs[2];
+        dist2 = p->normal[0] * emins[0] + p->normal[1] * emaxs[1] + p->normal[2] * emins[2];
+        break;
+														   case 3:
+        dist1 = p->normal[0] * emins[0] + p->normal[1] * emins[1] + p->normal[2] * emaxs[2];
+        dist2 = p->normal[0] * emaxs[0] + p->normal[1] * emaxs[1] + p->normal[2] * emins[2];
+        break;
+														   case 4:
+        dist1 = p->normal[0] * emaxs[0] + p->normal[1] * emaxs[1] + p->normal[2] * emins[2];
+        dist2 = p->normal[0] * emins[0] + p->normal[1] * emins[1] + p->normal[2] * emaxs[2];
+        break;
+														   case 5:
+        dist1 = p->normal[0] * emins[0] + p->normal[1] * emaxs[1] + p->normal[2] * emins[2];
+        dist2 = p->normal[0] * emaxs[0] + p->normal[1] * emins[1] + p->normal[2] * emaxs[2];
+        break;
+														   case 6:
+        dist1 = p->normal[0] * emaxs[0] + p->normal[1] * emins[1] + p->normal[2] * emins[2];
+        dist2 = p->normal[0] * emins[0] + p->normal[1] * emaxs[1] + p->normal[2] * emaxs[2];
+        break;
+														   case 7:
+        dist1 = p->normal[0] * emins[0] + p->normal[1] * emins[1] + p->normal[2] * emins[2];
+        dist2 = p->normal[0] * emaxs[0] + p->normal[1] * emaxs[1] + p->normal[2] * emaxs[2];
+        break;
+														   default:
+        dist1 = dist2 = 0;  // shut up compiler
+        break;
+    }
 
-	sides = 0;
-	if (dist1 >= p->dist)
-		sides = 1;
-	if (dist2 < p->dist)
-		sides |= 2;
+														   sides = 0;
+														   if (dist1 >= p->dist)
+        sides = 1;
+    if (dist2 < p->dist)
+        sides |= 2;
 
-	return sides;
+    return sides;
 }
 #else
 #pragma warning(disable : 4035)
 
-__declspec(naked) int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *p) {
+__declspec(naked) int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s* p) {
 	static int bops_initialized;
 	static int Ljmptab[8];
 
@@ -1081,8 +1081,8 @@ float RadiusFromBounds(const vec3_t mins, const vec3_t maxs) {
 	float  a, b;
 
 	for (i = 0; i < 3; i++) {
-		a = fabs(mins[i]);
-		b = fabs(maxs[i]);
+		a         = fabs(mins[i]);
+		b         = fabs(maxs[i]);
 		corner[i] = a > b ? a : b;
 	}
 
@@ -1140,15 +1140,15 @@ vec_t VectorNormalize2(const vec3_t v, vec3_t out) {
 	length = sqrt(length);
 
 	if (length) {
-#ifndef Q3_VM // bk0101022 - FPE related
+#ifndef Q3_VM  // bk0101022 - FPE related
 //	  assert( ((Q_fabs(v[0])!=0.0f) || (Q_fabs(v[1])!=0.0f) || (Q_fabs(v[2])!=0.0f)) );
 #endif
 		ilength = 1 / length;
-		out[0] = v[0] * ilength;
-		out[1] = v[1] * ilength;
-		out[2] = v[2] * ilength;
+		out[0]  = v[0] * ilength;
+		out[1]  = v[1] * ilength;
+		out[2]  = v[2] * ilength;
 	} else {
-#ifndef Q3_VM // bk0101022 - FPE related
+#ifndef Q3_VM  // bk0101022 - FPE related
 //	  assert( ((Q_fabs(v[0])==0.0f) && (Q_fabs(v[1])==0.0f) && (Q_fabs(v[2])==0.0f)) );
 #endif
 		VectorClear(out);
@@ -1255,14 +1255,14 @@ void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up) 
 	// static to help MS compiler fp bugs
 
 	angle = angles[YAW] * (M_PI * 2 / 360);
-	sy = sin(angle);
-	cy = cos(angle);
+	sy    = sin(angle);
+	cy    = cos(angle);
 	angle = angles[PITCH] * (M_PI * 2 / 360);
-	sp = sin(angle);
-	cp = cos(angle);
+	sp    = sin(angle);
+	cp    = cos(angle);
 	angle = angles[ROLL] * (M_PI * 2 / 360);
-	sr = sin(angle);
-	cr = cos(angle);
+	sr    = sin(angle);
+	cr    = cos(angle);
 
 	if (forward) {
 		forward[0] = cp * cy;
@@ -1296,12 +1296,12 @@ void PerpendicularVector(vec3_t dst, const vec3_t src) {
 	for (pos = 0, i = 0; i < 3; i++) {
 		f = fabs(src[i]);
 		if (f < minelem) {
-			pos = i;
+			pos     = i;
 			minelem = f;
 		}
 	}
 	tempvec[0] = tempvec[1] = tempvec[2] = 0.0F;
-	tempvec[pos] = 1.0F;
+	tempvec[pos]                         = 1.0F;
 
 	/*
 	** project the point onto the plane defined by src

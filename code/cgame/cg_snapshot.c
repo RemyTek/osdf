@@ -10,7 +10,7 @@
 CG_ResetEntity
 ==================
 */
-static void CG_ResetEntity(centity_t *cent) {
+static void CG_ResetEntity(centity_t* cent) {
 	// if the previous snapshot this entity was updated in is at least
 	// an event window back in time then we can reset the previous event
 	if (cent->snapShotTime < cg.time - EVENT_VALID_MSEC) {
@@ -33,7 +33,7 @@ CG_TransitionEntity
 cent->nextState is moved to cent->currentState and events are fired
 ===============
 */
-static void CG_TransitionEntity(centity_t *cent) {
+static void CG_TransitionEntity(centity_t* cent) {
 	cent->currentState = cent->nextState;
 	cent->currentValid = qtrue;
 
@@ -60,10 +60,10 @@ CG_TransitionSnapshot instead.
 FIXME: Also called by map_restart?
 ==================
 */
-void CG_SetInitialSnapshot(snapshot_t *snap) {
+void CG_SetInitialSnapshot(snapshot_t* snap) {
 	int            i;
-	centity_t     *cent;
-	entityState_t *state;
+	centity_t*     cent;
+	entityState_t* state;
 
 	cg.snap = snap;
 
@@ -80,11 +80,11 @@ void CG_SetInitialSnapshot(snapshot_t *snap) {
 
 	for (i = 0; i < cg.snap->numEntities; i++) {
 		state = &cg.snap->entities[i];
-		cent = &cg_entities[state->number];
+		cent  = &cg_entities[state->number];
 
 		memcpy(&cent->currentState, state, sizeof(entityState_t));
 		// cent->currentState = *state;
-		cent->interpolate = qfalse;
+		cent->interpolate  = qfalse;
 		cent->currentValid = qtrue;
 
 		CG_ResetEntity(cent);
@@ -102,8 +102,8 @@ The transition point from snap to nextSnap has passed
 ===================
 */
 static void CG_TransitionSnapshot(void) {
-	centity_t  *cent;
-	snapshot_t *oldFrame;
+	centity_t*  cent;
+	snapshot_t* oldFrame;
 	int         i;
 
 	if (!cg.snap) {
@@ -123,13 +123,13 @@ static void CG_TransitionSnapshot(void) {
 
 	// clear the currentValid flag for all entities in the existing snapshot
 	for (i = 0; i < cg.snap->numEntities; i++) {
-		cent = &cg_entities[cg.snap->entities[i].number];
+		cent               = &cg_entities[cg.snap->entities[i].number];
 		cent->currentValid = qfalse;
 	}
 
 	// move nextSnap to snap and do the transitions
 	oldFrame = cg.snap;
-	cg.snap = cg.nextSnap;
+	cg.snap  = cg.nextSnap;
 
 	BG_PlayerStateToEntityState(&cg.snap->ps, &cg_entities[cg.snap->ps.clientNum].currentState, qfalse);
 	cg_entities[cg.snap->ps.clientNum].interpolate = qfalse;
@@ -149,10 +149,10 @@ static void CG_TransitionSnapshot(void) {
 		playerState_t *ops, *ps;
 
 		ops = &oldFrame->ps;
-		ps = &cg.snap->ps;
+		ps  = &cg.snap->ps;
 		// teleporting checks are irrespective of prediction
 		if ((ps->eFlags ^ ops->eFlags) & EF_TELEPORT_BIT) {
-			cg.thisFrameTeleport = qtrue; // will be cleared by prediction code
+			cg.thisFrameTeleport = qtrue;  // will be cleared by prediction code
 		}
 
 		// if we are not doing client side movement prediction for any
@@ -170,11 +170,11 @@ CG_SetNextSnap
 A new snapshot has just been read in from the client system.
 ===================
 */
-static void CG_SetNextSnap(snapshot_t *snap) {
+static void CG_SetNextSnap(snapshot_t* snap) {
 	int            num;
 	int            esNum;
-	entityState_t *es;
-	centity_t     *cent;
+	entityState_t* es;
+	centity_t*     cent;
 
 	cg.nextSnap = snap;
 
@@ -183,7 +183,7 @@ static void CG_SetNextSnap(snapshot_t *snap) {
 
 	// check for extrapolation errors
 	for (num = 0; num < snap->numEntities; num++) {
-		es = &snap->entities[num];
+		es   = &snap->entities[num];
 		cent = &cg_entities[es->number];
 
 		memcpy(&cent->nextState, es, sizeof(entityState_t));
@@ -236,9 +236,9 @@ times if the client system fails to return a
 valid snapshot.
 ========================
 */
-static snapshot_t *CG_ReadNextSnapshot(void) {
+static snapshot_t* CG_ReadNextSnapshot(void) {
 	qboolean    r;
-	snapshot_t *dest;
+	snapshot_t* dest;
 
 	if (cg.latestSnapshotNum > cgs.processedSnapshotNum + 1000) {
 		CG_Printf("WARNING: CG_ReadNextSnapshot: way out of range, %i > %i\n", cg.latestSnapshotNum, cgs.processedSnapshotNum);
@@ -305,7 +305,7 @@ of an interpolating one)
 ============
 */
 void CG_ProcessSnapshots(void) {
-	snapshot_t *snap;
+	snapshot_t* snap;
 	int         n;
 
 	// see what the latest snapshot the client system has is

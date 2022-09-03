@@ -11,23 +11,23 @@
 static char memoryPool[POOLSIZE];
 static int  allocPoint;
 
-void *G_Alloc(size_t size) {
-	char *p;
+void*       G_Alloc(size_t size) {
+		  char* p;
 
-	if (g_debugAlloc.integer) {
-		G_Printf("G_Alloc of %i bytes (%i left)\n", size, POOLSIZE - allocPoint - ((size + 31) & ~31));
-	}
+		  if (g_debugAlloc.integer) {
+			  G_Printf("G_Alloc of %i bytes (%i left)\n", size, POOLSIZE - allocPoint - ((size + 31) & ~31));
+    }
 
-	if (allocPoint + size > POOLSIZE) {
-		G_Error("G_Alloc: failed on allocation of %i bytes", size);
-		return NULL;
-	}
+		  if (allocPoint + size > POOLSIZE) {
+			  G_Error("G_Alloc: failed on allocation of %i bytes", size);
+			  return NULL;
+    }
 
-	p = &memoryPool[allocPoint];
+		  p = &memoryPool[allocPoint];
 
-	allocPoint += (size + 31) & ~31;
+		  allocPoint += (size + 31) & ~31;
 
-	return p;
+		  return p;
 }
 
 void G_InitMemory(void) {

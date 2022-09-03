@@ -116,17 +116,25 @@ typedef enum {
 	UI_CEIL
 } uiImport_t;
 
-typedef enum { UIMENU_NONE, UIMENU_MAIN, UIMENU_INGAME, UIMENU_NEED_CD, UIMENU_BAD_CD_KEY, UIMENU_TEAM, UIMENU_POSTGAME } uiMenuCommand_t;
+typedef enum {
+	UIMENU_NONE,
+	UIMENU_MAIN,
+	UIMENU_INGAME,
+	UIMENU_NEED_CD,
+	UIMENU_BAD_CD_KEY,
+	UIMENU_TEAM,
+	UIMENU_POSTGAME
+} uiMenuCommand_t;
 
-#define SORT_HOST 0
-#define SORT_MAP 1
-#define SORT_CLIENTS 2
-#define SORT_GAME 3
-#define SORT_PING 4
+#define SORT_HOST       0
+#define SORT_MAP        1
+#define SORT_CLIENTS    2
+#define SORT_GAME       3
+#define SORT_PING       4
 #define SORT_PUNKBUSTER 5
 
 typedef enum {
-	UI_GETAPIVERSION = 0, // system reserved
+	UI_GETAPIVERSION = 0,  // system reserved
 
 	UI_INIT,
 	//	void	UI_Init( void );

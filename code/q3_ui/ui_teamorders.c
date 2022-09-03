@@ -14,44 +14,44 @@ TEAM ORDERS MENU
 #define ART_BACK0 "menu/art/back_0"
 #define ART_BACK1 "menu/art/back_1"
 
-#define ID_LIST_BOTS 10
-#define ID_LIST_CTF_ORDERS 11
+#define ID_LIST_BOTS        10
+#define ID_LIST_CTF_ORDERS  11
 #define ID_LIST_TEAM_ORDERS 12
 
 typedef struct {
 	menuframework_s menu;
 
-	menutext_s   banner;
-	menubitmap_s frame;
+	menutext_s      banner;
+	menubitmap_s    frame;
 
-	menulist_s list;
+	menulist_s      list;
 
-	menubitmap_s back;
+	menubitmap_s    back;
 
-	int   gametype;
-	int   numBots;
-	int   selectedBot;
-	char *bots[9];
-	char  botNames[9][16];
+	int             gametype;
+	int             numBots;
+	int             selectedBot;
+	char*           bots[9];
+	char            botNames[9][16];
 } teamOrdersMenuInfo_t;
 
 static teamOrdersMenuInfo_t teamOrdersMenuInfo;
 
 #define NUM_CTF_ORDERS 7
-static const char *ctfOrders[] = {"I Am the Leader", "Defend the Base", "Follow Me", "Get Enemy Flag", "Camp Here", "Report", "I Relinquish Command", NULL};
-static const char *ctfMessages[] = {
+static const char* ctfOrders[]   = {"I Am the Leader", "Defend the Base", "Follow Me", "Get Enemy Flag", "Camp Here", "Report", "I Relinquish Command", NULL};
+static const char* ctfMessages[] = {
 	"i am the leader", "%s defend the base", "%s follow me", "%s get enemy flag", "%s camp here", "%s report", "i stop being the leader", NULL};
 
 #define NUM_TEAM_ORDERS 6
-static const char *teamOrders[] = {"I Am the Leader", "Follow Me", "Roam", "Camp Here", "Report", "I Relinquish Command", NULL};
-static const char *teamMessages[] = {"i am the leader", "%s follow me", "%s roam", "%s camp here", "%s report", "i stop being the leader", NULL};
+static const char* teamOrders[]   = {"I Am the Leader", "Follow Me", "Roam", "Camp Here", "Report", "I Relinquish Command", NULL};
+static const char* teamMessages[] = {"i am the leader", "%s follow me", "%s roam", "%s camp here", "%s report", "i stop being the leader", NULL};
 
 /*
 ===============
 UI_TeamOrdersMenu_BackEvent
 ===============
 */
-static void UI_TeamOrdersMenu_BackEvent(void *ptr, int event) {
+static void UI_TeamOrdersMenu_BackEvent(void* ptr, int event) {
 	if (event != QM_ACTIVATED) {
 		return;
 	}
@@ -68,20 +68,20 @@ static void UI_TeamOrdersMenu_SetList(int id) {
 	default:
 	case ID_LIST_BOTS:
 		teamOrdersMenuInfo.list.generic.id = id;
-		teamOrdersMenuInfo.list.numitems = teamOrdersMenuInfo.numBots;
-		teamOrdersMenuInfo.list.itemnames = (const char **)teamOrdersMenuInfo.bots;
+		teamOrdersMenuInfo.list.numitems   = teamOrdersMenuInfo.numBots;
+		teamOrdersMenuInfo.list.itemnames  = (const char**)teamOrdersMenuInfo.bots;
 		break;
 
 	case ID_LIST_CTF_ORDERS:
 		teamOrdersMenuInfo.list.generic.id = id;
-		teamOrdersMenuInfo.list.numitems = NUM_CTF_ORDERS;
-		teamOrdersMenuInfo.list.itemnames = ctfOrders;
+		teamOrdersMenuInfo.list.numitems   = NUM_CTF_ORDERS;
+		teamOrdersMenuInfo.list.itemnames  = ctfOrders;
 		break;
 
 	case ID_LIST_TEAM_ORDERS:
 		teamOrdersMenuInfo.list.generic.id = id;
-		teamOrdersMenuInfo.list.numitems = NUM_TEAM_ORDERS;
-		teamOrdersMenuInfo.list.itemnames = teamOrders;
+		teamOrdersMenuInfo.list.numitems   = NUM_TEAM_ORDERS;
+		teamOrdersMenuInfo.list.itemnames  = teamOrders;
 		break;
 	}
 
@@ -94,12 +94,12 @@ UI_TeamOrdersMenu_Key
 =================
 */
 sfxHandle_t UI_TeamOrdersMenu_Key(int key) {
-	menulist_s *l;
+	menulist_s* l;
 	int         x;
 	int         y;
 	int         index;
 
-	l = (menulist_s *)Menu_ItemAtCursor(&teamOrdersMenuInfo.menu);
+	l = (menulist_s*)Menu_ItemAtCursor(&teamOrdersMenuInfo.menu);
 	if (l != &teamOrdersMenuInfo.list) {
 		return Menu_DefaultKey(&teamOrdersMenuInfo.menu, key);
 	}
@@ -109,7 +109,7 @@ sfxHandle_t UI_TeamOrdersMenu_Key(int key) {
 		x = l->generic.left;
 		y = l->generic.top;
 		if (UI_CursorInRect(x, y, l->generic.right - x, l->generic.bottom - y)) {
-			index = (uis.cursory - y) / PROP_HEIGHT;
+			index       = (uis.cursory - y) / PROP_HEIGHT;
 			l->oldvalue = l->curvalue;
 			l->curvalue = index;
 
@@ -152,20 +152,20 @@ sfxHandle_t UI_TeamOrdersMenu_Key(int key) {
 UI_TeamOrdersMenu_ListDraw
 =================
 */
-static void UI_TeamOrdersMenu_ListDraw(void *self) {
-	menulist_s *l;
+static void UI_TeamOrdersMenu_ListDraw(void* self) {
+	menulist_s* l;
 	int         x;
 	int         y;
 	int         i;
-	float      *color;
+	float*      color;
 	qboolean    hasfocus;
 	int         style;
 
-	l = (menulist_s *)self;
+	l = (menulist_s*)self;
 
 	hasfocus = (l->generic.parent->cursor == l->generic.menuPosition);
 
-	x = 320; // l->generic.x;
+	x = 320;  // l->generic.x;
 	y = l->generic.y;
 	for (i = 0; i < l->numitems; i++) {
 		style = UI_LEFT | UI_SMALLFONT | UI_CENTER;
@@ -188,7 +188,7 @@ static void UI_TeamOrdersMenu_ListDraw(void *self) {
 UI_TeamOrdersMenu_ListEvent
 ===============
 */
-static void UI_TeamOrdersMenu_ListEvent(void *ptr, int event) {
+static void UI_TeamOrdersMenu_ListEvent(void* ptr, int event) {
 	int  id;
 	int  selection;
 	char message[256];
@@ -196,8 +196,8 @@ static void UI_TeamOrdersMenu_ListEvent(void *ptr, int event) {
 	if (event != QM_ACTIVATED)
 		return;
 
-	id = ((menulist_s *)ptr)->generic.id;
-	selection = ((menulist_s *)ptr)->curvalue;
+	id        = ((menulist_s*)ptr)->generic.id;
+	selection = ((menulist_s*)ptr)->curvalue;
 
 	if (id == ID_LIST_BOTS) {
 		teamOrdersMenuInfo.selectedBot = selection;
@@ -243,7 +243,7 @@ static void UI_TeamOrdersMenu_BuildBotList(void) {
 	teamOrdersMenuInfo.numBots = 1;
 
 	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
-	numPlayers = atoi(Info_ValueForKey(info, "sv_maxclients"));
+	numPlayers                  = atoi(Info_ValueForKey(info, "sv_maxclients"));
 	teamOrdersMenuInfo.gametype = trap_Cvar_VariableValue("ui_gametype");
 
 	for (n = 0; n < numPlayers && teamOrdersMenuInfo.numBots < 9; n++) {
@@ -280,49 +280,49 @@ static void UI_TeamOrdersMenu_Init(void) {
 
 	memset(&teamOrdersMenuInfo, 0, sizeof(teamOrdersMenuInfo));
 	teamOrdersMenuInfo.menu.fullscreen = qfalse;
-	teamOrdersMenuInfo.menu.key = UI_TeamOrdersMenu_Key;
+	teamOrdersMenuInfo.menu.key        = UI_TeamOrdersMenu_Key;
 
 	UI_TeamOrdersMenu_BuildBotList();
 
 	teamOrdersMenuInfo.banner.generic.type = MTYPE_BTEXT;
-	teamOrdersMenuInfo.banner.generic.x = 320;
-	teamOrdersMenuInfo.banner.generic.y = 16;
-	teamOrdersMenuInfo.banner.string = "TEAM ORDERS";
-	teamOrdersMenuInfo.banner.color = color_white;
-	teamOrdersMenuInfo.banner.style = UI_CENTER;
+	teamOrdersMenuInfo.banner.generic.x    = 320;
+	teamOrdersMenuInfo.banner.generic.y    = 16;
+	teamOrdersMenuInfo.banner.string       = "TEAM ORDERS";
+	teamOrdersMenuInfo.banner.color        = color_white;
+	teamOrdersMenuInfo.banner.style        = UI_CENTER;
 
-	teamOrdersMenuInfo.frame.generic.type = MTYPE_BITMAP;
+	teamOrdersMenuInfo.frame.generic.type  = MTYPE_BITMAP;
 	teamOrdersMenuInfo.frame.generic.flags = QMF_INACTIVE;
-	teamOrdersMenuInfo.frame.generic.name = ART_FRAME;
-	teamOrdersMenuInfo.frame.generic.x = 320 - 233;
-	teamOrdersMenuInfo.frame.generic.y = 240 - 166;
-	teamOrdersMenuInfo.frame.width = 466;
-	teamOrdersMenuInfo.frame.height = 332;
+	teamOrdersMenuInfo.frame.generic.name  = ART_FRAME;
+	teamOrdersMenuInfo.frame.generic.x     = 320 - 233;
+	teamOrdersMenuInfo.frame.generic.y     = 240 - 166;
+	teamOrdersMenuInfo.frame.width         = 466;
+	teamOrdersMenuInfo.frame.height        = 332;
 
-	teamOrdersMenuInfo.list.generic.type = MTYPE_SCROLLLIST;
-	teamOrdersMenuInfo.list.generic.flags = QMF_PULSEIFFOCUS;
+	teamOrdersMenuInfo.list.generic.type      = MTYPE_SCROLLLIST;
+	teamOrdersMenuInfo.list.generic.flags     = QMF_PULSEIFFOCUS;
 	teamOrdersMenuInfo.list.generic.ownerdraw = UI_TeamOrdersMenu_ListDraw;
-	teamOrdersMenuInfo.list.generic.callback = UI_TeamOrdersMenu_ListEvent;
-	teamOrdersMenuInfo.list.generic.x = 320 - 64;
-	teamOrdersMenuInfo.list.generic.y = 120;
+	teamOrdersMenuInfo.list.generic.callback  = UI_TeamOrdersMenu_ListEvent;
+	teamOrdersMenuInfo.list.generic.x         = 320 - 64;
+	teamOrdersMenuInfo.list.generic.y         = 120;
 
-	teamOrdersMenuInfo.back.generic.type = MTYPE_BITMAP;
-	teamOrdersMenuInfo.back.generic.name = ART_BACK0;
-	teamOrdersMenuInfo.back.generic.flags = QMF_LEFT_JUSTIFY | QMF_PULSEIFFOCUS;
+	teamOrdersMenuInfo.back.generic.type     = MTYPE_BITMAP;
+	teamOrdersMenuInfo.back.generic.name     = ART_BACK0;
+	teamOrdersMenuInfo.back.generic.flags    = QMF_LEFT_JUSTIFY | QMF_PULSEIFFOCUS;
 	teamOrdersMenuInfo.back.generic.callback = UI_TeamOrdersMenu_BackEvent;
-	teamOrdersMenuInfo.back.generic.x = 0;
-	teamOrdersMenuInfo.back.generic.y = 480 - 64;
-	teamOrdersMenuInfo.back.width = 128;
-	teamOrdersMenuInfo.back.height = 64;
-	teamOrdersMenuInfo.back.focuspic = ART_BACK1;
+	teamOrdersMenuInfo.back.generic.x        = 0;
+	teamOrdersMenuInfo.back.generic.y        = 480 - 64;
+	teamOrdersMenuInfo.back.width            = 128;
+	teamOrdersMenuInfo.back.height           = 64;
+	teamOrdersMenuInfo.back.focuspic         = ART_BACK1;
 
 	Menu_AddItem(&teamOrdersMenuInfo.menu, &teamOrdersMenuInfo.banner);
 	Menu_AddItem(&teamOrdersMenuInfo.menu, &teamOrdersMenuInfo.frame);
 	Menu_AddItem(&teamOrdersMenuInfo.menu, &teamOrdersMenuInfo.list);
 	Menu_AddItem(&teamOrdersMenuInfo.menu, &teamOrdersMenuInfo.back);
 
-	teamOrdersMenuInfo.list.generic.left = 220;
-	teamOrdersMenuInfo.list.generic.top = teamOrdersMenuInfo.list.generic.y;
+	teamOrdersMenuInfo.list.generic.left  = 220;
+	teamOrdersMenuInfo.list.generic.top   = teamOrdersMenuInfo.list.generic.y;
 	teamOrdersMenuInfo.list.generic.right = 420;
 	UI_TeamOrdersMenu_SetList(ID_LIST_BOTS);
 }

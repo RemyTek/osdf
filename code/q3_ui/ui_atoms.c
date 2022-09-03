@@ -8,12 +8,12 @@
 #include "ui_local.h"
 
 uiStatic_t uis;
-qboolean   m_entersound; // after a frame, so caching won't disrupt the sound
+qboolean   m_entersound;  // after a frame, so caching won't disrupt the sound
 
 // these are here so the functions in q_shared.c can link
 #ifndef UI_HARD_LINKED
 
-void QDECL Com_Error(int level, const char *fmt, ...) {
+void QDECL Com_Error(int level, const char* fmt, ...) {
 	va_list argptr;
 	char    text[2048];
 
@@ -24,7 +24,7 @@ void QDECL Com_Error(int level, const char *fmt, ...) {
 	trap_Error(text);
 }
 
-void QDECL Com_Printf(const char *fmt, ...) {
+void QDECL Com_Printf(const char* fmt, ...) {
 	va_list argptr;
 	char    text[2048];
 
@@ -64,9 +64,9 @@ void UI_StartDemoLoop(void) {
 UI_PushMenu
 =================
 */
-void UI_PushMenu(menuframework_s *menu) {
+void UI_PushMenu(menuframework_s* menu) {
 	int           i;
-	menucommon_s *item;
+	menucommon_s* item;
 
 	// avoid stacking menus invoked by hotkeys
 	for (i = 0; i < uis.menusp; i++) {
@@ -86,7 +86,7 @@ void UI_PushMenu(menuframework_s *menu) {
 	uis.activemenu = menu;
 
 	// default cursor position
-	menu->cursor = 0;
+	menu->cursor      = 0;
 	menu->cursor_prev = 0;
 
 	m_entersound = qtrue;
@@ -95,7 +95,7 @@ void UI_PushMenu(menuframework_s *menu) {
 
 	// force first available item to have focus
 	for (i = 0; i < menu->nitems; i++) {
-		item = (menucommon_s *)menu->items[i];
+		item = (menucommon_s*)menu->items[i];
 		if (!(item->flags & (QMF_GRAYED | QMF_MOUSEONLY | QMF_INACTIVE))) {
 			menu->cursor_prev = -1;
 			Menu_SetCursor(menu, i);
@@ -121,14 +121,14 @@ void UI_PopMenu(void) {
 
 	if (uis.menusp) {
 		uis.activemenu = uis.stack[uis.menusp - 1];
-		uis.firstdraw = qtrue;
+		uis.firstdraw  = qtrue;
 	} else {
 		UI_ForceMenuOff();
 	}
 }
 
 void UI_ForceMenuOff(void) {
-	uis.menusp = 0;
+	uis.menusp     = 0;
 	uis.activemenu = NULL;
 
 	trap_Key_SetCatcher(trap_Key_GetCatcher() & ~KEYCATCH_UI);
@@ -329,9 +329,9 @@ static int propMapB[26][3] = {
     {158, 139, 25},
 };
 
-#define PROPB_GAP_WIDTH 4
+#define PROPB_GAP_WIDTH   4
 #define PROPB_SPACE_WIDTH 12
-#define PROPB_HEIGHT 36
+#define PROPB_HEIGHT      36
 
 // bk001205 - code below duplicated in cgame/cg_drawtools.c
 // bk001205 - FIXME: does this belong in ui_shared.c?
@@ -340,9 +340,9 @@ static int propMapB[26][3] = {
 UI_DrawBannerString
 =================
 */
-static void UI_DrawBannerString2(int x, int y, const char *str, vec4_t color) {
-	const char   *s;
-	unsigned char ch; // bk001204 - unsigned
+static void UI_DrawBannerString2(int x, int y, const char* str, vec4_t color) {
+	const char*   s;
+	unsigned char ch;  // bk001204 - unsigned
 	float         ax;
 	float         ay;
 	float         aw;
@@ -365,12 +365,12 @@ static void UI_DrawBannerString2(int x, int y, const char *str, vec4_t color) {
 			ax += ((float)PROPB_SPACE_WIDTH + (float)PROPB_GAP_WIDTH) * uis.scale;
 		} else if (ch >= 'A' && ch <= 'Z') {
 			ch -= 'A';
-			fcol = (float)propMapB[ch][0] / 256.0f;
-			frow = (float)propMapB[ch][1] / 256.0f;
-			fwidth = (float)propMapB[ch][2] / 256.0f;
+			fcol    = (float)propMapB[ch][0] / 256.0f;
+			frow    = (float)propMapB[ch][1] / 256.0f;
+			fwidth  = (float)propMapB[ch][2] / 256.0f;
 			fheight = (float)PROPB_HEIGHT / 256.0f;
-			aw = (float)propMapB[ch][2] * uis.scale;
-			ah = (float)PROPB_HEIGHT * uis.scale;
+			aw      = (float)propMapB[ch][2] * uis.scale;
+			ah      = (float)PROPB_HEIGHT * uis.scale;
 			trap_R_DrawStretchPic(ax, ay, aw, ah, fcol, frow, fcol + fwidth, frow + fheight, uis.charsetPropB);
 			ax += (aw + (float)PROPB_GAP_WIDTH * uis.scale);
 		}
@@ -380,14 +380,14 @@ static void UI_DrawBannerString2(int x, int y, const char *str, vec4_t color) {
 	trap_R_SetColor(NULL);
 }
 
-void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color) {
-	const char *s;
+void UI_DrawBannerString(int x, int y, const char* str, int style, vec4_t color) {
+	const char* s;
 	int         ch;
 	int         width;
 	vec4_t      drawcolor;
 
 	// find the width of the drawn text
-	s = str;
+	s     = str;
 	width = 0;
 	while (*s) {
 		ch = *s;
@@ -416,23 +416,23 @@ void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color)
 
 	if (style & UI_DROPSHADOW) {
 		drawcolor[0] = drawcolor[1] = drawcolor[2] = 0;
-		drawcolor[3] = color[3];
+		drawcolor[3]                               = color[3];
 		UI_DrawBannerString2(x + 2, y + 2, str, drawcolor);
 	}
 
 	UI_DrawBannerString2(x, y, str, color);
 }
 
-int UI_ProportionalStringWidth(const char *str) {
-	const char *s;
+int UI_ProportionalStringWidth(const char* str) {
+	const char* s;
 	int         ch;
 	int         charWidth;
 	int         width;
 
-	s = str;
+	s     = str;
 	width = 0;
 	while (*s) {
-		ch = *s & 127;
+		ch        = *s & 127;
 		charWidth = propMap[ch][2];
 		if (charWidth != -1) {
 			width += charWidth;
@@ -445,12 +445,12 @@ int UI_ProportionalStringWidth(const char *str) {
 	return width;
 }
 
-static void UI_DrawProportionalString2(int x, int y, const char *str, vec4_t color, float sizeScale, qhandle_t charset) {
-	const char   *s;
-	unsigned char ch; // bk001204 - unsigned
+static void UI_DrawProportionalString2(int x, int y, const char* str, vec4_t color, float sizeScale, qhandle_t charset) {
+	const char*   s;
+	unsigned char ch;  // bk001204 - unsigned
 	float         ax;
 	float         ay;
-	float         aw = 0; // bk001204 - init
+	float         aw = 0;  // bk001204 - init
 	float         ah;
 	float         frow;
 	float         fcol;
@@ -469,12 +469,12 @@ static void UI_DrawProportionalString2(int x, int y, const char *str, vec4_t col
 		if (ch == ' ') {
 			aw = (float)PROP_SPACE_WIDTH * uis.scale * sizeScale;
 		} else if (propMap[ch][2] != -1) {
-			fcol = (float)propMap[ch][0] / 256.0f;
-			frow = (float)propMap[ch][1] / 256.0f;
-			fwidth = (float)propMap[ch][2] / 256.0f;
+			fcol    = (float)propMap[ch][0] / 256.0f;
+			frow    = (float)propMap[ch][1] / 256.0f;
+			fwidth  = (float)propMap[ch][2] / 256.0f;
 			fheight = (float)PROP_HEIGHT / 256.0f;
-			aw = (float)propMap[ch][2] * uis.scale * sizeScale;
-			ah = (float)PROP_HEIGHT * uis.scale * sizeScale;
+			aw      = (float)propMap[ch][2] * uis.scale * sizeScale;
+			ah      = (float)PROP_HEIGHT * uis.scale * sizeScale;
 			trap_R_DrawStretchPic(ax, ay, aw, ah, fcol, frow, fcol + fwidth, frow + fheight, charset);
 		}
 
@@ -503,7 +503,7 @@ float UI_ProportionalSizeScale(int style) {
 UI_DrawProportionalString
 =================
 */
-void UI_DrawProportionalString(int x, int y, const char *str, int style, vec4_t color) {
+void UI_DrawProportionalString(int x, int y, const char* str, int style, vec4_t color) {
 	vec4_t drawcolor;
 	int    width;
 	float  sizeScale;
@@ -528,7 +528,7 @@ void UI_DrawProportionalString(int x, int y, const char *str, int style, vec4_t 
 
 	if (style & UI_DROPSHADOW) {
 		drawcolor[0] = drawcolor[1] = drawcolor[2] = 0;
-		drawcolor[3] = color[3];
+		drawcolor[3]                               = color[3];
 		UI_DrawProportionalString2(x + 2, y + 2, str, drawcolor, sizeScale, uis.charsetProp);
 	}
 
@@ -564,7 +564,7 @@ void UI_DrawProportionalString(int x, int y, const char *str, int style, vec4_t 
 UI_DrawProportionalString_Wrapped
 =================
 */
-void UI_DrawProportionalString_AutoWrapped(int x, int y, int xmax, int ystep, const char *str, int style, vec4_t color) {
+void UI_DrawProportionalString_AutoWrapped(int x, int y, int xmax, int ystep, const char* str, int style, vec4_t color) {
 	int   width;
 	char *s1, *s2, *s3;
 	char  c_bcp;
@@ -584,9 +584,9 @@ void UI_DrawProportionalString_AutoWrapped(int x, int y, int xmax, int ystep, co
 			s3++;
 		} while (*s3 != ' ' && *s3 != '\0');
 		c_bcp = *s3;
-		*s3 = '\0';
+		*s3   = '\0';
 		width = UI_ProportionalStringWidth(s1) * sizeScale;
-		*s3 = c_bcp;
+		*s3   = c_bcp;
 		if (width > xmax) {
 			if (s1 == s2) {
 				// fuck, don't have a clean cut, we'll overflow
@@ -601,7 +601,7 @@ void UI_DrawProportionalString_AutoWrapped(int x, int y, int xmax, int ystep, co
 				// even if the word is too long, we would overflow it (see above)
 				// so just print it now if needed
 				s2++;
-				if (*s2 != '\0') // if we are printing an overflowing line we have s2 == s3
+				if (*s2 != '\0')  // if we are printing an overflowing line we have s2 == s3
 					UI_DrawProportionalString(x, y, s2, style, color);
 				break;
 			}
@@ -610,7 +610,7 @@ void UI_DrawProportionalString_AutoWrapped(int x, int y, int xmax, int ystep, co
 			s3 = s2;
 		} else {
 			s2 = s3;
-			if (c_bcp == '\0') // we reached the end
+			if (c_bcp == '\0')  // we reached the end
 			{
 				UI_DrawProportionalString(x, y, s1, style, color);
 				break;
@@ -624,10 +624,10 @@ void UI_DrawProportionalString_AutoWrapped(int x, int y, int xmax, int ystep, co
 UI_DrawString2
 =================
 */
-static void UI_DrawString2(int x, int y, const char *str, vec4_t color, int charw, int charh) {
-	const char *s;
+static void UI_DrawString2(int x, int y, const char* str, vec4_t color, int charw, int charh) {
+	const char* s;
 	char        ch;
-	int         forceColor = qfalse; // APSFIXME;
+	int         forceColor = qfalse;  // APSFIXME;
 	vec4_t      tempcolor;
 	float       ax;
 	float       ay;
@@ -679,13 +679,13 @@ static void UI_DrawString2(int x, int y, const char *str, vec4_t color, int char
 UI_DrawString
 =================
 */
-void UI_DrawString(int x, int y, const char *str, int style, vec4_t color) {
+void UI_DrawString(int x, int y, const char* str, int style, vec4_t color) {
 	int    len;
 	int    charw;
 	int    charh;
 	vec4_t newcolor;
 	vec4_t lowlight;
-	float *drawcolor;
+	float* drawcolor;
 	vec4_t dropcolor;
 
 	if (!str) {
@@ -720,13 +720,13 @@ void UI_DrawString(int x, int y, const char *str, int style, vec4_t color) {
 	case UI_CENTER:
 		// center justify at x
 		len = strlen(str);
-		x = x - len * charw / 2;
+		x   = x - len * charw / 2;
 		break;
 
 	case UI_RIGHT:
 		// right justify at x
 		len = strlen(str);
-		x = x - len * charw;
+		x   = x - len * charw;
 		break;
 
 	default:
@@ -736,7 +736,7 @@ void UI_DrawString(int x, int y, const char *str, int style, vec4_t color) {
 
 	if (style & UI_DROPSHADOW) {
 		dropcolor[0] = dropcolor[1] = dropcolor[2] = 0;
-		dropcolor[3] = drawcolor[3];
+		dropcolor[3]                               = drawcolor[3];
 		UI_DrawString2(x + 2, y + 2, str, dropcolor, charw, charh);
 	}
 
@@ -849,7 +849,7 @@ UI_MouseEvent
 */
 void UI_MouseEvent(int dx, int dy) {
 	int           i;
-	menucommon_s *m;
+	menucommon_s* m;
 
 	if (!uis.activemenu)
 		return;
@@ -871,7 +871,7 @@ void UI_MouseEvent(int dx, int dy) {
 
 	// region test the active menu items
 	for (i = 0; i < uis.activemenu->nitems; i++) {
-		m = (menucommon_s *)uis.activemenu->items[i];
+		m = (menucommon_s*)uis.activemenu->items[i];
 
 		if (m->flags & (QMF_GRAYED | QMF_INACTIVE))
 			continue;
@@ -884,24 +884,24 @@ void UI_MouseEvent(int dx, int dy) {
 		// set focus to item at cursor
 		if (uis.activemenu->cursor != i) {
 			Menu_SetCursor(uis.activemenu, i);
-			((menucommon_s *)(uis.activemenu->items[uis.activemenu->cursor_prev]))->flags &= ~QMF_HASMOUSEFOCUS;
+			((menucommon_s*)(uis.activemenu->items[uis.activemenu->cursor_prev]))->flags &= ~QMF_HASMOUSEFOCUS;
 
-			if (!(((menucommon_s *)(uis.activemenu->items[uis.activemenu->cursor]))->flags & QMF_SILENT)) {
+			if (!(((menucommon_s*)(uis.activemenu->items[uis.activemenu->cursor]))->flags & QMF_SILENT)) {
 				trap_S_StartLocalSound(menu_move_sound, CHAN_LOCAL_SOUND);
 			}
 		}
 
-		((menucommon_s *)(uis.activemenu->items[uis.activemenu->cursor]))->flags |= QMF_HASMOUSEFOCUS;
+		((menucommon_s*)(uis.activemenu->items[uis.activemenu->cursor]))->flags |= QMF_HASMOUSEFOCUS;
 		return;
 	}
 
 	if (uis.activemenu->nitems > 0) {
 		// out of any region
-		((menucommon_s *)(uis.activemenu->items[uis.activemenu->cursor]))->flags &= ~QMF_HASMOUSEFOCUS;
+		((menucommon_s*)(uis.activemenu->items[uis.activemenu->cursor]))->flags &= ~QMF_HASMOUSEFOCUS;
 	}
 }
 
-char *UI_Argv(int arg) {
+char* UI_Argv(int arg) {
 	static char buffer[MAX_STRING_CHARS];
 
 	trap_Argv(arg, buffer, sizeof(buffer));
@@ -909,7 +909,7 @@ char *UI_Argv(int arg) {
 	return buffer;
 }
 
-char *UI_Cvar_VariableString(const char *var_name) {
+char* UI_Cvar_VariableString(const char* var_name) {
 	static char buffer[MAX_STRING_CHARS];
 
 	trap_Cvar_VariableStringBuffer(var_name, buffer, sizeof(buffer));
@@ -962,10 +962,10 @@ UI_ConsoleCommand
 =================
 */
 qboolean UI_ConsoleCommand(int realTime) {
-	char *cmd;
+	char* cmd;
 
 	uis.frametime = realTime - uis.realtime;
-	uis.realtime = realTime;
+	uis.realtime  = realTime;
 
 	cmd = UI_Argv(0);
 
@@ -1039,7 +1039,7 @@ void UI_Init(void) {
 	Menu_Cache();
 
 	uis.activemenu = NULL;
-	uis.menusp = 0;
+	uis.menusp     = 0;
 }
 
 /*
@@ -1049,7 +1049,7 @@ UI_AdjustFrom640
 Adjusted for resolution and screen aspect ratio
 ================
 */
-void UI_AdjustFrom640(float *x, float *y, float *w, float *h) {
+void UI_AdjustFrom640(float* x, float* y, float* w, float* h) {
 	// expect valid pointers
 	*x = *x * uis.scale + uis.biasX;
 	*y = *y * uis.scale + uis.biasY;
@@ -1057,7 +1057,7 @@ void UI_AdjustFrom640(float *x, float *y, float *w, float *h) {
 	*h *= uis.scale;
 }
 
-void UI_DrawNamedPic(float x, float y, float width, float height, const char *picname) {
+void UI_DrawNamedPic(float x, float y, float width, float height, const char* picname) {
 	qhandle_t hShader;
 
 	hShader = trap_R_RegisterShaderNoMip(picname);
@@ -1071,8 +1071,8 @@ void UI_DrawHandlePic(float x, float y, float w, float h, qhandle_t hShader) {
 	float t0;
 	float t1;
 
-	if (w < 0) { // flip about vertical
-		w = -w;
+	if (w < 0) {  // flip about vertical
+		w  = -w;
 		s0 = 1;
 		s1 = 0;
 	} else {
@@ -1080,8 +1080,8 @@ void UI_DrawHandlePic(float x, float y, float w, float h, qhandle_t hShader) {
 		s1 = 1;
 	}
 
-	if (h < 0) { // flip about horizontal
-		h = -h;
+	if (h < 0) {  // flip about horizontal
+		h  = -h;
 		t0 = 1;
 		t1 = 0;
 	} else {
@@ -1106,7 +1106,7 @@ UI_FillRect
 Coordinates are 640*480 virtual values
 =================
 */
-void UI_FillRect(float x, float y, float width, float height, const float *color) {
+void UI_FillRect(float x, float y, float width, float height, const float* color) {
 	trap_R_SetColor(color);
 
 	UI_AdjustFrom640(&x, &y, &width, &height);
@@ -1122,7 +1122,7 @@ UI_DrawRect
 Coordinates are 640*480 virtual values
 =================
 */
-void UI_DrawRect(float x, float y, float width, float height, const float *color) {
+void UI_DrawRect(float x, float y, float width, float height, const float* color) {
 	trap_R_SetColor(color);
 
 	UI_AdjustFrom640(&x, &y, &width, &height);
@@ -1135,7 +1135,7 @@ void UI_DrawRect(float x, float y, float width, float height, const float *color
 	trap_R_SetColor(NULL);
 }
 
-void UI_SetColor(const float *rgba) {
+void UI_SetColor(const float* rgba) {
 	trap_R_SetColor(rgba);
 }
 
@@ -1150,7 +1150,7 @@ UI_Refresh
 */
 void UI_Refresh(int realtime) {
 	uis.frametime = realtime - uis.realtime;
-	uis.realtime = realtime;
+	uis.realtime  = realtime;
 
 	if (!(trap_Key_GetCatcher() & KEYCATCH_UI)) {
 		return;

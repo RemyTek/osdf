@@ -9,8 +9,8 @@
 ScorePlum
 ============
 */
-void ScorePlum(gentity_t *ent, vec3_t origin, int score) {
-	gentity_t *plum;
+void ScorePlum(gentity_t* ent, vec3_t origin, int score) {
+	gentity_t* plum;
 
 	plum = G_TempEntity(origin, EV_SCOREPLUM);
 	// only send this temp entity to a single client
@@ -18,7 +18,7 @@ void ScorePlum(gentity_t *ent, vec3_t origin, int score) {
 	plum->r.singleClient = ent->s.number;
 	//
 	plum->s.otherEntityNum = ent->s.number;
-	plum->s.time = score;
+	plum->s.time           = score;
 }
 
 /*
@@ -28,7 +28,7 @@ AddScore
 Adds score to both the client and his team
 ============
 */
-void AddScore(gentity_t *ent, vec3_t origin, int score) {
+void AddScore(gentity_t* ent, vec3_t origin, int score) {
 	if (!ent->client) {
 		return;
 	}
@@ -53,12 +53,12 @@ TossClientItems
 Toss the weapon and powerups for the killed player
 =================
 */
-void TossClientItems(gentity_t *self) {
-	gitem_t   *item;
+void TossClientItems(gentity_t* self) {
+	gitem_t*   item;
 	int        weapon;
 	float      angle;
 	int        i;
-	gentity_t *drop;
+	gentity_t* drop;
 
 	// drop the weapon if not a gauntlet or machinegun
 	weapon = self->s.weapon;
@@ -116,49 +116,49 @@ void TossClientItems(gentity_t *self) {
 TossClientCubes
 =================
 */
-extern gentity_t *neutralObelisk;
+extern gentity_t* neutralObelisk;
 
-void TossClientCubes(gentity_t *self) {
-	gitem_t   *item;
-	gentity_t *drop;
-	vec3_t     velocity;
-	vec3_t     angles;
-	vec3_t     origin;
+void              TossClientCubes(gentity_t* self) {
+				 gitem_t*   item;
+				 gentity_t* drop;
+				 vec3_t     velocity;
+				 vec3_t     angles;
+				 vec3_t     origin;
 
-	self->client->ps.generic1 = 0;
+				 self->client->ps.generic1 = 0;
 
-	// this should never happen but we should never
-	// get the server to crash due to skull being spawned in
-	if (!G_EntitiesFree()) {
-		return;
-	}
+				 // this should never happen but we should never
+	             // get the server to crash due to skull being spawned in
+				 if (!G_EntitiesFree()) {
+					 return;
+    }
 
-	if (self->client->sess.sessionTeam == TEAM_RED) {
-		item = BG_FindItem("Red Cube");
-	} else {
-		item = BG_FindItem("Blue Cube");
-	}
+				 if (self->client->sess.sessionTeam == TEAM_RED) {
+					 item = BG_FindItem("Red Cube");
+    } else {
+					 item = BG_FindItem("Blue Cube");
+    }
 
-	angles[YAW] = (float)(level.time % 360);
-	angles[PITCH] = 0; // always forward
-	angles[ROLL] = 0;
+				 angles[YAW]   = (float)(level.time % 360);
+				 angles[PITCH] = 0;  // always forward
+				 angles[ROLL]  = 0;
 
-	AngleVectors(angles, velocity, NULL, NULL);
-	VectorScale(velocity, 150, velocity);
-	velocity[2] += 200 + crandom() * 50;
+				 AngleVectors(angles, velocity, NULL, NULL);
+				 VectorScale(velocity, 150, velocity);
+				 velocity[2] += 200 + crandom() * 50;
 
-	if (neutralObelisk) {
-		VectorCopy(neutralObelisk->s.pos.trBase, origin);
-		origin[2] += 44;
-	} else {
-		VectorClear(origin);
-	}
+				 if (neutralObelisk) {
+					 VectorCopy(neutralObelisk->s.pos.trBase, origin);
+					 origin[2] += 44;
+    } else {
+					 VectorClear(origin);
+    }
 
-	drop = LaunchItem(item, origin, velocity);
+				 drop = LaunchItem(item, origin, velocity);
 
-	drop->nextthink = level.time + g_cubeTimeout.integer * 1000;
-	drop->think = G_FreeEntity;
-	drop->spawnflags = self->client->sess.sessionTeam;
+				 drop->nextthink  = level.time + g_cubeTimeout.integer * 1000;
+				 drop->think      = G_FreeEntity;
+				 drop->spawnflags = self->client->sess.sessionTeam;
 }
 
 /*
@@ -166,8 +166,8 @@ void TossClientCubes(gentity_t *self) {
 TossClientPersistantPowerups
 =================
 */
-void TossClientPersistantPowerups(gentity_t *ent) {
-	gentity_t *powerup;
+void TossClientPersistantPowerups(gentity_t* ent) {
+	gentity_t* powerup;
 
 	if (!ent->client) {
 		return;
@@ -185,7 +185,7 @@ void TossClientPersistantPowerups(gentity_t *ent) {
 	trap_LinkEntity(powerup);
 
 	ent->client->ps.stats[STAT_PERSISTANT_POWERUP] = 0;
-	ent->client->persistantPowerup = NULL;
+	ent->client->persistantPowerup                 = NULL;
 }
 #endif
 
@@ -194,7 +194,7 @@ void TossClientPersistantPowerups(gentity_t *ent) {
 LookAtKiller
 ==================
 */
-void LookAtKiller(gentity_t *self, gentity_t *inflictor, gentity_t *attacker) {
+void LookAtKiller(gentity_t* self, gentity_t* inflictor, gentity_t* attacker) {
 	vec3_t dir;
 
 	if (attacker && attacker != self) {
@@ -214,9 +214,9 @@ void LookAtKiller(gentity_t *self, gentity_t *inflictor, gentity_t *attacker) {
 GibEntity
 ==================
 */
-void GibEntity(gentity_t *self, int killer) {
+void GibEntity(gentity_t* self, int killer) {
 #ifdef MISSIONPACK
-	gentity_t *ent;
+	gentity_t* ent;
 	int        i;
 
 	// if this entity still has kamikaze
@@ -238,7 +238,7 @@ void GibEntity(gentity_t *self, int killer) {
 
 	G_AddEvent(self, EV_GIB_PLAYER, killer);
 	self->takedamage = qfalse;
-	self->s.eType = ET_INVISIBLE;
+	self->s.eType    = ET_INVISIBLE;
 	self->r.contents = 0;
 }
 
@@ -247,7 +247,7 @@ void GibEntity(gentity_t *self, int killer) {
 body_die
 ==================
 */
-void body_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int meansOfDeath) {
+void body_die(gentity_t* self, gentity_t* inflictor, gentity_t* attacker, int damage, int meansOfDeath) {
 	if (self->health > GIB_HEALTH) {
 		return;
 	}
@@ -260,7 +260,7 @@ void body_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int da
 }
 
 // these are just for logging, the client prints its own messages
-char *modNames[] = {"MOD_UNKNOWN",  "MOD_SHOTGUN",       "MOD_GAUNTLET",       "MOD_MACHINEGUN",    "MOD_GRENADE",      "MOD_GRENADE_SPLASH",
+char* modNames[] = {"MOD_UNKNOWN",  "MOD_SHOTGUN",       "MOD_GAUNTLET",       "MOD_MACHINEGUN",    "MOD_GRENADE",      "MOD_GRENADE_SPLASH",
                     "MOD_ROCKET",   "MOD_ROCKET_SPLASH", "MOD_PLASMA",         "MOD_PLASMA_SPLASH", "MOD_RAILGUN",      "MOD_LIGHTNING",
                     "MOD_BFG",      "MOD_BFG_SPLASH",    "MOD_WATER",          "MOD_SLIME",         "MOD_LAVA",         "MOD_CRUSH",
                     "MOD_TELEFRAG", "MOD_FALLING",       "MOD_SUICIDE",        "MOD_TARGET_LASER",  "MOD_TRIGGER_HURT",
@@ -275,7 +275,7 @@ char *modNames[] = {"MOD_UNKNOWN",  "MOD_SHOTGUN",       "MOD_GAUNTLET",       "
 Kamikaze_DeathActivate
 ==================
 */
-void Kamikaze_DeathActivate(gentity_t *ent) {
+void Kamikaze_DeathActivate(gentity_t* ent) {
 	G_StartKamikaze(ent);
 	G_FreeEntity(ent);
 }
@@ -285,14 +285,14 @@ void Kamikaze_DeathActivate(gentity_t *ent) {
 Kamikaze_DeathTimer
 ==================
 */
-void Kamikaze_DeathTimer(gentity_t *self) {
-	gentity_t *ent;
+void Kamikaze_DeathTimer(gentity_t* self) {
+	gentity_t* ent;
 
-	ent = G_Spawn();
+	ent            = G_Spawn();
 	ent->classname = "kamikaze timer";
 	VectorCopy(self->s.pos.trBase, ent->s.pos.trBase);
 	ent->r.svFlags |= SVF_NOCLIENT;
-	ent->think = Kamikaze_DeathActivate;
+	ent->think     = Kamikaze_DeathActivate;
 	ent->nextthink = level.time + 5 * 1000;
 
 	ent->activator = self;
@@ -305,10 +305,10 @@ void Kamikaze_DeathTimer(gentity_t *self) {
 CheckAlmostCapture
 ==================
 */
-void CheckAlmostCapture(gentity_t *self, gentity_t *attacker) {
-	gentity_t *ent;
+void CheckAlmostCapture(gentity_t* self, gentity_t* attacker) {
+	gentity_t* ent;
 	vec3_t     dir;
-	char      *classname;
+	char*      classname;
 
 	// if this player was carrying a flag
 	if (self->client->ps.powerups[PW_REDFLAG] || self->client->ps.powerups[PW_BLUEFLAG] || self->client->ps.powerups[PW_NEUTRALFLAG]) {
@@ -349,10 +349,10 @@ void CheckAlmostCapture(gentity_t *self, gentity_t *attacker) {
 CheckAlmostScored
 ==================
 */
-void CheckAlmostScored(gentity_t *self, gentity_t *attacker) {
-	gentity_t *ent;
+void CheckAlmostScored(gentity_t* self, gentity_t* attacker) {
+	gentity_t* ent;
 	vec3_t     dir;
-	char      *classname;
+	char*      classname;
 
 	// if the player was carrying cubes
 	if (self->client->ps.generic1) {
@@ -381,13 +381,13 @@ void CheckAlmostScored(gentity_t *self, gentity_t *attacker) {
 player_die
 ==================
 */
-void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int meansOfDeath) {
-	gentity_t *ent;
+void player_die(gentity_t* self, gentity_t* inflictor, gentity_t* attacker, int damage, int meansOfDeath) {
+	gentity_t* ent;
 	int        anim;
 	int        contents;
 	int        killer;
 	int        i;
-	char      *killerName, *obit;
+	char *     killerName, *obit;
 
 	if (self->client->ps.pm_type == PM_DEAD) {
 		return;
@@ -411,7 +411,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 #ifdef MISSIONPACK
 	if ((self->client->ps.eFlags & EF_TICKING) && self->activator) {
 		self->client->ps.eFlags &= ~EF_TICKING;
-		self->activator->think = G_FreeEntity;
+		self->activator->think     = G_FreeEntity;
 		self->activator->nextthink = level.time;
 	}
 #endif
@@ -425,12 +425,12 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 			killerName = "<non-client>";
 		}
 	} else {
-		killer = ENTITYNUM_WORLD;
+		killer     = ENTITYNUM_WORLD;
 		killerName = "<world>";
 	}
 
 	if (killer < 0 || killer >= MAX_CLIENTS) {
-		killer = ENTITYNUM_WORLD;
+		killer     = ENTITYNUM_WORLD;
 		killerName = "<world>";
 	}
 
@@ -443,11 +443,11 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	G_LogPrintf("Kill: %i %i %i: %s killed %s by %s\n", killer, self->s.number, meansOfDeath, killerName, self->client->pers.netname, obit);
 
 	// broadcast the death event to everyone
-	ent = G_TempEntity(self->r.currentOrigin, EV_OBITUARY);
-	ent->s.eventParm = meansOfDeath;
-	ent->s.otherEntityNum = self - g_entities;
+	ent                    = G_TempEntity(self->r.currentOrigin, EV_OBITUARY);
+	ent->s.eventParm       = meansOfDeath;
+	ent->s.otherEntityNum  = self - g_entities;
 	ent->s.otherEntityNum2 = killer;
-	ent->r.svFlags = SVF_BROADCAST; // send to everyone
+	ent->r.svFlags         = SVF_BROADCAST;  // send to everyone
 
 	self->enemy = attacker;
 
@@ -500,15 +500,15 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	// if I committed suicide, the flag does not fall, it returns.
 	if (meansOfDeath == MOD_SUICIDE) {
 #ifdef MISSIONPACK
-		if (self->client->ps.powerups[PW_NEUTRALFLAG]) { // only happens in One Flag CTF
+		if (self->client->ps.powerups[PW_NEUTRALFLAG]) {  // only happens in One Flag CTF
 			Team_ReturnFlag(TEAM_FREE);
 			self->client->ps.powerups[PW_NEUTRALFLAG] = 0;
 		} else
 #endif
-			if (self->client->ps.powerups[PW_REDFLAG]) { // only happens in standard CTF
+			if (self->client->ps.powerups[PW_REDFLAG]) {  // only happens in standard CTF
 			Team_ReturnFlag(TEAM_RED);
 			self->client->ps.powerups[PW_REDFLAG] = 0;
-		} else if (self->client->ps.powerups[PW_BLUEFLAG]) { // only happens in standard CTF
+		} else if (self->client->ps.powerups[PW_BLUEFLAG]) {  // only happens in standard CTF
 			Team_ReturnFlag(TEAM_BLUE);
 			self->client->ps.powerups[PW_BLUEFLAG] = 0;
 		}
@@ -519,11 +519,11 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	if (!(contents & CONTENTS_NODROP)) {
 		TossClientItems(self);
 	} else {
-		if (self->client->ps.powerups[PW_NEUTRALFLAG]) { // only happens in One Flag CTF
+		if (self->client->ps.powerups[PW_NEUTRALFLAG]) {  // only happens in One Flag CTF
 			Team_ReturnFlag(TEAM_FREE);
-		} else if (self->client->ps.powerups[PW_REDFLAG]) { // only happens in standard CTF
+		} else if (self->client->ps.powerups[PW_REDFLAG]) {  // only happens in standard CTF
 			Team_ReturnFlag(TEAM_RED);
-		} else if (self->client->ps.powerups[PW_BLUEFLAG]) { // only happens in standard CTF
+		} else if (self->client->ps.powerups[PW_BLUEFLAG]) {  // only happens in standard CTF
 			Team_ReturnFlag(TEAM_BLUE);
 		}
 	}
@@ -534,11 +534,11 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	}
 #endif
 
-	Cmd_Score_f(self); // show scores
+	Cmd_Score_f(self);  // show scores
 	// send updated scores to any clients that are following this one,
 	// or they would get stale scoreboards
 	for (i = 0; i < level.maxclients; i++) {
-		gclient_t *client;
+		gclient_t* client;
 
 		client = &level.clients[i];
 		if (client->pers.connected != CON_CONNECTED) {
@@ -552,9 +552,9 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		}
 	}
 
-	self->takedamage = qtrue; // can still be gibbed
+	self->takedamage = qtrue;  // can still be gibbed
 
-	self->s.weapon = WP_NONE;
+	self->s.weapon   = WP_NONE;
 	self->s.powerups = 0;
 	self->r.contents = CONTENTS_CORPSE;
 
@@ -602,7 +602,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 			self->health = GIB_HEALTH + 1;
 		}
 
-		self->client->ps.legsAnim = ((self->client->ps.legsAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | anim;
+		self->client->ps.legsAnim  = ((self->client->ps.legsAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | anim;
 		self->client->ps.torsoAnim = ((self->client->ps.torsoAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | anim;
 
 		G_AddEvent(self, EV_DEATH1 + i, killer);
@@ -628,8 +628,8 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 CheckArmor
 ================
 */
-int CheckArmor(gentity_t *ent, int damage, int dflags) {
-	gclient_t *client;
+int CheckArmor(gentity_t* ent, int damage, int dflags) {
+	gclient_t* client;
 	int        save;
 	int        count;
 
@@ -646,7 +646,7 @@ int CheckArmor(gentity_t *ent, int damage, int dflags) {
 
 	// armor
 	count = client->ps.stats[STAT_ARMOR];
-	save = ceil(damage * ARMOR_PROTECTION);
+	save  = ceil(damage * ARMOR_PROTECTION);
 	if (save >= count)
 		save = count;
 
@@ -698,8 +698,8 @@ int RaySphereIntersections(vec3_t origin, float radius, vec3_t point, vec3_t dir
 G_InvulnerabilityEffect
 ================
 */
-int G_InvulnerabilityEffect(gentity_t *targ, vec3_t dir, vec3_t point, vec3_t impactpoint, vec3_t bouncedir) {
-	gentity_t *impact;
+int G_InvulnerabilityEffect(gentity_t* targ, vec3_t dir, vec3_t point, vec3_t impactpoint, vec3_t bouncedir) {
+	gentity_t* impact;
 	vec3_t     intersections[2], vec;
 	int        n;
 
@@ -754,8 +754,8 @@ dflags		these flags are used to control how T_Damage works
 ============
 */
 
-void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t point, int damage, int dflags, int mod) {
-	gclient_t *client;
+void G_Damage(gentity_t* targ, gentity_t* inflictor, gentity_t* attacker, vec3_t dir, vec3_t point, int damage, int dflags, int mod) {
+	gclient_t* client;
 	int        take;
 	int        asave;
 	int        knockback;
@@ -953,7 +953,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	// the total will be turned into screen blends and view angle kicks
 	// at the end of the frame
 	if (client) {
-		if (attacker) { // FIXME: always true?
+		if (attacker) {  // FIXME: always true?
 			client->ps.persistant[PERS_ATTACKER] = attacker->s.number;
 		} else {
 			client->ps.persistant[PERS_ATTACKER] = ENTITYNUM_WORLD;
@@ -982,7 +982,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	if (targ->client) {
 		// set the last client who damaged the target
 		targ->client->lasthurt_client = attacker->s.number;
-		targ->client->lasthurt_mod = mod;
+		targ->client->lasthurt_mod    = mod;
 	}
 
 	// do the damage
@@ -1016,7 +1016,7 @@ Returns qtrue if the inflictor can directly damage the target.  Used for
 explosions and melee attacks.
 ============
 */
-qboolean CanDamage(gentity_t *targ, vec3_t origin) {
+qboolean CanDamage(gentity_t* targ, vec3_t origin) {
 	// we check if the attacker can damage the target, return qtrue if yes, qfalse if no
 	vec3_t  dest;
 	trace_t tr;
@@ -1101,9 +1101,9 @@ qboolean CanDamage(gentity_t *targ, vec3_t origin) {
 G_RadiusDamage
 ============
 */
-qboolean G_RadiusDamage(vec3_t origin, gentity_t *attacker, float damage, float radius, gentity_t *ignore, int mod) {
+qboolean G_RadiusDamage(vec3_t origin, gentity_t* attacker, float damage, float radius, gentity_t* ignore, int mod) {
 	float      points, dist;
-	gentity_t *ent;
+	gentity_t* ent;
 	int        entityList[MAX_GENTITIES];
 	int        numListedEntities;
 	vec3_t     mins, maxs;

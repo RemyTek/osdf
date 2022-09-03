@@ -11,14 +11,14 @@ Used to group brushes together just for editor convenience.  They are turned int
 /*QUAKED info_camp (0 0.5 0) (-4 -4 -4) (4 4 4)
 Used as a positional target for calculations in the utilities (spotlights, etc), but removed during gameplay.
 */
-void SP_info_camp(gentity_t *self) {
+void SP_info_camp(gentity_t* self) {
 	G_SetOrigin(self, self->s.origin);
 }
 
 /*QUAKED info_null (0 0.5 0) (-4 -4 -4) (4 4 4)
 Used as a positional target for calculations in the utilities (spotlights, etc), but removed during gameplay.
 */
-void SP_info_null(gentity_t *self) {
+void SP_info_null(gentity_t* self) {
 	G_FreeEntity(self);
 }
 
@@ -26,7 +26,7 @@ void SP_info_null(gentity_t *self) {
 Used as a positional target for in-game calculation, like jumppad targets.
 target_position does the same thing
 */
-void SP_info_notnull(gentity_t *self) {
+void SP_info_notnull(gentity_t* self) {
 	G_SetOrigin(self, self->s.origin);
 }
 
@@ -37,7 +37,7 @@ Linear checbox gives linear falloff instead of inverse square
 Lights pointed at a target will be spotlights.
 "radius" overrides the default 64 unit radius of a spotlight at the target point.
 */
-void SP_light(gentity_t *self) {
+void SP_light(gentity_t* self) {
 	G_FreeEntity(self);
 }
 
@@ -49,16 +49,16 @@ TELEPORTERS
 =================================================================================
 */
 
-void TeleportPlayer(gentity_t *player, vec3_t origin, vec3_t angles) {
-	gentity_t *tent;
+void TeleportPlayer(gentity_t* player, vec3_t origin, vec3_t angles) {
+	gentity_t* tent;
 
 	// use temp events at source and destination to prevent the effect
 	// from getting dropped by a second player event
 	if (player->client->sess.sessionTeam != TEAM_SPECTATOR) {
-		tent = G_TempEntity(player->client->ps.origin, EV_PLAYER_TELEPORT_OUT);
+		tent              = G_TempEntity(player->client->ps.origin, EV_PLAYER_TELEPORT_OUT);
 		tent->s.clientNum = player->s.clientNum;
 
-		tent = G_TempEntity(origin, EV_PLAYER_TELEPORT_IN);
+		tent              = G_TempEntity(origin, EV_PLAYER_TELEPORT_IN);
 		tent->s.clientNum = player->s.clientNum;
 	}
 
@@ -78,7 +78,7 @@ void TeleportPlayer(gentity_t *player, vec3_t origin, vec3_t angles) {
 		VectorScale(player->client->ps.velocity, g_speed.value * 1.25f, player->client->ps.velocity);
 	}
 
-	player->client->ps.pm_time = 160; // hold time
+	player->client->ps.pm_time = 160;  // hold time
 	player->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
 
 	// toggle the teleport bit so the client knows to not lerp
@@ -112,14 +112,14 @@ Point teleporters at these.
 Now that we don't have teleport destination pads, this is just
 an info_notnull
 */
-void SP_misc_teleporter_dest(gentity_t *ent) {}
+void SP_misc_teleporter_dest(gentity_t* ent) {}
 
 //===========================================================
 
 /*QUAKED misc_model (1 0 0) (-16 -16 -16) (16 16 16)
 "model"		arbitrary .md3 file to display
 */
-void SP_misc_model(gentity_t *ent) {
+void SP_misc_model(gentity_t* ent) {
 
 #if 0
 	ent->s.modelindex = G_ModelIndex( ent->model );
@@ -136,10 +136,10 @@ void SP_misc_model(gentity_t *ent) {
 
 //===========================================================
 
-void locateCamera(gentity_t *ent) {
+void locateCamera(gentity_t* ent) {
 	vec3_t     dir;
-	gentity_t *target;
-	gentity_t *owner;
+	gentity_t* target;
+	gentity_t* owner;
 
 	owner = G_PickTarget(ent->target);
 	if (!owner) {
@@ -185,18 +185,18 @@ void locateCamera(gentity_t *ent) {
 The portal surface nearest this entity will show a view from the targeted misc_portal_camera, or a mirror view if untargeted.
 This must be within 64 world units of the surface!
 */
-void SP_misc_portal_surface(gentity_t *ent) {
+void SP_misc_portal_surface(gentity_t* ent) {
 	VectorClear(ent->r.mins);
 	VectorClear(ent->r.maxs);
 	trap_LinkEntity(ent);
 
 	ent->r.svFlags = SVF_PORTAL;
-	ent->s.eType = ET_PORTAL;
+	ent->s.eType   = ET_PORTAL;
 
 	if (!ent->target) {
 		VectorCopy(ent->s.origin, ent->s.origin2);
 	} else {
-		ent->think = locateCamera;
+		ent->think     = locateCamera;
 		ent->nextthink = level.time + 100;
 	}
 }
@@ -205,7 +205,7 @@ void SP_misc_portal_surface(gentity_t *ent) {
 The target for a misc_portal_director.  You can set either angles or target another entity to determine the direction of view.
 "roll" an angle modifier to orient the camera around the target vector;
 */
-void SP_misc_portal_camera(gentity_t *ent) {
+void SP_misc_portal_camera(gentity_t* ent) {
 	float roll;
 
 	VectorClear(ent->r.mins);
@@ -225,7 +225,7 @@ void SP_misc_portal_camera(gentity_t *ent) {
 ======================================================================
 */
 
-void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator) {
+void Use_Shooter(gentity_t* ent, gentity_t* other, gentity_t* activator) {
 	vec3_t dir;
 	float  deg;
 	vec3_t up, right;
@@ -265,14 +265,14 @@ void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator) {
 	G_AddEvent(ent, EV_FIRE_WEAPON, 0);
 }
 
-static void InitShooter_Finish(gentity_t *ent) {
-	ent->enemy = G_PickTarget(ent->target);
-	ent->think = 0;
+static void InitShooter_Finish(gentity_t* ent) {
+	ent->enemy     = G_PickTarget(ent->target);
+	ent->think     = 0;
 	ent->nextthink = 0;
 }
 
-void InitShooter(gentity_t *ent, int weapon) {
-	ent->use = Use_Shooter;
+void InitShooter(gentity_t* ent, int weapon) {
+	ent->use      = Use_Shooter;
 	ent->s.weapon = weapon;
 
 	RegisterItem(BG_FindItemForWeapon(weapon));
@@ -285,7 +285,7 @@ void InitShooter(gentity_t *ent, int weapon) {
 	ent->random = sin(M_PI * ent->random / 180);
 	// target might be a moving object, so we can't set movedir for it
 	if (ent->target) {
-		ent->think = InitShooter_Finish;
+		ent->think     = InitShooter_Finish;
 		ent->nextthink = level.time + 500;
 	}
 	trap_LinkEntity(ent);
@@ -295,7 +295,7 @@ void InitShooter(gentity_t *ent, int weapon) {
 Fires at either the target or the current direction.
 "random" the number of degrees of deviance from the taget. (1.0 default)
 */
-void SP_shooter_rocket(gentity_t *ent) {
+void SP_shooter_rocket(gentity_t* ent) {
 	InitShooter(ent, WP_ROCKET_LAUNCHER);
 }
 
@@ -303,7 +303,7 @@ void SP_shooter_rocket(gentity_t *ent) {
 Fires at either the target or the current direction.
 "random" is the number of degrees of deviance from the taget. (1.0 default)
 */
-void SP_shooter_plasma(gentity_t *ent) {
+void SP_shooter_plasma(gentity_t* ent) {
 	InitShooter(ent, WP_PLASMAGUN);
 }
 
@@ -311,22 +311,22 @@ void SP_shooter_plasma(gentity_t *ent) {
 Fires at either the target or the current direction.
 "random" is the number of degrees of deviance from the taget. (1.0 default)
 */
-void SP_shooter_grenade(gentity_t *ent) {
+void SP_shooter_grenade(gentity_t* ent) {
 	InitShooter(ent, WP_GRENADE_LAUNCHER);
 }
 
 #ifdef MISSIONPACK
-static void PortalDie(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod) {
+static void PortalDie(gentity_t* self, gentity_t* inflictor, gentity_t* attacker, int damage, int mod) {
 	G_FreeEntity(self);
 	// FIXME do something more interesting
 }
 
-void DropPortalDestination(gentity_t *player) {
-	gentity_t *ent;
+void DropPortalDestination(gentity_t* player) {
+	gentity_t* ent;
 	vec3_t     snapped;
 
 	// create the portal destination
-	ent = G_Spawn();
+	ent               = G_Spawn();
 	ent->s.modelindex = G_ModelIndex("models/powerups/teleporter/tele_exit.md3");
 
 	VectorCopy(player->s.pos.trBase, snapped);
@@ -335,30 +335,30 @@ void DropPortalDestination(gentity_t *player) {
 	VectorCopy(player->r.mins, ent->r.mins);
 	VectorCopy(player->r.maxs, ent->r.maxs);
 
-	ent->classname = "hi_portal destination";
+	ent->classname    = "hi_portal destination";
 	ent->s.pos.trType = TR_STATIONARY;
 
 	ent->r.contents = CONTENTS_CORPSE;
 	ent->takedamage = qtrue;
-	ent->health = 200;
-	ent->die = PortalDie;
+	ent->health     = 200;
+	ent->die        = PortalDie;
 
 	VectorCopy(player->s.apos.trBase, ent->s.angles);
 
-	ent->think = G_FreeEntity;
+	ent->think     = G_FreeEntity;
 	ent->nextthink = level.time + 2 * 60 * 1000;
 
 	trap_LinkEntity(ent);
 
 	player->client->portalID = ++level.portalSequence;
-	ent->count = player->client->portalID;
+	ent->count               = player->client->portalID;
 
 	// give the item back so they can drop the source now
 	player->client->ps.stats[STAT_HOLDABLE_ITEM] = BG_FindItem("Portal") - bg_itemlist;
 }
 
-static void PortalTouch(gentity_t *self, gentity_t *other, trace_t *trace) {
-	gentity_t *destination;
+static void PortalTouch(gentity_t* self, gentity_t* other, trace_t* trace) {
+	gentity_t* destination;
 
 	// see if we will even let other try to use it
 	if (other->health <= 0) {
@@ -371,13 +371,13 @@ static void PortalTouch(gentity_t *self, gentity_t *other, trace_t *trace) {
 	//		return;
 	//	}
 
-	if (other->client->ps.powerups[PW_NEUTRALFLAG]) { // only happens in One Flag CTF
+	if (other->client->ps.powerups[PW_NEUTRALFLAG]) {  // only happens in One Flag CTF
 		Drop_Item(other, BG_FindItemForPowerup(PW_NEUTRALFLAG), 0);
 		other->client->ps.powerups[PW_NEUTRALFLAG] = 0;
-	} else if (other->client->ps.powerups[PW_REDFLAG]) { // only happens in standard CTF
+	} else if (other->client->ps.powerups[PW_REDFLAG]) {  // only happens in standard CTF
 		Drop_Item(other, BG_FindItemForPowerup(PW_REDFLAG), 0);
 		other->client->ps.powerups[PW_REDFLAG] = 0;
-	} else if (other->client->ps.powerups[PW_BLUEFLAG]) { // only happens in standard CTF
+	} else if (other->client->ps.powerups[PW_BLUEFLAG]) {  // only happens in standard CTF
 		Drop_Item(other, BG_FindItemForPowerup(PW_BLUEFLAG), 0);
 		other->client->ps.powerups[PW_BLUEFLAG] = 0;
 	}
@@ -402,19 +402,19 @@ static void PortalTouch(gentity_t *self, gentity_t *other, trace_t *trace) {
 	TeleportPlayer(other, destination->s.pos.trBase, destination->s.angles);
 }
 
-static void PortalEnable(gentity_t *self) {
-	self->touch = PortalTouch;
-	self->think = G_FreeEntity;
+static void PortalEnable(gentity_t* self) {
+	self->touch     = PortalTouch;
+	self->think     = G_FreeEntity;
 	self->nextthink = level.time + 2 * 60 * 1000;
 }
 
-void DropPortalSource(gentity_t *player) {
-	gentity_t *ent;
-	gentity_t *destination;
+void DropPortalSource(gentity_t* player) {
+	gentity_t* ent;
+	gentity_t* destination;
 	vec3_t     snapped;
 
 	// create the portal source
-	ent = G_Spawn();
+	ent               = G_Spawn();
 	ent->s.modelindex = G_ModelIndex("models/powerups/teleporter/tele_enter.md3");
 
 	VectorCopy(player->s.pos.trBase, snapped);
@@ -423,23 +423,23 @@ void DropPortalSource(gentity_t *player) {
 	VectorCopy(player->r.mins, ent->r.mins);
 	VectorCopy(player->r.maxs, ent->r.maxs);
 
-	ent->classname = "hi_portal source";
+	ent->classname    = "hi_portal source";
 	ent->s.pos.trType = TR_STATIONARY;
 
 	ent->r.contents = CONTENTS_CORPSE | CONTENTS_TRIGGER;
 	ent->takedamage = qtrue;
-	ent->health = 200;
-	ent->die = PortalDie;
+	ent->health     = 200;
+	ent->die        = PortalDie;
 
 	trap_LinkEntity(ent);
 
-	ent->count = player->client->portalID;
+	ent->count               = player->client->portalID;
 	player->client->portalID = 0;
 
 	//	ent->spawnflags = player->client->ps.persistant[PERS_TEAM];
 
 	ent->nextthink = level.time + 1000;
-	ent->think = PortalEnable;
+	ent->think     = PortalEnable;
 
 	// find the destination
 	destination = NULL;

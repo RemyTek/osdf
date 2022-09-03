@@ -11,12 +11,12 @@ G_ResetHistory
 Clear out the given client's history (should be called when the teleport bit is flipped)
 ============
 */
-void G_ResetHistory(gentity_t *ent) {
+void G_ResetHistory(gentity_t* ent) {
 	int        i, t, dt;
-	gclient_t *client;
+	gclient_t* client;
 
 	client = ent->client;
-	dt = 1000 / sv_fps.integer;
+	dt     = 1000 / sv_fps.integer;
 
 	// fill up the history with data (assume the current position)
 	client->historyHead = NUM_CLIENT_HISTORY - 1;
@@ -35,9 +35,9 @@ G_StoreHistory
 Keep track of where the client's been
 ============
 */
-void G_StoreHistory(gentity_t *ent) {
+void G_StoreHistory(gentity_t* ent) {
 	int        head;
-	gclient_t *client;
+	gclient_t* client;
 
 	client = ent->client;
 
@@ -76,9 +76,9 @@ G_TimeShiftClient
 Move a client back to where he was at the specified "time"
 =================
 */
-void G_TimeShiftClient(gentity_t *ent, int time, qboolean debug, gentity_t *debugger) {
+void G_TimeShiftClient(gentity_t* ent, int time, qboolean debug, gentity_t* debugger) {
 	int        j, k;
-	gclient_t *client;
+	gclient_t* client;
 
 	// find two entries in the history whose times sandwich "time"
 	// assumes no two adjacent records have the same timestamp
@@ -141,9 +141,9 @@ Move ALL clients back to where they were at the specified "ltime",
 except for "skip"
 =====================
 */
-void G_TimeShiftAllClients(int ltime, gentity_t *skip) {
+void G_TimeShiftAllClients(int ltime, gentity_t* skip) {
 	int        i;
-	gentity_t *ent;
+	gentity_t* ent;
 
 	// for every client
 	ent = &g_entities[0];
@@ -166,7 +166,7 @@ G_DoTimeShiftFor
 Decide what time to shift everyone back to, and do it
 ================
 */
-void G_DoTimeShiftFor(gentity_t *ent) {
+void G_DoTimeShiftFor(gentity_t* ent) {
 	int time;
 
 	// don't time shift for mistakes or bots
@@ -193,7 +193,7 @@ G_UnTimeShiftClient
 Move a client back to where he was before the time shift
 ===================
 */
-void G_UnTimeShiftClient(gentity_t *ent) {
+void G_UnTimeShiftClient(gentity_t* ent) {
 	// if it was saved
 	if (ent->client->saved.leveltime == level.time) {
 		// move it back
@@ -215,9 +215,9 @@ Move ALL the clients back to where they were before the time shift,
 except for "skip"
 =======================
 */
-void G_UnTimeShiftAllClients(gentity_t *skip) {
+void G_UnTimeShiftAllClients(gentity_t* skip) {
 	int        i;
-	gentity_t *ent;
+	gentity_t* ent;
 	qboolean   linked;
 
 	ent = &g_entities[0];
@@ -243,7 +243,7 @@ G_UndoTimeShiftFor
 Put everyone except for this client back where they were
 ==================
 */
-void G_UndoTimeShiftFor(gentity_t *ent) {
+void G_UndoTimeShiftFor(gentity_t* ent) {
 
 	// don't un-time shift for mistakes or bots
 	if (!ent->inuse || !ent->client || (ent->r.svFlags & SVF_BOT)) {
@@ -289,7 +289,7 @@ Advance the given entity frametime seconds, sliding as appropriate
 */
 #define MAX_CLIP_PLANES 5
 
-qboolean G_PredictPlayerSlideMove(gentity_t *ent, float frametime) {
+qboolean G_PredictPlayerSlideMove(gentity_t* ent, float frametime) {
 	int     bumpcount, numbumps;
 	vec3_t  dir;
 	float   d;
@@ -338,7 +338,7 @@ qboolean G_PredictPlayerSlideMove(gentity_t *ent, float frametime) {
 		}
 
 		if (trace.fraction == 1) {
-			break; // moved the entire distance
+			break;  // moved the entire distance
 		}
 
 		time_left -= time_left * trace.fraction;
@@ -377,7 +377,7 @@ qboolean G_PredictPlayerSlideMove(gentity_t *ent, float frametime) {
 		for (i = 0; i < numplanes; i++) {
 			into = DotProduct(velocity, planes[i]);
 			if (into >= 0.1) {
-				continue; // move doesn't interact with the plane
+				continue;  // move doesn't interact with the plane
 			}
 
 			// slide along the plane
@@ -393,7 +393,7 @@ qboolean G_PredictPlayerSlideMove(gentity_t *ent, float frametime) {
 				}
 
 				if (DotProduct(clipVelocity, planes[j]) >= 0.1) {
-					continue; // move doesn't interact with the plane
+					continue;  // move doesn't interact with the plane
 				}
 
 				// try clipping the move to the plane
@@ -423,7 +423,7 @@ qboolean G_PredictPlayerSlideMove(gentity_t *ent, float frametime) {
 					}
 
 					if (DotProduct(clipVelocity, planes[k]) >= 0.1) {
-						continue; // move doesn't interact with the plane
+						continue;  // move doesn't interact with the plane
 					}
 
 					// stop dead at a tripple plane interaction
@@ -453,7 +453,7 @@ G_PredictPlayerStepSlideMove
 Advance the given entity frametime seconds, stepping and sliding as appropriate
 ============================
 */
-void G_PredictPlayerStepSlideMove(gentity_t *ent, float frametime) {
+void G_PredictPlayerStepSlideMove(gentity_t* ent, float frametime) {
 	vec3_t start_o, start_v;
 	// vec3_t down_o, down_v;
 	vec3_t  down, up;
@@ -478,7 +478,7 @@ void G_PredictPlayerStepSlideMove(gentity_t *ent, float frametime) {
 	// test the player position if they were a stepheight higher
 	trap_Trace(&trace, start_o, ent->r.mins, ent->r.maxs, up, ent->s.number, ent->clipmask);
 	if (trace.allsolid) {
-		return; // can't step up
+		return;  // can't step up
 	}
 
 	stepSize = trace.endpos[2] - start_o[2];
@@ -510,6 +510,6 @@ Advance the given entity frametime seconds, stepping and sliding as appropriate
 This is the entry point to the server-side-only prediction code
 ===================
 */
-void G_PredictPlayerMove(gentity_t *ent, float frametime) {
+void G_PredictPlayerMove(gentity_t* ent, float frametime) {
 	G_PredictPlayerStepSlideMove(ent, frametime);
 }

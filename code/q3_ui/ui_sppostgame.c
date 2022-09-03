@@ -14,16 +14,16 @@ SINGLE PLAYER POSTGAME MENU
 
 #define AWARD_PRESENTATION_TIME 2000
 
-#define ART_MENU0 "menu/art/menu_0"
-#define ART_MENU1 "menu/art/menu_1"
+#define ART_MENU0   "menu/art/menu_0"
+#define ART_MENU1   "menu/art/menu_1"
 #define ART_REPLAY0 "menu/art/replay_0"
 #define ART_REPLAY1 "menu/art/replay_1"
-#define ART_NEXT0 "menu/art/next_0"
-#define ART_NEXT1 "menu/art/next_1"
+#define ART_NEXT0   "menu/art/next_0"
+#define ART_NEXT1   "menu/art/next_1"
 
 #define ID_AGAIN 10
-#define ID_NEXT 11
-#define ID_MENU 12
+#define ID_NEXT  11
+#define ID_MENU  12
 
 typedef struct {
 	menuframework_s menu;
@@ -31,44 +31,44 @@ typedef struct {
 	menubitmap_s    item_next;
 	menubitmap_s    item_menu;
 
-	int phase;
-	int ignoreKeysTime;
-	int starttime;
-	int scoreboardtime;
-	int serverId;
+	int             phase;
+	int             ignoreKeysTime;
+	int             starttime;
+	int             scoreboardtime;
+	int             serverId;
 
-	int clientNums[MAX_SCOREBOARD_CLIENTS];
-	int ranks[MAX_SCOREBOARD_CLIENTS];
-	int scores[MAX_SCOREBOARD_CLIENTS];
+	int             clientNums[MAX_SCOREBOARD_CLIENTS];
+	int             ranks[MAX_SCOREBOARD_CLIENTS];
+	int             scores[MAX_SCOREBOARD_CLIENTS];
 
-	char placeNames[3][64];
+	char            placeNames[3][64];
 
-	int         level;
-	int         numClients;
-	int         won;
-	int         numAwards;
-	int         awardsEarned[6];
-	int         awardsLevels[6];
-	qboolean    playedSound[6];
-	int         lastTier;
-	sfxHandle_t winnerSound;
+	int             level;
+	int             numClients;
+	int             won;
+	int             numAwards;
+	int             awardsEarned[6];
+	int             awardsLevels[6];
+	qboolean        playedSound[6];
+	int             lastTier;
+	sfxHandle_t     winnerSound;
 } postgameMenuInfo_t;
 
 static postgameMenuInfo_t postgameMenuInfo;
 static char               arenainfo[MAX_INFO_VALUE];
 
-char *ui_medalNames[] = {"Accuracy", "Impressive", "Excellent", "Gauntlet", "Frags", "Perfect"};
-char *ui_medalPicNames[] = {"menu/medals/medal_accuracy", "menu/medals/medal_impressive", "menu/medals/medal_excellent",
-                            "menu/medals/medal_gauntlet", "menu/medals/medal_frags",      "menu/medals/medal_victory"};
-char *ui_medalSounds[] = {"sound/feedback/accuracy.wav", "sound/feedback/impressive_a.wav", "sound/feedback/excellent_a.wav",
-                          "sound/feedback/gauntlet.wav", "sound/feedback/frags.wav",        "sound/feedback/perfect.wav"};
+char*                     ui_medalNames[]    = {"Accuracy", "Impressive", "Excellent", "Gauntlet", "Frags", "Perfect"};
+char*                     ui_medalPicNames[] = {"menu/medals/medal_accuracy", "menu/medals/medal_impressive", "menu/medals/medal_excellent",
+                                                "menu/medals/medal_gauntlet", "menu/medals/medal_frags",      "menu/medals/medal_victory"};
+char*                     ui_medalSounds[]   = {"sound/feedback/accuracy.wav", "sound/feedback/impressive_a.wav", "sound/feedback/excellent_a.wav",
+                                                "sound/feedback/gauntlet.wav", "sound/feedback/frags.wav",        "sound/feedback/perfect.wav"};
 
 /*
 =================
 UI_SPPostgameMenu_AgainEvent
 =================
 */
-static void UI_SPPostgameMenu_AgainEvent(void *ptr, int event) {
+static void UI_SPPostgameMenu_AgainEvent(void* ptr, int event) {
 	if (event != QM_ACTIVATED) {
 		return;
 	}
@@ -81,12 +81,12 @@ static void UI_SPPostgameMenu_AgainEvent(void *ptr, int event) {
 UI_SPPostgameMenu_NextEvent
 =================
 */
-static void UI_SPPostgameMenu_NextEvent(void *ptr, int event) {
+static void UI_SPPostgameMenu_NextEvent(void* ptr, int event) {
 	int         currentSet;
 	int         levelSet;
 	int         level;
 	int         currentLevel;
-	const char *arenaInfo;
+	const char* arenaInfo;
 
 	if (event != QM_ACTIVATED) {
 		return;
@@ -124,7 +124,7 @@ static void UI_SPPostgameMenu_NextEvent(void *ptr, int event) {
 UI_SPPostgameMenu_MenuEvent
 =================
 */
-static void UI_SPPostgameMenu_MenuEvent(void *ptr, int event) {
+static void UI_SPPostgameMenu_MenuEvent(void* ptr, int event) {
 	if (event != QM_ACTIVATED) {
 		return;
 	}
@@ -144,15 +144,15 @@ static sfxHandle_t UI_SPPostgameMenu_MenuKey(int key) {
 
 	if (postgameMenuInfo.phase == 1) {
 		trap_Cmd_ExecuteText(EXEC_APPEND, "abort_podium\n");
-		postgameMenuInfo.phase = 2;
-		postgameMenuInfo.starttime = uis.realtime;
+		postgameMenuInfo.phase          = 2;
+		postgameMenuInfo.starttime      = uis.realtime;
 		postgameMenuInfo.ignoreKeysTime = uis.realtime + 250;
 		return 0;
 	}
 
 	if (postgameMenuInfo.phase == 2) {
-		postgameMenuInfo.phase = 3;
-		postgameMenuInfo.starttime = uis.realtime;
+		postgameMenuInfo.phase          = 3;
+		postgameMenuInfo.starttime      = uis.realtime;
 		postgameMenuInfo.ignoreKeysTime = uis.realtime + 250;
 		return 0;
 	}
@@ -164,7 +164,7 @@ static sfxHandle_t UI_SPPostgameMenu_MenuKey(int key) {
 	return Menu_DefaultKey(&postgameMenuInfo.menu, key);
 }
 
-static int medalLocations[6] = {144, 448, 88, 504, 32, 560};
+static int  medalLocations[6] = {144, 448, 88, 504, 32, 560};
 
 static void UI_SPPostgameMenu_DrawAwardsMedals(int max) {
 	int  n;
@@ -174,9 +174,9 @@ static void UI_SPPostgameMenu_DrawAwardsMedals(int max) {
 	char buf[16];
 
 	for (n = 0; n < max; n++) {
-		x = medalLocations[n];
-		y = 64;
-		medal = postgameMenuInfo.awardsEarned[n];
+		x      = medalLocations[n];
+		y      = 64;
+		medal  = postgameMenuInfo.awardsEarned[n];
 		amount = postgameMenuInfo.awardsLevels[n];
 
 		UI_DrawNamedPic(x, y, 48, 48, ui_medalPicNames[medal]);
@@ -200,10 +200,10 @@ static void UI_SPPostgameMenu_DrawAwardsPresentation(int timer) {
 	vec4_t color;
 
 	awardNum = timer / AWARD_PRESENTATION_TIME;
-	atimer = timer % AWARD_PRESENTATION_TIME;
+	atimer   = timer % AWARD_PRESENTATION_TIME;
 
 	color[0] = color[1] = color[2] = 1.0f;
-	color[3] = (float)(AWARD_PRESENTATION_TIME - atimer) / (float)AWARD_PRESENTATION_TIME;
+	color[3]                       = (float)(AWARD_PRESENTATION_TIME - atimer) / (float)AWARD_PRESENTATION_TIME;
 	UI_DrawProportionalString(320, 64, ui_medalNames[postgameMenuInfo.awardsEarned[awardNum]], UI_CENTER, color);
 
 	UI_SPPostgameMenu_DrawAwardsMedals(awardNum + 1);
@@ -280,7 +280,7 @@ static void UI_SPPostgameMenu_MenuDraw(void) {
 		if (timer < 5000) {
 			return;
 		}
-		postgameMenuInfo.phase = 2;
+		postgameMenuInfo.phase     = 2;
 		postgameMenuInfo.starttime = uis.realtime;
 	}
 
@@ -293,7 +293,7 @@ static void UI_SPPostgameMenu_MenuDraw(void) {
 				return;
 			}
 
-			postgameMenuInfo.phase = 3;
+			postgameMenuInfo.phase     = 3;
 			postgameMenuInfo.starttime = uis.realtime;
 		} else {
 			UI_SPPostgameMenu_DrawAwardsPresentation(timer);
@@ -382,48 +382,48 @@ UI_SPPostgameMenu_Init
 */
 static void UI_SPPostgameMenu_Init(void) {
 	postgameMenuInfo.menu.wrapAround = qtrue;
-	postgameMenuInfo.menu.key = UI_SPPostgameMenu_MenuKey;
-	postgameMenuInfo.menu.draw = UI_SPPostgameMenu_MenuDraw;
-	postgameMenuInfo.ignoreKeysTime = uis.realtime + 1500;
+	postgameMenuInfo.menu.key        = UI_SPPostgameMenu_MenuKey;
+	postgameMenuInfo.menu.draw       = UI_SPPostgameMenu_MenuDraw;
+	postgameMenuInfo.ignoreKeysTime  = uis.realtime + 1500;
 
 	UI_SPPostgameMenu_Cache();
 
-	postgameMenuInfo.item_menu.generic.type = MTYPE_BITMAP;
-	postgameMenuInfo.item_menu.generic.name = ART_MENU0;
-	postgameMenuInfo.item_menu.generic.flags = QMF_LEFT_JUSTIFY | QMF_PULSEIFFOCUS | QMF_INACTIVE;
-	postgameMenuInfo.item_menu.generic.x = 0;
-	postgameMenuInfo.item_menu.generic.y = 480 - 64;
+	postgameMenuInfo.item_menu.generic.type     = MTYPE_BITMAP;
+	postgameMenuInfo.item_menu.generic.name     = ART_MENU0;
+	postgameMenuInfo.item_menu.generic.flags    = QMF_LEFT_JUSTIFY | QMF_PULSEIFFOCUS | QMF_INACTIVE;
+	postgameMenuInfo.item_menu.generic.x        = 0;
+	postgameMenuInfo.item_menu.generic.y        = 480 - 64;
 	postgameMenuInfo.item_menu.generic.callback = UI_SPPostgameMenu_MenuEvent;
-	postgameMenuInfo.item_menu.generic.id = ID_MENU;
-	postgameMenuInfo.item_menu.width = 128;
-	postgameMenuInfo.item_menu.height = 64;
-	postgameMenuInfo.item_menu.focuspic = ART_MENU1;
+	postgameMenuInfo.item_menu.generic.id       = ID_MENU;
+	postgameMenuInfo.item_menu.width            = 128;
+	postgameMenuInfo.item_menu.height           = 64;
+	postgameMenuInfo.item_menu.focuspic         = ART_MENU1;
 
-	postgameMenuInfo.item_again.generic.type = MTYPE_BITMAP;
-	postgameMenuInfo.item_again.generic.name = ART_REPLAY0;
-	postgameMenuInfo.item_again.generic.flags = QMF_CENTER_JUSTIFY | QMF_PULSEIFFOCUS | QMF_INACTIVE;
-	postgameMenuInfo.item_again.generic.x = 320;
-	postgameMenuInfo.item_again.generic.y = 480 - 64;
+	postgameMenuInfo.item_again.generic.type     = MTYPE_BITMAP;
+	postgameMenuInfo.item_again.generic.name     = ART_REPLAY0;
+	postgameMenuInfo.item_again.generic.flags    = QMF_CENTER_JUSTIFY | QMF_PULSEIFFOCUS | QMF_INACTIVE;
+	postgameMenuInfo.item_again.generic.x        = 320;
+	postgameMenuInfo.item_again.generic.y        = 480 - 64;
 	postgameMenuInfo.item_again.generic.callback = UI_SPPostgameMenu_AgainEvent;
-	postgameMenuInfo.item_again.generic.id = ID_AGAIN;
-	postgameMenuInfo.item_again.width = 128;
-	postgameMenuInfo.item_again.height = 64;
-	postgameMenuInfo.item_again.focuspic = ART_REPLAY1;
+	postgameMenuInfo.item_again.generic.id       = ID_AGAIN;
+	postgameMenuInfo.item_again.width            = 128;
+	postgameMenuInfo.item_again.height           = 64;
+	postgameMenuInfo.item_again.focuspic         = ART_REPLAY1;
 
-	postgameMenuInfo.item_next.generic.type = MTYPE_BITMAP;
-	postgameMenuInfo.item_next.generic.name = ART_NEXT0;
-	postgameMenuInfo.item_next.generic.flags = QMF_RIGHT_JUSTIFY | QMF_PULSEIFFOCUS | QMF_INACTIVE;
-	postgameMenuInfo.item_next.generic.x = 640;
-	postgameMenuInfo.item_next.generic.y = 480 - 64;
+	postgameMenuInfo.item_next.generic.type     = MTYPE_BITMAP;
+	postgameMenuInfo.item_next.generic.name     = ART_NEXT0;
+	postgameMenuInfo.item_next.generic.flags    = QMF_RIGHT_JUSTIFY | QMF_PULSEIFFOCUS | QMF_INACTIVE;
+	postgameMenuInfo.item_next.generic.x        = 640;
+	postgameMenuInfo.item_next.generic.y        = 480 - 64;
 	postgameMenuInfo.item_next.generic.callback = UI_SPPostgameMenu_NextEvent;
-	postgameMenuInfo.item_next.generic.id = ID_NEXT;
-	postgameMenuInfo.item_next.width = 128;
-	postgameMenuInfo.item_next.height = 64;
-	postgameMenuInfo.item_next.focuspic = ART_NEXT1;
+	postgameMenuInfo.item_next.generic.id       = ID_NEXT;
+	postgameMenuInfo.item_next.width            = 128;
+	postgameMenuInfo.item_next.height           = 64;
+	postgameMenuInfo.item_next.focuspic         = ART_NEXT1;
 
-	Menu_AddItem(&postgameMenuInfo.menu, (void *)&postgameMenuInfo.item_menu);
-	Menu_AddItem(&postgameMenuInfo.menu, (void *)&postgameMenuInfo.item_again);
-	Menu_AddItem(&postgameMenuInfo.menu, (void *)&postgameMenuInfo.item_next);
+	Menu_AddItem(&postgameMenuInfo.menu, (void*)&postgameMenuInfo.item_menu);
+	Menu_AddItem(&postgameMenuInfo.menu, (void*)&postgameMenuInfo.item_again);
+	Menu_AddItem(&postgameMenuInfo.menu, (void*)&postgameMenuInfo.item_next);
 }
 
 static void Prepname(int index) {
@@ -454,7 +454,7 @@ void UI_SPPostgameMenu_f(void) {
 	int         playerClientNum;
 	int         n;
 	int         oldFrags, newFrags;
-	const char *arena;
+	const char* arena;
 	int         awardValues[6];
 	char        map[MAX_QPATH];
 	char        info[MAX_INFO_STRING];
@@ -475,8 +475,8 @@ void UI_SPPostgameMenu_f(void) {
 	postgameMenuInfo.level = atoi(Info_ValueForKey(arenainfo, "num"));
 
 	postgameMenuInfo.numClients = atoi(UI_Argv(1));
-	playerClientNum = atoi(UI_Argv(2));
-	playerGameRank = 8; // in case they ended game as a spectator
+	playerClientNum             = atoi(UI_Argv(2));
+	playerGameRank              = 8;  // in case they ended game as a spectator
 
 	if (postgameMenuInfo.numClients > MAX_SCOREBOARD_CLIENTS) {
 		postgameMenuInfo.numClients = MAX_SCOREBOARD_CLIENTS;
@@ -484,8 +484,8 @@ void UI_SPPostgameMenu_f(void) {
 
 	for (n = 0; n < postgameMenuInfo.numClients; n++) {
 		postgameMenuInfo.clientNums[n] = atoi(UI_Argv(8 + n * 3 + 1));
-		postgameMenuInfo.ranks[n] = atoi(UI_Argv(8 + n * 3 + 2));
-		postgameMenuInfo.scores[n] = atoi(UI_Argv(8 + n * 3 + 3));
+		postgameMenuInfo.ranks[n]      = atoi(UI_Argv(8 + n * 3 + 2));
+		postgameMenuInfo.scores[n]     = atoi(UI_Argv(8 + n * 3 + 3));
 
 		if (postgameMenuInfo.clientNums[n] == playerClientNum) {
 			playerGameRank = (postgameMenuInfo.ranks[n] & ~RANK_TIED_FLAG) + 1;
@@ -495,12 +495,12 @@ void UI_SPPostgameMenu_f(void) {
 	UI_SetBestScore(postgameMenuInfo.level, playerGameRank);
 
 	// process award stats and prepare presentation data
-	awardValues[AWARD_ACCURACY] = atoi(UI_Argv(3));
+	awardValues[AWARD_ACCURACY]   = atoi(UI_Argv(3));
 	awardValues[AWARD_IMPRESSIVE] = atoi(UI_Argv(4));
-	awardValues[AWARD_EXCELLENT] = atoi(UI_Argv(5));
-	awardValues[AWARD_GAUNTLET] = atoi(UI_Argv(6));
-	awardValues[AWARD_FRAGS] = atoi(UI_Argv(7));
-	awardValues[AWARD_PERFECT] = atoi(UI_Argv(8));
+	awardValues[AWARD_EXCELLENT]  = atoi(UI_Argv(5));
+	awardValues[AWARD_GAUNTLET]   = atoi(UI_Argv(6));
+	awardValues[AWARD_FRAGS]      = atoi(UI_Argv(7));
+	awardValues[AWARD_PERFECT]    = atoi(UI_Argv(8));
 
 	postgameMenuInfo.numAwards = 0;
 
@@ -554,7 +554,7 @@ void UI_SPPostgameMenu_f(void) {
 		postgameMenuInfo.won = -1;
 	}
 
-	postgameMenuInfo.starttime = uis.realtime;
+	postgameMenuInfo.starttime      = uis.realtime;
 	postgameMenuInfo.scoreboardtime = uis.realtime;
 
 	trap_Key_SetCatcher(KEYCATCH_UI);

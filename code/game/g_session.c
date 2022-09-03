@@ -19,9 +19,9 @@ G_WriteClientSessionData
 Called on game shutdown
 ================
 */
-void G_WriteClientSessionData(gclient_t *client) {
-	const char *s;
-	const char *var;
+void G_WriteClientSessionData(gclient_t* client) {
+	const char* s;
+	const char* var;
 
 	s =
 		va("%i %i %i %i %i %i %i", client->sess.sessionTeam, client->sess.spectatorTime, client->sess.spectatorState, client->sess.spectatorClient,
@@ -39,9 +39,9 @@ G_ReadSessionData
 Called on a reconnect
 ================
 */
-void G_ReadClientSessionData(gclient_t *client) {
+void G_ReadClientSessionData(gclient_t* client) {
 	char        s[MAX_STRING_CHARS];
-	const char *var;
+	const char* var;
 	int         teamLeader;
 	int         spectatorState;
 	int         sessionTeam;
@@ -53,9 +53,9 @@ void G_ReadClientSessionData(gclient_t *client) {
 		s, "%i %i %i %i %i %i %i", &sessionTeam, &client->sess.spectatorTime, &spectatorState, &client->sess.spectatorClient, &client->sess.wins,
 		&client->sess.losses, &teamLeader);
 
-	client->sess.sessionTeam = (team_t)sessionTeam;
+	client->sess.sessionTeam    = (team_t)sessionTeam;
 	client->sess.spectatorState = (spectatorState_t)spectatorState;
-	client->sess.teamLeader = (qboolean)teamLeader;
+	client->sess.teamLeader     = (qboolean)teamLeader;
 
 	if ((unsigned)client->sess.sessionTeam >= TEAM_NUM_TEAMS) {
 		client->sess.sessionTeam = TEAM_SPECTATOR;
@@ -67,8 +67,8 @@ void G_ReadClientSessionData(gclient_t *client) {
 G_ClearClientSessionData
 ================
 */
-void G_ClearClientSessionData(gclient_t *client) {
-	const char *var;
+void G_ClearClientSessionData(gclient_t* client) {
+	const char* var;
 
 	var = va("session%i", client - level.clients);
 	trap_Cvar_Set(var, "");
@@ -81,8 +81,8 @@ G_InitSessionData
 Called on a first-time connect
 ================
 */
-void G_InitSessionData(gclient_t *client, const char *team, qboolean isBot) {
-	clientSession_t *sess;
+void G_InitSessionData(gclient_t* client, const char* team, qboolean isBot) {
+	clientSession_t* sess;
 
 	sess = &client->sess;
 
@@ -145,7 +145,7 @@ void G_InitSessionData(gclient_t *client, const char *team, qboolean isBot) {
 	}
 
 	sess->spectatorState = SPECTATOR_FREE;
-	sess->spectatorTime = 0;
+	sess->spectatorTime  = 0;
 }
 
 /*

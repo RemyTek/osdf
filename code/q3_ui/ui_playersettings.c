@@ -2,76 +2,76 @@
 //
 #include "ui_local.h"
 
-#define ART_FRAMEL "menu/art/frame2_l"
-#define ART_FRAMER "menu/art/frame1_r"
-#define ART_MODEL0 "menu/art/model_0"
-#define ART_MODEL1 "menu/art/model_1"
-#define ART_BACK0 "menu/art/back_0"
-#define ART_BACK1 "menu/art/back_1"
-#define ART_FX_BASE "menu/art/fx_base"
-#define ART_FX_BLUE "menu/art/fx_blue"
-#define ART_FX_CYAN "menu/art/fx_cyan"
-#define ART_FX_GREEN "menu/art/fx_grn"
-#define ART_FX_RED "menu/art/fx_red"
-#define ART_FX_TEAL "menu/art/fx_teal"
-#define ART_FX_WHITE "menu/art/fx_white"
+#define ART_FRAMEL    "menu/art/frame2_l"
+#define ART_FRAMER    "menu/art/frame1_r"
+#define ART_MODEL0    "menu/art/model_0"
+#define ART_MODEL1    "menu/art/model_1"
+#define ART_BACK0     "menu/art/back_0"
+#define ART_BACK1     "menu/art/back_1"
+#define ART_FX_BASE   "menu/art/fx_base"
+#define ART_FX_BLUE   "menu/art/fx_blue"
+#define ART_FX_CYAN   "menu/art/fx_cyan"
+#define ART_FX_GREEN  "menu/art/fx_grn"
+#define ART_FX_RED    "menu/art/fx_red"
+#define ART_FX_TEAL   "menu/art/fx_teal"
+#define ART_FX_WHITE  "menu/art/fx_white"
 #define ART_FX_YELLOW "menu/art/fx_yel"
 
-#define ID_NAME 10
+#define ID_NAME     10
 #define ID_HANDICAP 11
-#define ID_EFFECTS 12
-#define ID_BACK 13
-#define ID_MODEL 14
+#define ID_EFFECTS  12
+#define ID_BACK     13
+#define ID_MODEL    14
 
 #define MAX_NAMELENGTH 20
 
 typedef struct {
 	menuframework_s menu;
 
-	menutext_s   banner;
-	menubitmap_s framel;
-	menubitmap_s framer;
-	menubitmap_s player;
+	menutext_s      banner;
+	menubitmap_s    framel;
+	menubitmap_s    framer;
+	menubitmap_s    player;
 
-	menufield_s name;
-	menulist_s  handicap;
-	menulist_s  effects;
+	menufield_s     name;
+	menulist_s      handicap;
+	menulist_s      effects;
 
-	menubitmap_s back;
-	menubitmap_s model;
-	menubitmap_s item_null;
+	menubitmap_s    back;
+	menubitmap_s    model;
+	menubitmap_s    item_null;
 
-	qhandle_t    fxBasePic;
-	qhandle_t    fxPic;
-	playerInfo_t playerinfo;
-	int          current_fx;
-	char         playerModel[MAX_QPATH];
+	qhandle_t       fxBasePic;
+	qhandle_t       fxPic;
+	playerInfo_t    playerinfo;
+	int             current_fx;
+	char            playerModel[MAX_QPATH];
 } playersettings_t;
 
 static playersettings_t s_playersettings;
 
-static const char *handicap_items[] = {"None", "95", "90", "85", "80", "75", "70", "65", "60", "55", "50",
-                                       "45",   "40", "35", "30", "25", "20", "15", "10", "5",  NULL};
+static const char*      handicap_items[] = {"None", "95", "90", "85", "80", "75", "70", "65", "60", "55", "50",
+                                            "45",   "40", "35", "30", "25", "20", "15", "10", "5",  NULL};
 
 /*
 =================
 PlayerSettings_DrawName
 =================
 */
-static void PlayerSettings_DrawName(void *self) {
-	menufield_s *f;
+static void PlayerSettings_DrawName(void* self) {
+	menufield_s* f;
 	qboolean     focus;
 	int          style;
-	char        *txt;
+	char*        txt;
 	char         c;
-	float       *color;
+	float*       color;
 	int          n;
 	int          basex, x, y;
 	char         name[32];
 
-	f = (menufield_s *)self;
+	f     = (menufield_s*)self;
 	basex = f->generic.x;
-	y = f->generic.y;
+	y     = f->generic.y;
 	focus = (f->generic.parent->cursor == f->generic.menuPosition);
 
 	style = UI_LEFT | UI_SMALLFONT;
@@ -86,9 +86,9 @@ static void PlayerSettings_DrawName(void *self) {
 	// draw the actual name
 	basex += 64;
 	y += PROP_HEIGHT;
-	txt = f->field.buffer;
+	txt   = f->field.buffer;
 	color = g_color_table[ColorIndex(COLOR_WHITE)];
-	x = basex;
+	x     = basex;
 	while ((c = *txt) != 0) {
 		if (!focus && Q_IsColorString(txt)) {
 			n = ColorIndex(*(txt + 1));
@@ -129,13 +129,13 @@ static void PlayerSettings_DrawName(void *self) {
 PlayerSettings_DrawHandicap
 =================
 */
-static void PlayerSettings_DrawHandicap(void *self) {
-	menulist_s *item;
+static void PlayerSettings_DrawHandicap(void* self) {
+	menulist_s* item;
 	qboolean    focus;
 	int         style;
-	float      *color;
+	float*      color;
 
-	item = (menulist_s *)self;
+	item  = (menulist_s*)self;
 	focus = (item->generic.parent->cursor == item->generic.menuPosition);
 
 	style = UI_LEFT | UI_SMALLFONT;
@@ -154,15 +154,15 @@ static void PlayerSettings_DrawHandicap(void *self) {
 PlayerSettings_DrawEffects
 =================
 */
-static void PlayerSettings_DrawEffects(void *self) {
-	menulist_s *item;
+static void PlayerSettings_DrawEffects(void* self) {
+	menulist_s* item;
 	qboolean    focus;
 	int         style;
-	float      *color;
+	float*      color;
 	vec4_t      colors;
 	int         c;
 
-	item = (menulist_s *)self;
+	item  = (menulist_s*)self;
 	focus = (item->generic.parent->cursor == item->generic.menuPosition);
 
 	style = UI_LEFT | UI_SMALLFONT;
@@ -175,7 +175,7 @@ static void PlayerSettings_DrawEffects(void *self) {
 	UI_DrawProportionalString(item->generic.x, item->generic.y, "Effects", style, color);
 
 	UI_DrawHandlePic(item->generic.x + 64, item->generic.y + PROP_HEIGHT + 8, 128, 8, s_playersettings.fxBasePic);
-	c = item->curvalue + 1;
+	c         = item->curvalue + 1;
 	colors[0] = (c >> 0) & 1;
 	colors[1] = (c >> 1) & 1;
 	colors[2] = (c >> 2) & 1;
@@ -190,8 +190,8 @@ static void PlayerSettings_DrawEffects(void *self) {
 PlayerSettings_DrawPlayer
 =================
 */
-static void PlayerSettings_DrawPlayer(void *self) {
-	menubitmap_s *b;
+static void PlayerSettings_DrawPlayer(void* self) {
+	menubitmap_s* b;
 	vec3_t        viewangles;
 	char          buf[MAX_QPATH];
 
@@ -200,13 +200,13 @@ static void PlayerSettings_DrawPlayer(void *self) {
 		UI_PlayerInfo_SetModel(&s_playersettings.playerinfo, buf);
 		strcpy(s_playersettings.playerModel, buf);
 
-		viewangles[YAW] = 180 - 30;
+		viewangles[YAW]   = 180 - 30;
 		viewangles[PITCH] = 0;
-		viewangles[ROLL] = 0;
+		viewangles[ROLL]  = 0;
 		UI_PlayerInfo_SetInfo(&s_playersettings.playerinfo, LEGS_IDLE, TORSO_STAND, viewangles, vec3_origin, WP_MACHINEGUN, qfalse);
 	}
 
-	b = (menubitmap_s *)self;
+	b = (menubitmap_s*)self;
 	UI_DrawPlayer(b->generic.x, b->generic.y, b->width, b->height, &s_playersettings.playerinfo, uis.realtime / 2);
 }
 
@@ -261,15 +261,15 @@ static void PlayerSettings_SetMenuItems(void) {
 	// model/skin
 	memset(&s_playersettings.playerinfo, 0, sizeof(playerInfo_t));
 
-	viewangles[YAW] = 180 - 30;
+	viewangles[YAW]   = 180 - 30;
 	viewangles[PITCH] = 0;
-	viewangles[ROLL] = 0;
+	viewangles[ROLL]  = 0;
 
 	UI_PlayerInfo_SetModel(&s_playersettings.playerinfo, UI_Cvar_VariableString("model"));
 	UI_PlayerInfo_SetInfo(&s_playersettings.playerinfo, LEGS_IDLE, TORSO_STAND, viewangles, vec3_origin, WP_MACHINEGUN, qfalse);
 
 	// handicap
-	h = Com_Clamp(5, 100, trap_Cvar_VariableValue("handicap"));
+	h                                  = Com_Clamp(5, 100, trap_Cvar_VariableValue("handicap"));
 	s_playersettings.handicap.curvalue = 20 - h / 5;
 }
 
@@ -278,12 +278,12 @@ static void PlayerSettings_SetMenuItems(void) {
 PlayerSettings_MenuEvent
 =================
 */
-static void PlayerSettings_MenuEvent(void *ptr, int event) {
+static void PlayerSettings_MenuEvent(void* ptr, int event) {
 	if (event != QM_ACTIVATED) {
 		return;
 	}
 
-	switch (((menucommon_s *)ptr)->id) {
+	switch (((menucommon_s*)ptr)->id) {
 	case ID_HANDICAP:
 		trap_Cvar_Set("handicap", va("%i", 100 - 25 * s_playersettings.handicap.curvalue));
 		break;
@@ -312,108 +312,108 @@ static void PlayerSettings_MenuInit(void) {
 
 	PlayerSettings_Cache();
 
-	s_playersettings.menu.key = PlayerSettings_MenuKey;
+	s_playersettings.menu.key        = PlayerSettings_MenuKey;
 	s_playersettings.menu.wrapAround = qtrue;
 	s_playersettings.menu.fullscreen = qtrue;
 
 	s_playersettings.banner.generic.type = MTYPE_BTEXT;
-	s_playersettings.banner.generic.x = 320;
-	s_playersettings.banner.generic.y = 16;
-	s_playersettings.banner.string = "PLAYER SETTINGS";
-	s_playersettings.banner.color = color_white;
-	s_playersettings.banner.style = UI_CENTER;
+	s_playersettings.banner.generic.x    = 320;
+	s_playersettings.banner.generic.y    = 16;
+	s_playersettings.banner.string       = "PLAYER SETTINGS";
+	s_playersettings.banner.color        = color_white;
+	s_playersettings.banner.style        = UI_CENTER;
 
-	s_playersettings.framel.generic.type = MTYPE_BITMAP;
-	s_playersettings.framel.generic.name = ART_FRAMEL;
+	s_playersettings.framel.generic.type  = MTYPE_BITMAP;
+	s_playersettings.framel.generic.name  = ART_FRAMEL;
 	s_playersettings.framel.generic.flags = QMF_LEFT_JUSTIFY | QMF_INACTIVE;
-	s_playersettings.framel.generic.x = 0;
-	s_playersettings.framel.generic.y = 78;
-	s_playersettings.framel.width = 256;
-	s_playersettings.framel.height = 329;
+	s_playersettings.framel.generic.x     = 0;
+	s_playersettings.framel.generic.y     = 78;
+	s_playersettings.framel.width         = 256;
+	s_playersettings.framel.height        = 329;
 
-	s_playersettings.framer.generic.type = MTYPE_BITMAP;
-	s_playersettings.framer.generic.name = ART_FRAMER;
+	s_playersettings.framer.generic.type  = MTYPE_BITMAP;
+	s_playersettings.framer.generic.name  = ART_FRAMER;
 	s_playersettings.framer.generic.flags = QMF_LEFT_JUSTIFY | QMF_INACTIVE;
-	s_playersettings.framer.generic.x = 376;
-	s_playersettings.framer.generic.y = 76;
-	s_playersettings.framer.width = 256;
-	s_playersettings.framer.height = 334;
+	s_playersettings.framer.generic.x     = 376;
+	s_playersettings.framer.generic.y     = 76;
+	s_playersettings.framer.width         = 256;
+	s_playersettings.framer.height        = 334;
 
-	y = 144;
-	s_playersettings.name.generic.type = MTYPE_FIELD;
-	s_playersettings.name.generic.flags = QMF_NODEFAULTINIT;
-	s_playersettings.name.generic.ownerdraw = PlayerSettings_DrawName;
+	y                                        = 144;
+	s_playersettings.name.generic.type       = MTYPE_FIELD;
+	s_playersettings.name.generic.flags      = QMF_NODEFAULTINIT;
+	s_playersettings.name.generic.ownerdraw  = PlayerSettings_DrawName;
 	s_playersettings.name.field.widthInChars = MAX_NAMELENGTH;
-	s_playersettings.name.field.maxchars = MAX_NAMELENGTH;
-	s_playersettings.name.generic.x = 192;
-	s_playersettings.name.generic.y = y;
-	s_playersettings.name.generic.left = 192 - 8;
-	s_playersettings.name.generic.top = y - 8;
-	s_playersettings.name.generic.right = 192 + 200;
-	s_playersettings.name.generic.bottom = y + 2 * PROP_HEIGHT;
+	s_playersettings.name.field.maxchars     = MAX_NAMELENGTH;
+	s_playersettings.name.generic.x          = 192;
+	s_playersettings.name.generic.y          = y;
+	s_playersettings.name.generic.left       = 192 - 8;
+	s_playersettings.name.generic.top        = y - 8;
+	s_playersettings.name.generic.right      = 192 + 200;
+	s_playersettings.name.generic.bottom     = y + 2 * PROP_HEIGHT;
 
 	y += 3 * PROP_HEIGHT;
-	s_playersettings.handicap.generic.type = MTYPE_SPINCONTROL;
-	s_playersettings.handicap.generic.flags = QMF_NODEFAULTINIT;
-	s_playersettings.handicap.generic.id = ID_HANDICAP;
+	s_playersettings.handicap.generic.type      = MTYPE_SPINCONTROL;
+	s_playersettings.handicap.generic.flags     = QMF_NODEFAULTINIT;
+	s_playersettings.handicap.generic.id        = ID_HANDICAP;
 	s_playersettings.handicap.generic.ownerdraw = PlayerSettings_DrawHandicap;
-	s_playersettings.handicap.generic.x = 192;
-	s_playersettings.handicap.generic.y = y;
-	s_playersettings.handicap.generic.left = 192 - 8;
-	s_playersettings.handicap.generic.top = y - 8;
-	s_playersettings.handicap.generic.right = 192 + 200;
-	s_playersettings.handicap.generic.bottom = y + 2 * PROP_HEIGHT;
-	s_playersettings.handicap.numitems = 20;
+	s_playersettings.handicap.generic.x         = 192;
+	s_playersettings.handicap.generic.y         = y;
+	s_playersettings.handicap.generic.left      = 192 - 8;
+	s_playersettings.handicap.generic.top       = y - 8;
+	s_playersettings.handicap.generic.right     = 192 + 200;
+	s_playersettings.handicap.generic.bottom    = y + 2 * PROP_HEIGHT;
+	s_playersettings.handicap.numitems          = 20;
 
 	y += 3 * PROP_HEIGHT;
-	s_playersettings.effects.generic.type = MTYPE_SPINCONTROL;
-	s_playersettings.effects.generic.flags = QMF_NODEFAULTINIT;
-	s_playersettings.effects.generic.id = ID_EFFECTS;
+	s_playersettings.effects.generic.type      = MTYPE_SPINCONTROL;
+	s_playersettings.effects.generic.flags     = QMF_NODEFAULTINIT;
+	s_playersettings.effects.generic.id        = ID_EFFECTS;
 	s_playersettings.effects.generic.ownerdraw = PlayerSettings_DrawEffects;
-	s_playersettings.effects.generic.x = 192;
-	s_playersettings.effects.generic.y = y;
-	s_playersettings.effects.generic.left = 192 - 8;
-	s_playersettings.effects.generic.top = y - 8;
-	s_playersettings.effects.generic.right = 192 + 200;
-	s_playersettings.effects.generic.bottom = y + 2 * PROP_HEIGHT;
-	s_playersettings.effects.numitems = 7;
+	s_playersettings.effects.generic.x         = 192;
+	s_playersettings.effects.generic.y         = y;
+	s_playersettings.effects.generic.left      = 192 - 8;
+	s_playersettings.effects.generic.top       = y - 8;
+	s_playersettings.effects.generic.right     = 192 + 200;
+	s_playersettings.effects.generic.bottom    = y + 2 * PROP_HEIGHT;
+	s_playersettings.effects.numitems          = 7;
 
-	s_playersettings.model.generic.type = MTYPE_BITMAP;
-	s_playersettings.model.generic.name = ART_MODEL0;
-	s_playersettings.model.generic.flags = QMF_RIGHT_JUSTIFY | QMF_PULSEIFFOCUS;
-	s_playersettings.model.generic.id = ID_MODEL;
+	s_playersettings.model.generic.type     = MTYPE_BITMAP;
+	s_playersettings.model.generic.name     = ART_MODEL0;
+	s_playersettings.model.generic.flags    = QMF_RIGHT_JUSTIFY | QMF_PULSEIFFOCUS;
+	s_playersettings.model.generic.id       = ID_MODEL;
 	s_playersettings.model.generic.callback = PlayerSettings_MenuEvent;
-	s_playersettings.model.generic.x = 640;
-	s_playersettings.model.generic.y = 480 - 64;
-	s_playersettings.model.width = 128;
-	s_playersettings.model.height = 64;
-	s_playersettings.model.focuspic = ART_MODEL1;
+	s_playersettings.model.generic.x        = 640;
+	s_playersettings.model.generic.y        = 480 - 64;
+	s_playersettings.model.width            = 128;
+	s_playersettings.model.height           = 64;
+	s_playersettings.model.focuspic         = ART_MODEL1;
 
-	s_playersettings.player.generic.type = MTYPE_BITMAP;
-	s_playersettings.player.generic.flags = QMF_INACTIVE;
+	s_playersettings.player.generic.type      = MTYPE_BITMAP;
+	s_playersettings.player.generic.flags     = QMF_INACTIVE;
 	s_playersettings.player.generic.ownerdraw = PlayerSettings_DrawPlayer;
-	s_playersettings.player.generic.x = 400;
-	s_playersettings.player.generic.y = -40;
-	s_playersettings.player.width = 32 * 10;
-	s_playersettings.player.height = 56 * 10;
+	s_playersettings.player.generic.x         = 400;
+	s_playersettings.player.generic.y         = -40;
+	s_playersettings.player.width             = 32 * 10;
+	s_playersettings.player.height            = 56 * 10;
 
-	s_playersettings.back.generic.type = MTYPE_BITMAP;
-	s_playersettings.back.generic.name = ART_BACK0;
-	s_playersettings.back.generic.flags = QMF_LEFT_JUSTIFY | QMF_PULSEIFFOCUS;
-	s_playersettings.back.generic.id = ID_BACK;
+	s_playersettings.back.generic.type     = MTYPE_BITMAP;
+	s_playersettings.back.generic.name     = ART_BACK0;
+	s_playersettings.back.generic.flags    = QMF_LEFT_JUSTIFY | QMF_PULSEIFFOCUS;
+	s_playersettings.back.generic.id       = ID_BACK;
 	s_playersettings.back.generic.callback = PlayerSettings_MenuEvent;
-	s_playersettings.back.generic.x = 0;
-	s_playersettings.back.generic.y = 480 - 64;
-	s_playersettings.back.width = 128;
-	s_playersettings.back.height = 64;
-	s_playersettings.back.focuspic = ART_BACK1;
+	s_playersettings.back.generic.x        = 0;
+	s_playersettings.back.generic.y        = 480 - 64;
+	s_playersettings.back.width            = 128;
+	s_playersettings.back.height           = 64;
+	s_playersettings.back.focuspic         = ART_BACK1;
 
-	s_playersettings.item_null.generic.type = MTYPE_BITMAP;
+	s_playersettings.item_null.generic.type  = MTYPE_BITMAP;
 	s_playersettings.item_null.generic.flags = QMF_LEFT_JUSTIFY | QMF_MOUSEONLY | QMF_SILENT;
-	s_playersettings.item_null.generic.x = 0;
-	s_playersettings.item_null.generic.y = 0;
-	s_playersettings.item_null.width = 640;
-	s_playersettings.item_null.height = 480;
+	s_playersettings.item_null.generic.x     = 0;
+	s_playersettings.item_null.generic.y     = 0;
+	s_playersettings.item_null.width         = 640;
+	s_playersettings.item_null.height        = 480;
 
 	Menu_AddItem(&s_playersettings.menu, &s_playersettings.banner);
 	Menu_AddItem(&s_playersettings.menu, &s_playersettings.framel);
@@ -446,7 +446,7 @@ void PlayerSettings_Cache(void) {
 	trap_R_RegisterShaderNoMip(ART_BACK1);
 
 	s_playersettings.fxBasePic = trap_R_RegisterShaderNoMip(ART_FX_BASE);
-	s_playersettings.fxPic = trap_R_RegisterShaderNoMip(ART_FX_WHITE);
+	s_playersettings.fxPic     = trap_R_RegisterShaderNoMip(ART_FX_WHITE);
 }
 
 /*

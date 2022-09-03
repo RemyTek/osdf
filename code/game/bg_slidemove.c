@@ -46,7 +46,7 @@ qboolean PM_SlideMove(qboolean gravity) {
 		VectorCopy(pm->ps->velocity, endVelocity);
 		endVelocity[2] -= pm->ps->gravity * pml.frametime;
 		pm->ps->velocity[2] = (pm->ps->velocity[2] + endVelocity[2]) * 0.5;
-		primal_velocity[2] = endVelocity[2];
+		primal_velocity[2]  = endVelocity[2];
 		if (pml.groundPlane) {
 			// slide along the ground plane
 			PM_ClipVelocity(pm->ps->velocity, pml.groundTrace.plane.normal, pm->ps->velocity, OVERCLIP);
@@ -77,7 +77,7 @@ qboolean PM_SlideMove(qboolean gravity) {
 
 		if (trace.allsolid) {
 			// entity is completely trapped in another solid
-			pm->ps->velocity[2] = 0; // don't build up falling damage, but allow sideways acceleration
+			pm->ps->velocity[2] = 0;  // don't build up falling damage, but allow sideways acceleration
 			return qtrue;
 		}
 
@@ -87,7 +87,7 @@ qboolean PM_SlideMove(qboolean gravity) {
 		}
 
 		if (trace.fraction == 1) {
-			break; // moved the entire distance
+			break;  // moved the entire distance
 		}
 
 		// save entity for contact
@@ -126,7 +126,7 @@ qboolean PM_SlideMove(qboolean gravity) {
 		for (i = 0; i < numplanes; i++) {
 			into = DotProduct(pm->ps->velocity, planes[i]);
 			if (into >= 0.1) {
-				continue; // move doesn't interact with the plane
+				continue;  // move doesn't interact with the plane
 			}
 
 			// see how hard we are hitting things
@@ -146,7 +146,7 @@ qboolean PM_SlideMove(qboolean gravity) {
 					continue;
 				}
 				if (DotProduct(clipVelocity, planes[j]) >= 0.1) {
-					continue; // move doesn't interact with the plane
+					continue;  // move doesn't interact with the plane
 				}
 
 				// try clipping the move to the plane
@@ -175,7 +175,7 @@ qboolean PM_SlideMove(qboolean gravity) {
 						continue;
 					}
 					if (DotProduct(clipVelocity, planes[k]) >= 0.1) {
-						continue; // move doesn't interact with the plane
+						continue;  // move doesn't interact with the plane
 					}
 
 					// stop dead at a tripple plane interaction
@@ -222,7 +222,7 @@ void PM_StepSlideMove(qboolean gravity) {
 	VectorCopy(pm->ps->velocity, start_v);
 
 	if (PM_SlideMove(gravity) == 0) {
-		return; // we got exactly where we wanted to go first try
+		return;  // we got exactly where we wanted to go first try
 	}
 
 	VectorCopy(start_o, down);
@@ -246,7 +246,7 @@ void PM_StepSlideMove(qboolean gravity) {
 		if (pm->debugLevel) {
 			Com_Printf("%i:bend can't step\n", c_pmove);
 		}
-		return; // can't step up
+		return;  // can't step up
 	}
 
 	stepSize = trace.endpos[2] - start_o[2];

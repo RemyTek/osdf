@@ -580,7 +580,7 @@ int bg_numItems = ARRAY_LEN(bg_itemlist) - 1;
 BG_FindItemForPowerup
 ==============
 */
-gitem_t *BG_FindItemForPowerup(powerup_t pw) {
+gitem_t* BG_FindItemForPowerup(powerup_t pw) {
 	int i;
 
 	for (i = 0; i < bg_numItems; i++) {
@@ -598,7 +598,7 @@ gitem_t *BG_FindItemForPowerup(powerup_t pw) {
 BG_FindItemForHoldable
 ==============
 */
-gitem_t *BG_FindItemForHoldable(holdable_t pw) {
+gitem_t* BG_FindItemForHoldable(holdable_t pw) {
 	int i;
 
 	for (i = 0; i < bg_numItems; i++) {
@@ -618,8 +618,8 @@ BG_FindItemForWeapon
 
 ===============
 */
-gitem_t *BG_FindItemForWeapon(weapon_t weapon) {
-	gitem_t *it;
+gitem_t* BG_FindItemForWeapon(weapon_t weapon) {
+	gitem_t* it;
 
 	for (it = bg_itemlist + 1; it->classname; it++) {
 		if (it->giType == IT_WEAPON && it->giTag == weapon) {
@@ -637,8 +637,8 @@ BG_FindItem
 
 ===============
 */
-gitem_t *BG_FindItem(const char *pickupName) {
-	gitem_t *it;
+gitem_t* BG_FindItem(const char* pickupName) {
+	gitem_t* it;
 
 	for (it = bg_itemlist + 1; it->classname; it++) {
 		if (!Q_stricmp(it->pickup_name, pickupName))
@@ -656,7 +656,7 @@ Items can be picked up without actually touching their physical bounds to make
 grabbing them easier
 ============
 */
-qboolean BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime) {
+qboolean BG_PlayerTouchesItem(playerState_t* ps, entityState_t* item, int atTime) {
 	vec3_t origin;
 
 	BG_EvaluateTrajectory(&item->pos, atTime, origin);
@@ -678,8 +678,8 @@ Returns false if the item should not be picked up.
 This needs to be the same for client side prediction and server use.
 ================
 */
-qboolean BG_CanItemBeGrabbed(int gametype, const entityState_t *ent, const playerState_t *ps) {
-	gitem_t *item;
+qboolean BG_CanItemBeGrabbed(int gametype, const entityState_t* ent, const playerState_t* ps) {
+	gitem_t* item;
 #ifdef MISSIONPACK
 	int upperBound;
 #endif
@@ -692,11 +692,11 @@ qboolean BG_CanItemBeGrabbed(int gametype, const entityState_t *ent, const playe
 
 	switch (item->giType) {
 	case IT_WEAPON:
-		return qtrue; // weapons are always picked up
+		return qtrue;  // weapons are always picked up
 
 	case IT_AMMO:
 		if (ps->ammo[item->giTag] >= 200) {
-			return qfalse; // can't hold any more
+			return qfalse;  // can't hold any more
 		}
 		return qtrue;
 
@@ -744,7 +744,7 @@ qboolean BG_CanItemBeGrabbed(int gametype, const entityState_t *ent, const playe
 		return qtrue;
 
 	case IT_POWERUP:
-		return qtrue; // powerups are always picked up
+		return qtrue;  // powerups are always picked up
 
 #ifdef MISSIONPACK
 	case IT_PERSISTANT_POWERUP:
@@ -764,7 +764,7 @@ qboolean BG_CanItemBeGrabbed(int gametype, const entityState_t *ent, const playe
 		return qtrue;
 #endif
 
-	case IT_TEAM: // team items, such as flags
+	case IT_TEAM:  // team items, such as flags
 #ifdef MISSIONPACK
 		if (gametype == GT_1FCTF) {
 			// neutral flag can always be picked up
@@ -831,7 +831,7 @@ BG_EvaluateTrajectory
 
 ================
 */
-void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result) {
+void BG_EvaluateTrajectory(const trajectory_t* tr, int atTime, vec3_t result) {
 	float deltaTime;
 	float phase;
 
@@ -841,28 +841,28 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result) {
 		VectorCopy(tr->trBase, result);
 		break;
 	case TR_LINEAR:
-		deltaTime = (atTime - tr->trTime) * 0.001; // milliseconds to seconds
+		deltaTime = (atTime - tr->trTime) * 0.001;  // milliseconds to seconds
 		VectorMA(tr->trBase, deltaTime, tr->trDelta, result);
 		break;
 	case TR_SINE:
 		deltaTime = ((atTime - tr->trTime) % tr->trDuration) / (float)tr->trDuration;
-		phase = sin(deltaTime * M_PI * 2);
+		phase     = sin(deltaTime * M_PI * 2);
 		VectorMA(tr->trBase, phase, tr->trDelta, result);
 		break;
 	case TR_LINEAR_STOP:
 		if (atTime > tr->trTime + tr->trDuration) {
 			atTime = tr->trTime + tr->trDuration;
 		}
-		deltaTime = (atTime - tr->trTime) * 0.001; // milliseconds to seconds
+		deltaTime = (atTime - tr->trTime) * 0.001;  // milliseconds to seconds
 		if (deltaTime < 0) {
 			deltaTime = 0;
 		}
 		VectorMA(tr->trBase, deltaTime, tr->trDelta, result);
 		break;
 	case TR_GRAVITY:
-		deltaTime = (atTime - tr->trTime) * 0.001; // milliseconds to seconds
+		deltaTime = (atTime - tr->trTime) * 0.001;  // milliseconds to seconds
 		VectorMA(tr->trBase, deltaTime, tr->trDelta, result);
-		result[2] -= 0.5 * DEFAULT_GRAVITY * deltaTime * deltaTime; // FIXME: local gravity...
+		result[2] -= 0.5 * DEFAULT_GRAVITY * deltaTime * deltaTime;  // FIXME: local gravity...
 		break;
 	default:
 		Com_Error(ERR_DROP, "BG_EvaluateTrajectory: unknown trType: %i", tr->trType);
@@ -877,7 +877,7 @@ BG_EvaluateTrajectoryDelta
 For determining velocity at a given time
 ================
 */
-void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t result) {
+void BG_EvaluateTrajectoryDelta(const trajectory_t* tr, int atTime, vec3_t result) {
 	float deltaTime;
 	float phase;
 
@@ -891,7 +891,7 @@ void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t resul
 		break;
 	case TR_SINE:
 		deltaTime = (atTime - tr->trTime) / (float)tr->trDuration;
-		phase = cos(deltaTime * M_PI * 2); // derivative of sin = cos
+		phase     = cos(deltaTime * M_PI * 2);  // derivative of sin = cos
 		phase *= 0.5;
 		VectorScale(tr->trDelta, phase, result);
 		break;
@@ -903,9 +903,9 @@ void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t resul
 		VectorCopy(tr->trDelta, result);
 		break;
 	case TR_GRAVITY:
-		deltaTime = (atTime - tr->trTime) * 0.001; // milliseconds to seconds
+		deltaTime = (atTime - tr->trTime) * 0.001;  // milliseconds to seconds
 		VectorCopy(tr->trDelta, result);
-		result[2] -= DEFAULT_GRAVITY * deltaTime; // FIXME: local gravity...
+		result[2] -= DEFAULT_GRAVITY * deltaTime;  // FIXME: local gravity...
 		break;
 	default:
 		Com_Error(ERR_DROP, "BG_EvaluateTrajectoryDelta: unknown trType: %i", tr->trType);
@@ -913,7 +913,7 @@ void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t resul
 	}
 }
 
-const char *eventnames[EV_MAX] = {
+const char* eventnames[EV_MAX] = {
 	"EV_NONE",
 
 	"EV_FOOTSTEP", "EV_FOOTSTEP_METAL", "EV_FOOTSPLASH", "EV_FOOTWADE", "EV_SWIM",
@@ -922,16 +922,16 @@ const char *eventnames[EV_MAX] = {
 
 	"EV_FALL_SHORT", "EV_FALL_MEDIUM", "EV_FALL_FAR",
 
-	"EV_JUMP_PAD", // boing sound at origin", jump sound on player
+	"EV_JUMP_PAD",  // boing sound at origin", jump sound on player
 
 	"EV_JUMP",
-	"EV_WATER_TOUCH", // foot touches
-	"EV_WATER_LEAVE", // foot leaves
-	"EV_WATER_UNDER", // head touches
-	"EV_WATER_CLEAR", // head leaves
+	"EV_WATER_TOUCH",  // foot touches
+	"EV_WATER_LEAVE",  // foot leaves
+	"EV_WATER_UNDER",  // head touches
+	"EV_WATER_CLEAR",  // head leaves
 
-	"EV_ITEM_PICKUP",        // normal item pickups are predictable
-	"EV_GLOBAL_ITEM_PICKUP", // powerup / team sounds are broadcast to everyone
+	"EV_ITEM_PICKUP",         // normal item pickups are predictable
+	"EV_GLOBAL_ITEM_PICKUP",  // powerup / team sounds are broadcast to everyone
 
 	"EV_NOAMMO", "EV_CHANGE_WEAPON", "EV_FIRE_WEAPON",
 
@@ -940,33 +940,33 @@ const char *eventnames[EV_MAX] = {
 
 	"EV_ITEM_RESPAWN", "EV_ITEM_POP", "EV_PLAYER_TELEPORT_IN", "EV_PLAYER_TELEPORT_OUT",
 
-	"EV_GRENADE_BOUNCE", // eventParm will be the soundindex
+	"EV_GRENADE_BOUNCE",  // eventParm will be the soundindex
 
 	"EV_GENERAL_SOUND",
-	"EV_GLOBAL_SOUND", // no attenuation
+	"EV_GLOBAL_SOUND",  // no attenuation
 	"EV_GLOBAL_TEAM_SOUND",
 
 	"EV_BULLET_HIT_FLESH", "EV_BULLET_HIT_WALL",
 
 	"EV_MISSILE_HIT", "EV_MISSILE_MISS", "EV_MISSILE_MISS_METAL", "EV_RAILTRAIL", "EV_SHOTGUN",
-	"EV_BULLET", // otherEntity is the shooter
+	"EV_BULLET",  // otherEntity is the shooter
 
 	"EV_PAIN", "EV_DEATH1", "EV_DEATH2", "EV_DEATH3", "EV_OBITUARY",
 
 	"EV_POWERUP_QUAD", "EV_POWERUP_BATTLESUIT", "EV_POWERUP_REGEN",
 
-	"EV_GIB_PLAYER", // gib a previously living player
-	"EV_SCOREPLUM",  // score plum
+	"EV_GIB_PLAYER",  // gib a previously living player
+	"EV_SCOREPLUM",   // score plum
 
 	//#ifdef MISSIONPACK
 	"EV_PROXIMITY_MINE_STICK", "EV_PROXIMITY_MINE_TRIGGER",
-	"EV_KAMIKAZE",       // kamikaze explodes
-	"EV_OBELISKEXPLODE", // obelisk explodes
-	"EV_OBELISKPAIN",    // obelisk is in pain
-	"EV_INVUL_IMPACT",   // invulnerability sphere impact
-	"EV_JUICED",         // invulnerability juiced effect
-	"EV_LIGHTNINGBOLT",  // lightning bolt bounced of invulnerability sphere
-						 //#endif
+	"EV_KAMIKAZE",        // kamikaze explodes
+	"EV_OBELISKEXPLODE",  // obelisk explodes
+	"EV_OBELISKPAIN",     // obelisk is in pain
+	"EV_INVUL_IMPACT",    // invulnerability sphere impact
+	"EV_JUICED",          // invulnerability juiced effect
+	"EV_LIGHTNINGBOLT",   // lightning bolt bounced of invulnerability sphere
+                          //#endif
 
 	"EV_DEBUG_LINE", "EV_STOPLOOPINGSOUND", "EV_TAUNT", "EV_TAUNT_YES", "EV_TAUNT_NO", "EV_TAUNT_FOLLOWME", "EV_TAUNT_GETFLAG", "EV_TAUNT_GUARDBASE",
 	"EV_TAUNT_PATROL"
@@ -984,9 +984,9 @@ Handles the sequence numbers
 void CG_StoreEvent(entity_event_t ev, int eventParm, int entityNum);
 #endif
 
-void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize);
+void trap_Cvar_VariableStringBuffer(const char* var_name, char* buffer, int bufsize);
 
-void BG_AddPredictableEventToPlayerstate(entity_event_t newEvent, int eventParm, playerState_t *ps, int entityNum) {
+void BG_AddPredictableEventToPlayerstate(entity_event_t newEvent, int eventParm, playerState_t* ps, int entityNum) {
 
 #ifdef _DEBUG
 	{
@@ -1010,7 +1010,7 @@ void BG_AddPredictableEventToPlayerstate(entity_event_t newEvent, int eventParm,
 	CG_StoreEvent(newEvent, eventParm, entityNum);
 #endif
 
-	ps->events[ps->eventSequence & (MAX_PS_EVENTS - 1)] = newEvent;
+	ps->events[ps->eventSequence & (MAX_PS_EVENTS - 1)]     = newEvent;
 	ps->eventParms[ps->eventSequence & (MAX_PS_EVENTS - 1)] = eventParm;
 	ps->eventSequence++;
 }
@@ -1020,7 +1020,7 @@ void BG_AddPredictableEventToPlayerstate(entity_event_t newEvent, int eventParm,
 BG_TouchJumpPad
 ========================
 */
-void BG_TouchJumpPad(playerState_t *ps, entityState_t *jumppad) {
+void BG_TouchJumpPad(playerState_t* ps, entityState_t* jumppad) {
 	vec3_t angles;
 	float  p;
 	int    effectNum;
@@ -1049,7 +1049,7 @@ void BG_TouchJumpPad(playerState_t *ps, entityState_t *jumppad) {
 		BG_AddPredictableEventToPlayerstate(EV_JUMP_PAD, effectNum, ps, -1);
 	}
 	// remember hitting this jumppad this frame
-	ps->jumppad_ent = jumppad->number;
+	ps->jumppad_ent   = jumppad->number;
 	ps->jumppad_frame = ps->pmove_framecount;
 	// give the player the velocity from the jumppad
 	VectorCopy(jumppad->origin2, ps->velocity);
@@ -1063,7 +1063,7 @@ This is done after each set of usercmd_t on the server,
 and after local prediction on the client
 ========================
 */
-void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean snap) {
+void BG_PlayerStateToEntityState(playerState_t* ps, entityState_t* s, qboolean snap) {
 	int i;
 
 	if (ps->pm_type == PM_INTERMISSION || ps->pm_type == PM_SPECTATOR) {
@@ -1091,10 +1091,10 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean s
 	}
 
 	s->angles2[YAW] = ps->movementDir;
-	s->legsAnim = ps->legsAnim;
-	s->torsoAnim = ps->torsoAnim;
-	s->clientNum = ps->clientNum; // ET_PLAYER looks here instead of at number
-	                              // so corpses can also reference the proper config
+	s->legsAnim     = ps->legsAnim;
+	s->torsoAnim    = ps->torsoAnim;
+	s->clientNum    = ps->clientNum;  // ET_PLAYER looks here instead of at number
+	                                  // so corpses can also reference the proper config
 	s->eFlags = ps->eFlags;
 	if (ps->stats[STAT_HEALTH] <= 0) {
 		s->eFlags |= EF_DEAD;
@@ -1103,7 +1103,7 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean s
 	}
 
 	if (ps->externalEvent) {
-		s->event = ps->externalEvent;
+		s->event     = ps->externalEvent;
 		s->eventParm = ps->externalEventParm;
 	} else if (ps->entityEventSequence < ps->eventSequence) {
 		int seq;
@@ -1111,13 +1111,13 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean s
 		if (ps->entityEventSequence < ps->eventSequence - MAX_PS_EVENTS) {
 			ps->entityEventSequence = ps->eventSequence - MAX_PS_EVENTS;
 		}
-		seq = ps->entityEventSequence & (MAX_PS_EVENTS - 1);
-		s->event = ps->events[seq] | ((ps->entityEventSequence & 3) << 8);
+		seq          = ps->entityEventSequence & (MAX_PS_EVENTS - 1);
+		s->event     = ps->events[seq] | ((ps->entityEventSequence & 3) << 8);
 		s->eventParm = ps->eventParms[seq];
 		ps->entityEventSequence++;
 	}
 
-	s->weapon = ps->weapon;
+	s->weapon          = ps->weapon;
 	s->groundEntityNum = ps->groundEntityNum;
 
 	s->powerups = 0;
@@ -1128,7 +1128,7 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, qboolean s
 	}
 
 	s->loopSound = ps->loopSound;
-	s->generic1 = ps->generic1;
+	s->generic1  = ps->generic1;
 }
 
 /*
@@ -1139,7 +1139,7 @@ This is done after each set of usercmd_t on the server,
 and after local prediction on the client
 ========================
 */
-void BG_PlayerStateToEntityStateExtraPolate(playerState_t *ps, entityState_t *s, int time, qboolean snap) {
+void BG_PlayerStateToEntityStateExtraPolate(playerState_t* ps, entityState_t* s, int time, qboolean snap) {
 	int i;
 
 	if (ps->pm_type == PM_INTERMISSION || ps->pm_type == PM_SPECTATOR) {
@@ -1162,7 +1162,7 @@ void BG_PlayerStateToEntityStateExtraPolate(playerState_t *ps, entityState_t *s,
 	// set the time for linear prediction
 	s->pos.trTime = time;
 	// set maximum extra polation time
-	s->pos.trDuration = 50; // 1000 / sv_fps (default = 20)
+	s->pos.trDuration = 50;  // 1000 / sv_fps (default = 20)
 
 	s->apos.trType = TR_INTERPOLATE;
 	VectorCopy(ps->viewangles, s->apos.trBase);
@@ -1171,10 +1171,10 @@ void BG_PlayerStateToEntityStateExtraPolate(playerState_t *ps, entityState_t *s,
 	}
 
 	s->angles2[YAW] = ps->movementDir;
-	s->legsAnim = ps->legsAnim;
-	s->torsoAnim = ps->torsoAnim;
-	s->clientNum = ps->clientNum; // ET_PLAYER looks here instead of at number
-	                              // so corpses can also reference the proper config
+	s->legsAnim     = ps->legsAnim;
+	s->torsoAnim    = ps->torsoAnim;
+	s->clientNum    = ps->clientNum;  // ET_PLAYER looks here instead of at number
+	                                  // so corpses can also reference the proper config
 	s->eFlags = ps->eFlags;
 	if (ps->stats[STAT_HEALTH] <= 0) {
 		s->eFlags |= EF_DEAD;
@@ -1183,7 +1183,7 @@ void BG_PlayerStateToEntityStateExtraPolate(playerState_t *ps, entityState_t *s,
 	}
 
 	if (ps->externalEvent) {
-		s->event = ps->externalEvent;
+		s->event     = ps->externalEvent;
 		s->eventParm = ps->externalEventParm;
 	} else if (ps->entityEventSequence < ps->eventSequence) {
 		int seq;
@@ -1191,13 +1191,13 @@ void BG_PlayerStateToEntityStateExtraPolate(playerState_t *ps, entityState_t *s,
 		if (ps->entityEventSequence < ps->eventSequence - MAX_PS_EVENTS) {
 			ps->entityEventSequence = ps->eventSequence - MAX_PS_EVENTS;
 		}
-		seq = ps->entityEventSequence & (MAX_PS_EVENTS - 1);
-		s->event = ps->events[seq] | ((ps->entityEventSequence & 3) << 8);
+		seq          = ps->entityEventSequence & (MAX_PS_EVENTS - 1);
+		s->event     = ps->events[seq] | ((ps->entityEventSequence & 3) << 8);
 		s->eventParm = ps->eventParms[seq];
 		ps->entityEventSequence++;
 	}
 
-	s->weapon = ps->weapon;
+	s->weapon          = ps->weapon;
 	s->groundEntityNum = ps->groundEntityNum;
 
 	s->powerups = 0;
@@ -1208,11 +1208,11 @@ void BG_PlayerStateToEntityStateExtraPolate(playerState_t *ps, entityState_t *s,
 	}
 
 	s->loopSound = ps->loopSound;
-	s->generic1 = ps->generic1;
+	s->generic1  = ps->generic1;
 }
 
-int replace_s(char *str1, char *str2, char *src, int max_len) {
-	int   count = 0; // replace count
+int replace_s(char* str1, char* str2, char* src, int max_len) {
+	int   count = 0;  // replace count
 	int   len1, len2, d;
 	char *match, *s0, *s1, *s2, *max;
 
@@ -1223,9 +1223,9 @@ int replace_s(char *str1, char *str2, char *src, int max_len) {
 
 	len1 = (int)strlen(str1);
 	len2 = (int)strlen(str2);
-	d = len2 - len1;
+	d    = len2 - len1;
 
-	if (d > 0) // expand and replace mode
+	if (d > 0)  // expand and replace mode
 	{
 		max = src + max_len;
 		src += strlen(src);
@@ -1257,7 +1257,7 @@ int replace_s(char *str1, char *str2, char *src, int max_len) {
 		} while (match);
 
 		return count;
-	} else if (d < 0) // shrink and replace mode
+	} else if (d < 0)  // shrink and replace mode
 	{
 		do {
 			// shrink source string
@@ -1281,7 +1281,7 @@ int replace_s(char *str1, char *str2, char *src, int max_len) {
 
 		return count;
 	} else
-		do // just replace match
+		do  // just replace match
 		{
 			s2 = str2;
 			while (*s2) {
@@ -1297,7 +1297,7 @@ int replace_s(char *str1, char *str2, char *src, int max_len) {
 	return count;
 }
 
-qboolean replace1(const char match, const char replace, char *str) {
+qboolean replace1(const char match, const char replace, char* str) {
 	qboolean res = qfalse;
 
 	if (!str)
@@ -1306,7 +1306,7 @@ qboolean replace1(const char match, const char replace, char *str) {
 	while (*str) {
 		if (*str == match) {
 			*str = replace;
-			res = qtrue;
+			res  = qtrue;
 		}
 		str++;
 	}
@@ -1314,15 +1314,15 @@ qboolean replace1(const char match, const char replace, char *str) {
 	return res;
 }
 
-char *strtok(char *strToken, const char *strDelimit) {
-	static char *lastStr = NULL;
+char* strtok(char* strToken, const char* strDelimit) {
+	static char* lastStr = NULL;
 
-	const char *delimit = strDelimit;
-	int         loop = 1;
+	const char*  delimit = strDelimit;
+	int          loop    = 1;
 
 	// check some state
 	if (!strToken)
-		strToken = lastStr; // use the last string given then
+		strToken = lastStr;  // use the last string given then
 
 	// if there are no delimiters or no string to work with, bail
 	if (!strToken /*|| !strDelimit */)
@@ -1362,15 +1362,15 @@ char *strtok(char *strToken, const char *strDelimit) {
 		if ('\0' == *lastStr)
 			lastStr = NULL;
 	} else {
-		lastStr = NULL; // clean up for the next call
+		lastStr = NULL;  // clean up for the next call
 	}
 
 	return strToken;
 }
 
-char *BG_StripColor(char *string) {
-	char *d;
-	char *s;
+char* BG_StripColor(char* string) {
+	char* d;
+	char* s;
 	int   c;
 
 	s = string;
@@ -1388,11 +1388,11 @@ char *BG_StripColor(char *string) {
 	return string;
 }
 
-char *EncodedString(const char *in) {
+char* EncodedString(const char* in) {
 	static const char hextab[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 	static char       buf[16384];
 	unsigned int      c;
-	char             *out;
+	char*             out;
 
 	if (!in) {
 		buf[0] = '\0';
@@ -1414,7 +1414,7 @@ char *EncodedString(const char *in) {
 		}
 	}
 	*out = '\0';
-	return (char *)buf;
+	return (char*)buf;
 }
 
 static int hex2dec(char chr) {
@@ -1467,13 +1467,13 @@ static int hex2dec(char chr) {
 	return 0;
 }
 
-char *DecodedString(const char *in) {
+char* DecodedString(const char* in) {
 	static char buf[16384];
-	char       *out, c1, c2;
+	char *      out, c1, c2;
 
 	if (!in) {
 		buf[0] = '\0';
-		return (char *)buf;
+		return (char*)buf;
 	}
 
 	out = buf;
@@ -1494,11 +1494,11 @@ char *DecodedString(const char *in) {
 
 	*out = '\0';
 
-	return (char *)buf;
+	return (char*)buf;
 }
 
 // a bit faster string compare function
-int BG_stricmp(const char *s1, const char *s2) {
+int BG_stricmp(const char* s1, const char* s2) {
 	int c1, c2;
 	do {
 		c1 = locase[(unsigned char)*s1];
@@ -1508,19 +1508,19 @@ int BG_stricmp(const char *s1, const char *s2) {
 		if (c1 != c2)
 			return ((c1 < c2) ? -1 : 1);
 	} while (c1);
-	return 0; // strings are equal
+	return 0;  // strings are equal
 }
 
-char *Q_stristr(const char *str1, const char *str2) {
-	char *cp = (char *)str1;
+char* Q_stristr(const char* str1, const char* str2) {
+	char* cp = (char*)str1;
 	char *s1, *s2;
 
 	if (!*str2)
-		return ((char *)str1);
+		return ((char*)str1);
 
 	while (*cp) {
 		s1 = cp;
-		s2 = (char *)str2;
+		s2 = (char*)str2;
 
 		while (*s1 && locase[(unsigned char)*s1] == locase[(unsigned char)*s2]) {
 			s1++;
@@ -1541,20 +1541,20 @@ char *Q_stristr(const char *str1, const char *str2) {
 BG_CleanName
 ============
 */
-void BG_CleanName(const char *in, char *out, int outSize, const char *blankString) {
+void BG_CleanName(const char* in, char* out, int outSize, const char* blankString) {
 	int   len, colorlessLen;
 	char  ch;
-	char *p;
+	char* p;
 	int   spaces;
 
 	// save room for trailing null byte
 	outSize--;
 
-	len = 0;
+	len          = 0;
 	colorlessLen = 0;
-	p = out;
-	*p = '\0';
-	spaces = 0;
+	p            = out;
+	*p           = '\0';
+	spaces       = 0;
 
 	while (1) {
 		ch = *in++;
@@ -1631,7 +1631,7 @@ Q_strcpy
 string copy, without any checks
 ===================
 */
-void Q_strcpy(char *dst, const char *src) {
+void Q_strcpy(char* dst, const char* src) {
 	char c;
 	while ((c = *src) != '\0') {
 		*dst = c;
@@ -1641,7 +1641,7 @@ void Q_strcpy(char *dst, const char *src) {
 	*dst = '\0';
 }
 
-char *Q_stradd(char *dst, const char *src) {
+char* Q_stradd(char* dst, const char* src) {
 	char c;
 	while ((c = *src) != '\0') {
 		*dst = c;
@@ -1652,17 +1652,17 @@ char *Q_stradd(char *dst, const char *src) {
 	return dst;
 }
 
-int Q_strlen(const char *s) {
-	const char *b = s;
+int Q_strlen(const char* s) {
+	const char* b = s;
 	while (*s != '\0')
 		s++;
 	return s - b;
 }
 
 qboolean BigEndian(void) {
-	const char *s = {"123"};
-	int        *i;
-	i = (void *)s;
+	const char* s = {"123"};
+	int*        i;
+	i = (void*)s;
 	if (*i != 0x00333231)
 		return qtrue;
 	else
@@ -1671,31 +1671,31 @@ qboolean BigEndian(void) {
 
 //=========================================================
 
-#define ALT 0x00000001       /* alternate form */
+#define ALT       0x00000001 /* alternate form */
 #define HEXPREFIX 0x00000002 /* add 0x or 0X prefix */
-#define LADJUST 0x00000004   /* left adjustment */
-#define LONGDBL 0x00000008   /* long double */
-#define LONGINT 0x00000010   /* long integer */
-#define QUADINT 0x00000020   /* quad integer */
-#define SHORTINT 0x00000040  /* short integer */
-#define ZEROPAD 0x00000080   /* zero (as opposed to blank) pad */
-#define FPT 0x00000100       /* floating point number */
-#define REDUCE 0x00000200    /* extension: do not emit anything if value is zero */
+#define LADJUST   0x00000004 /* left adjustment */
+#define LONGDBL   0x00000008 /* long double */
+#define LONGINT   0x00000010 /* long integer */
+#define QUADINT   0x00000020 /* quad integer */
+#define SHORTINT  0x00000040 /* short integer */
+#define ZEROPAD   0x00000080 /* zero (as opposed to blank) pad */
+#define FPT       0x00000100 /* floating point number */
+#define REDUCE    0x00000200 /* extension: do not emit anything if value is zero */
 
 #define to_digit(c) ((c) - '0')
 #define is_digit(c) ((unsigned)to_digit(c) <= 9)
-#define to_char(n) ((n) + '0')
+#define to_char(n)  ((n) + '0')
 
-static void AddInt(char **buf_p, int val, int width, int flags) {
+static void AddInt(char** buf_p, int val, int width, int flags) {
 	char  text[32];
 	int   digits;
 	int   signedVal;
-	char *buf;
+	char* buf;
 
 	if (flags & REDUCE && val == 0)
 		return;
 
-	digits = 0;
+	digits    = 0;
 	signedVal = val;
 	if (val < 0) {
 		val = -val;
@@ -1738,11 +1738,11 @@ static void AddInt(char **buf_p, int val, int width, int flags) {
 	*buf_p = buf;
 }
 
-static void AddFloat(char **buf_p, float fval, int width, int prec, int reduce) {
+static void AddFloat(char** buf_p, float fval, int width, int prec, int reduce) {
 	char  text[32];
 	int   digits;
 	float signedVal;
-	char *buf;
+	char* buf;
 	int   val;
 
 	if (reduce && fval == 0.0f)
@@ -1756,7 +1756,7 @@ static void AddFloat(char **buf_p, float fval, int width, int prec, int reduce) 
 
 	// write the float number
 	digits = 0;
-	val = (int)fval;
+	val    = (int)fval;
 	do {
 		text[digits] = '0' + val % 10;
 		digits++;
@@ -1798,13 +1798,13 @@ static void AddFloat(char **buf_p, float fval, int width, int prec, int reduce) 
 	while (digits < prec) {
 		fval -= (int)fval;
 		fval *= 10.0;
-		val = (int)fval;
+		val          = (int)fval;
 		text[digits] = '0' + val % 10;
 		digits++;
 	}
 
 	if (digits > 0) {
-		buf = *buf_p;
+		buf  = *buf_p;
 		*buf = '.';
 		buf++;
 		for (prec = 0; prec < digits; prec++) {
@@ -1815,15 +1815,15 @@ static void AddFloat(char **buf_p, float fval, int width, int prec, int reduce) 
 	}
 }
 
-static void AddString(char **buf_p, const char *string, int width, int prec) {
+static void AddString(char** buf_p, const char* string, int width, int prec) {
 	int   size;
-	char *buf;
+	char* buf;
 
 	buf = *buf_p;
 
 	if (string == NULL) {
 		string = "(null)";
-		prec = -1;
+		prec   = -1;
 	}
 
 	if (prec >= 0) {
@@ -1862,8 +1862,8 @@ parse and ignore formats we don't support.
 
 returns: number of char written without ending '\0'
 */
-int ED_vsprintf(char *buffer, const char *fmt, va_list ap) {
-	char *buf_p;
+int ED_vsprintf(char* buffer, const char* fmt, va_list ap) {
+	char* buf_p;
 	char  ch;
 	int   flags;
 	int   width;
@@ -1888,7 +1888,7 @@ int ED_vsprintf(char *buffer, const char *fmt, va_list ap) {
 		// reset formatting state
 		flags = 0;
 		width = 0;
-		prec = -1;
+		prec  = -1;
 	rflag:
 		ch = *fmt;
 		fmt++;
@@ -1901,7 +1901,7 @@ int ED_vsprintf(char *buffer, const char *fmt, va_list ap) {
 		case '.':
 			if (*fmt == '*') {
 				fmt++;
-				n = va_arg(ap, int);
+				n    = va_arg(ap, int);
 				prec = n < 0 ? -1 : n;
 				goto rflag;
 			} else {
@@ -1926,7 +1926,7 @@ int ED_vsprintf(char *buffer, const char *fmt, va_list ap) {
 		case '9':
 			n = 0;
 			do {
-				n = 10 * n + (ch - '0');
+				n  = 10 * n + (ch - '0');
 				ch = *fmt;
 				fmt++;
 			} while (is_digit(ch));
@@ -1947,7 +1947,7 @@ int ED_vsprintf(char *buffer, const char *fmt, va_list ap) {
 			AddFloat(&buf_p, va_arg(ap, double), width, prec, flags & REDUCE);
 			break;
 		case 's':
-			AddString(&buf_p, va_arg(ap, char *), width, prec);
+			AddString(&buf_p, va_arg(ap, char*), width, prec);
 			break;
 		case '%':
 			*buf_p = ch;
@@ -1961,14 +1961,14 @@ int ED_vsprintf(char *buffer, const char *fmt, va_list ap) {
 			*buf_p = va_arg(ap, int);
 			buf_p++;
 			break;
-		} // switch ( ch )
-	}     // while ( qtrue )
+		}  // switch ( ch )
+	}      // while ( qtrue )
 
 	*buf_p = '\0';
 	return buf_p - buffer;
 }
 
-int BG_sprintf(char *buf, const char *format, ...) {
+int BG_sprintf(char* buf, const char* format, ...) {
 	int     len;
 	va_list argptr;
 	va_start(argptr, format);
@@ -1977,11 +1977,11 @@ int BG_sprintf(char *buf, const char *format, ...) {
 	return len;
 }
 
-static int _atoi(const char **stringPtr) {
+static int _atoi(const char** stringPtr) {
 	int         sign;
 	int         value;
 	int         c;
-	const char *string;
+	const char* string;
 
 	string = *stringPtr;
 
@@ -2022,12 +2022,12 @@ static int _atoi(const char **stringPtr) {
 	return value * sign;
 }
 
-static float _atof(const char **stringPtr) {
-	const char *string;
+static float _atof(const char** stringPtr) {
+	const char* string;
 	float       sign;
 	float       value;
 	float       fraction;
-	int         c = '0'; // uninitialized use possible
+	int         c = '0';  // uninitialized use possible
 
 	string = *stringPtr;
 
@@ -2085,8 +2085,8 @@ static float _atof(const char **stringPtr) {
 	return value * sign;
 }
 
-static void _atos(const char **stringPtr, char *buffer, int delimiter, int width) {
-	const char *string;
+static void _atos(const char** stringPtr, char* buffer, int delimiter, int width) {
+	const char* string;
 
 	string = *stringPtr;
 
@@ -2109,12 +2109,12 @@ static void _atos(const char **stringPtr, char *buffer, int delimiter, int width
 	*buffer = '\0';
 }
 
-int Q_sscanf(const char *buffer, const char *fmt, ...) {
+int Q_sscanf(const char* buffer, const char* fmt, ...) {
 	va_list     ap;
 	int         count;
 	int         width;
 	int         cmd;
-	const char *p;
+	const char* p;
 
 	va_start(ap, fmt);
 	count = 0;
@@ -2138,19 +2138,19 @@ int Q_sscanf(const char *buffer, const char *fmt, ...) {
 		}
 
 		width = fmt[1];
-		fmt++; // %
+		fmt++;  // %
 		if (width >= '0' && width <= '9') {
-			width -= '0'; // valid width;
-			fmt++;        // ['0'..'9']
+			width -= '0';  // valid width;
+			fmt++;         // ['0'..'9']
 			cmd = *fmt;
 		} else {
-			cmd = width;
-			width = 1024; // some assumption
+			cmd   = width;
+			width = 1024;  // some assumption
 		}
 
 		p = buffer;
 
-		fmt++; // switch to delimiter?
+		fmt++;  // switch to delimiter?
 
 		// printf( "cmd=%c buffer=%s width=%i delim='%c'\n", cmd, buffer, width, *fmt );
 
@@ -2158,17 +2158,17 @@ int Q_sscanf(const char *buffer, const char *fmt, ...) {
 		case 'i':
 		case 'd':
 		case 'u':
-			*(va_arg(ap, int *)) = _atoi(&buffer);
+			*(va_arg(ap, int*)) = _atoi(&buffer);
 			break;
 		case 'f':
-			*(va_arg(ap, float *)) = _atof(&buffer);
+			*(va_arg(ap, float*)) = _atof(&buffer);
 			break;
 		case 'c':
-			*(va_arg(ap, char *)) = *buffer;
+			*(va_arg(ap, char*)) = *buffer;
 			buffer++;
 			break;
 		case 's':
-			_atos(&buffer, va_arg(ap, char *), *fmt, width);
+			_atos(&buffer, va_arg(ap, char*), *fmt, width);
 			break;
 		default:
 			return count;

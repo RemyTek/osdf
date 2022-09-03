@@ -11,12 +11,12 @@
 //
 
 int          ui_numBots;
-static char *ui_botInfos[MAX_BOTS];
+static char* ui_botInfos[MAX_BOTS];
 
 static int   ui_numArenas;
-static char *ui_arenaInfos[MAX_ARENAS];
+static char* ui_arenaInfos[MAX_ARENAS];
 
-#ifndef MISSIONPACK // bk001206
+#ifndef MISSIONPACK  // bk001206
 static int ui_numSinglePlayerArenas;
 static int ui_numSpecialSinglePlayerArenas;
 #endif
@@ -26,8 +26,8 @@ static int ui_numSpecialSinglePlayerArenas;
 UI_ParseInfos
 ===============
 */
-int UI_ParseInfos(char *buf, int max, char *infos[]) {
-	char *token;
+int UI_ParseInfos(char* buf, int max, char* infos[]) {
+	char* token;
 	int   count;
 	char  key[MAX_TOKEN_CHARS];
 	char  info[MAX_INFO_STRING];
@@ -82,7 +82,7 @@ int UI_ParseInfos(char *buf, int max, char *infos[]) {
 UI_LoadArenasFromFile
 ===============
 */
-static void UI_LoadArenasFromFile(char *filename) {
+static void UI_LoadArenasFromFile(char* filename) {
 	int          len;
 	fileHandle_t f;
 	char         buf[MAX_ARENAS_TEXT];
@@ -115,12 +115,12 @@ void UI_LoadArenas(void) {
 	vmCvar_t arenasFile;
 	char     filename[128];
 	char     dirlist[1024];
-	char    *dirptr;
+	char*    dirptr;
 	int      i, n;
 	int      dirlen;
-	char    *type;
+	char*    type;
 
-	ui_numArenas = 0;
+	ui_numArenas    = 0;
 	uiInfo.mapCount = 0;
 
 	trap_Cvar_Register(&arenasFile, "g_arenasFile", "", CVAR_INIT | CVAR_ROM);
@@ -132,7 +132,7 @@ void UI_LoadArenas(void) {
 
 	// get all arenas from .arena files
 	numdirs = trap_FS_GetFileList("scripts", ".arena", dirlist, 1024);
-	dirptr = dirlist;
+	dirptr  = dirlist;
 	for (i = 0; i < numdirs; i++, dirptr += dirlen + 1) {
 		dirlen = strlen(dirptr);
 		strcpy(filename, "scripts/");
@@ -147,12 +147,12 @@ void UI_LoadArenas(void) {
 	for (n = 0; n < ui_numArenas; n++) {
 		// determine type
 
-		uiInfo.mapList[uiInfo.mapCount].cinematic = -1;
+		uiInfo.mapList[uiInfo.mapCount].cinematic   = -1;
 		uiInfo.mapList[uiInfo.mapCount].mapLoadName = String_Alloc(Info_ValueForKey(ui_arenaInfos[n], "map"));
-		uiInfo.mapList[uiInfo.mapCount].mapName = String_Alloc(Info_ValueForKey(ui_arenaInfos[n], "longname"));
-		uiInfo.mapList[uiInfo.mapCount].levelShot = -1;
-		uiInfo.mapList[uiInfo.mapCount].imageName = String_Alloc(va("levelshots/%s", uiInfo.mapList[uiInfo.mapCount].mapLoadName));
-		uiInfo.mapList[uiInfo.mapCount].typeBits = 0;
+		uiInfo.mapList[uiInfo.mapCount].mapName     = String_Alloc(Info_ValueForKey(ui_arenaInfos[n], "longname"));
+		uiInfo.mapList[uiInfo.mapCount].levelShot   = -1;
+		uiInfo.mapList[uiInfo.mapCount].imageName   = String_Alloc(va("levelshots/%s", uiInfo.mapList[uiInfo.mapCount].mapLoadName));
+		uiInfo.mapList[uiInfo.mapCount].typeBits    = 0;
 
 		type = Info_ValueForKey(ui_arenaInfos[n], "type");
 		// if no type specified, it will be treated as "ffa"
@@ -191,7 +191,7 @@ void UI_LoadArenas(void) {
 UI_LoadBotsFromFile
 ===============
 */
-static void UI_LoadBotsFromFile(char *filename) {
+static void UI_LoadBotsFromFile(char* filename) {
 	int          len;
 	fileHandle_t f;
 	char         buf[MAX_BOTS_TEXT];
@@ -226,7 +226,7 @@ void UI_LoadBots(void) {
 	int      numdirs;
 	char     filename[128];
 	char     dirlist[1024];
-	char    *dirptr;
+	char*    dirptr;
 	int      i;
 	int      dirlen;
 
@@ -241,7 +241,7 @@ void UI_LoadBots(void) {
 
 	// get all bots from .bot files
 	numdirs = trap_FS_GetFileList("scripts", ".bot", dirlist, 1024);
-	dirptr = dirlist;
+	dirptr  = dirlist;
 	for (i = 0; i < numdirs; i++, dirptr += dirlen + 1) {
 		dirlen = strlen(dirptr);
 		strcpy(filename, "scripts/");
@@ -256,7 +256,7 @@ void UI_LoadBots(void) {
 UI_GetBotInfoByNumber
 ===============
 */
-char *UI_GetBotInfoByNumber(int num) {
+char* UI_GetBotInfoByNumber(int num) {
 	if (num < 0 || num >= ui_numBots) {
 		trap_Print(va(S_COLOR_RED "Invalid bot number: %i\n", num));
 		return NULL;
@@ -269,9 +269,9 @@ char *UI_GetBotInfoByNumber(int num) {
 UI_GetBotInfoByName
 ===============
 */
-char *UI_GetBotInfoByName(const char *name) {
+char* UI_GetBotInfoByName(const char* name) {
 	int   n;
-	char *value;
+	char* value;
 
 	for (n = 0; n < ui_numBots; n++) {
 		value = Info_ValueForKey(ui_botInfos[n], "name");
@@ -287,8 +287,8 @@ int UI_GetNumBots() {
 	return ui_numBots;
 }
 
-char *UI_GetBotNameByNumber(int num) {
-	char *info = UI_GetBotInfoByNumber(num);
+char* UI_GetBotNameByNumber(int num) {
+	char* info = UI_GetBotInfoByNumber(num);
 	if (info) {
 		return Info_ValueForKey(info, "name");
 	}

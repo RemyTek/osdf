@@ -33,15 +33,15 @@ void CG_BubbleTrail(const vec3_t start, const vec3_t end, float spacing) {
 	VectorScale(vec, spacing, vec);
 
 	for (; i < len; i += spacing) {
-		localEntity_t *le;
-		refEntity_t   *re;
+		localEntity_t* le;
+		refEntity_t*   re;
 
-		le = CG_AllocLocalEntity();
-		le->leFlags = LEF_PUFF_DONT_SCALE;
-		le->leType = LE_MOVE_SCALE_FADE;
+		le            = CG_AllocLocalEntity();
+		le->leFlags   = LEF_PUFF_DONT_SCALE;
+		le->leType    = LE_MOVE_SCALE_FADE;
 		le->startTime = cg.time;
-		le->endTime = cg.time + 1000 + random() * 250;
-		le->lifeRate = 1.0 / (le->endTime - le->startTime);
+		le->endTime   = cg.time + 1000 + random() * 250;
+		le->lifeRate  = 1.0 / (le->endTime - le->startTime);
 
 		re = &le->refEntity;
 		if (intShaderTime)
@@ -49,10 +49,10 @@ void CG_BubbleTrail(const vec3_t start, const vec3_t end, float spacing) {
 		else
 			re->u.shaderTime = cg.time / 1000.0f;
 
-		re->reType = RT_SPRITE;
-		re->rotation = 0;
-		re->radius = 3;
-		re->customShader = cgs.media.waterBubbleShader;
+		re->reType        = RT_SPRITE;
+		re->rotation      = 0;
+		re->radius        = 3;
+		re->customShader  = cgs.media.waterBubbleShader;
 		re->shaderRGBA[0] = 0xff;
 		re->shaderRGBA[1] = 0xff;
 		re->shaderRGBA[2] = 0xff;
@@ -78,31 +78,31 @@ CG_SmokePuff
 Adds a smoke puff or blood trail localEntity.
 =====================
 */
-localEntity_t *CG_SmokePuff(
+localEntity_t* CG_SmokePuff(
 	const vec3_t p, const vec3_t vel, float radius, float r, float g, float b, float a, float duration, int startTime, int fadeInTime, int leFlags,
 	qhandle_t hShader) {
 	static int     seed = 0x92;
-	localEntity_t *le;
-	refEntity_t   *re;
+	localEntity_t* le;
+	refEntity_t*   re;
 	//	int fadeInTime = startTime + duration / 2;
 
-	le = CG_AllocLocalEntity();
+	le          = CG_AllocLocalEntity();
 	le->leFlags = leFlags;
-	le->radius = radius;
+	le->radius  = radius;
 
-	re = &le->refEntity;
+	re           = &le->refEntity;
 	re->rotation = Q_random(&seed) * 360;
-	re->radius = radius;
+	re->radius   = radius;
 
 	if (intShaderTime)
 		re->u.intShaderTime = startTime;
 	else
 		re->u.shaderTime = startTime / 1000.0f;
 
-	le->leType = LE_MOVE_SCALE_FADE;
-	le->startTime = startTime;
+	le->leType     = LE_MOVE_SCALE_FADE;
+	le->startTime  = startTime;
 	le->fadeInTime = fadeInTime;
-	le->endTime = startTime + duration;
+	le->endTime    = startTime + duration;
 	if (fadeInTime > startTime) {
 		le->lifeRate = 1.0 / (le->endTime - le->fadeInTime);
 	} else {
@@ -123,7 +123,7 @@ localEntity_t *CG_SmokePuff(
 
 	// rage pro can't alpha fade, so use a different shader
 	if (cgs.glconfig.hardwareType == GLHW_RAGEPRO) {
-		re->customShader = cgs.media.smokePuffRageProShader;
+		re->customShader  = cgs.media.smokePuffRageProShader;
 		re->shaderRGBA[0] = 0xff;
 		re->shaderRGBA[1] = 0xff;
 		re->shaderRGBA[2] = 0xff;
@@ -149,15 +149,15 @@ Player teleporting in or out
 ==================
 */
 void CG_SpawnEffect(const vec3_t origin) {
-	localEntity_t *le;
-	refEntity_t   *re;
+	localEntity_t* le;
+	refEntity_t*   re;
 
-	le = CG_AllocLocalEntity();
-	le->leFlags = 0;
-	le->leType = LE_FADE_RGB;
+	le            = CG_AllocLocalEntity();
+	le->leFlags   = 0;
+	le->leType    = LE_FADE_RGB;
 	le->startTime = cg.time;
-	le->endTime = cg.time + 500;
-	le->lifeRate = 1.0 / (le->endTime - le->startTime);
+	le->endTime   = cg.time + 500;
+	le->lifeRate  = 1.0 / (le->endTime - le->startTime);
 
 	le->color[0] = le->color[1] = le->color[2] = le->color[3] = 1.0;
 
@@ -192,14 +192,14 @@ CG_LightningBoltBeam
 ===============
 */
 void CG_LightningBoltBeam(vec3_t start, vec3_t end) {
-	localEntity_t *le;
-	refEntity_t   *beam;
+	localEntity_t* le;
+	refEntity_t*   beam;
 
-	le = CG_AllocLocalEntity();
-	le->leFlags = 0;
-	le->leType = LE_SHOWREFENTITY;
+	le            = CG_AllocLocalEntity();
+	le->leFlags   = 0;
+	le->leType    = LE_SHOWREFENTITY;
 	le->startTime = cg.time;
-	le->endTime = cg.time + 50;
+	le->endTime   = cg.time + 50;
 
 	beam = &le->refEntity;
 
@@ -207,7 +207,7 @@ void CG_LightningBoltBeam(vec3_t start, vec3_t end) {
 	// this is the end point
 	VectorCopy(end, beam->oldorigin);
 
-	beam->reType = RT_LIGHTNING;
+	beam->reType       = RT_LIGHTNING;
 	beam->customShader = cgs.media.lightningShader;
 }
 
@@ -217,15 +217,15 @@ CG_KamikazeEffect
 ==================
 */
 void CG_KamikazeEffect(vec3_t org) {
-	localEntity_t *le;
-	refEntity_t   *re;
+	localEntity_t* le;
+	refEntity_t*   re;
 
-	le = CG_AllocLocalEntity();
-	le->leFlags = 0;
-	le->leType = LE_KAMIKAZE;
+	le            = CG_AllocLocalEntity();
+	le->leFlags   = 0;
+	le->leType    = LE_KAMIKAZE;
 	le->startTime = cg.time;
-	le->endTime = cg.time + 3000; // 2250;
-	le->lifeRate = 1.0 / (le->endTime - le->startTime);
+	le->endTime   = cg.time + 3000;  // 2250;
+	le->lifeRate  = 1.0 / (le->endTime - le->startTime);
 
 	le->color[0] = le->color[1] = le->color[2] = le->color[3] = 1.0;
 
@@ -251,14 +251,14 @@ CG_ObeliskExplode
 ==================
 */
 void CG_ObeliskExplode(vec3_t org, int entityNum) {
-	localEntity_t *le;
+	localEntity_t* le;
 	vec3_t         origin;
 
 	// create an explosion
 	VectorCopy(org, origin);
 	origin[2] += 64;
-	le = CG_MakeExplosion(origin, vec3_origin, cgs.media.dishFlashModel, cgs.media.rocketExplosionShader, 600, qtrue);
-	le->light = 300;
+	le                = CG_MakeExplosion(origin, vec3_origin, cgs.media.dishFlashModel, cgs.media.rocketExplosionShader, 600, qtrue);
+	le->light         = 300;
 	le->lightColor[0] = 1;
 	le->lightColor[1] = 0.75;
 	le->lightColor[2] = 0.0;
@@ -291,17 +291,17 @@ CG_InvulnerabilityImpact
 ==================
 */
 void CG_InvulnerabilityImpact(vec3_t org, vec3_t angles) {
-	localEntity_t *le;
-	refEntity_t   *re;
+	localEntity_t* le;
+	refEntity_t*   re;
 	int            r;
 	sfxHandle_t    sfx;
 
-	le = CG_AllocLocalEntity();
-	le->leFlags = 0;
-	le->leType = LE_INVULIMPACT;
+	le            = CG_AllocLocalEntity();
+	le->leFlags   = 0;
+	le->leType    = LE_INVULIMPACT;
 	le->startTime = cg.time;
-	le->endTime = cg.time + 1000;
-	le->lifeRate = 1.0 / (le->endTime - le->startTime);
+	le->endTime   = cg.time + 1000;
+	le->lifeRate  = 1.0 / (le->endTime - le->startTime);
 
 	le->color[0] = le->color[1] = le->color[2] = le->color[3] = 1.0;
 
@@ -336,16 +336,16 @@ CG_InvulnerabilityJuiced
 ==================
 */
 void CG_InvulnerabilityJuiced(vec3_t org) {
-	localEntity_t *le;
-	refEntity_t   *re;
+	localEntity_t* le;
+	refEntity_t*   re;
 	vec3_t         angles;
 
-	le = CG_AllocLocalEntity();
-	le->leFlags = 0;
-	le->leType = LE_INVULJUICED;
+	le            = CG_AllocLocalEntity();
+	le->leFlags   = 0;
+	le->leType    = LE_INVULJUICED;
 	le->startTime = cg.time;
-	le->endTime = cg.time + 10000;
-	le->lifeRate = 1.0 / (le->endTime - le->startTime);
+	le->endTime   = cg.time + 10000;
+	le->lifeRate  = 1.0 / (le->endTime - le->startTime);
 
 	le->color[0] = le->color[1] = le->color[2] = le->color[3] = 1.0;
 
@@ -374,8 +374,8 @@ CG_ScorePlum
 ==================
 */
 void CG_ScorePlum(int client, const vec3_t origin, int score) {
-	localEntity_t *le;
-	refEntity_t   *re;
+	localEntity_t* le;
+	refEntity_t*   re;
 	vec3_t         angles;
 	static vec3_t  lastPos;
 
@@ -384,15 +384,15 @@ void CG_ScorePlum(int client, const vec3_t origin, int score) {
 		return;
 	}
 
-	le = CG_AllocLocalEntity();
-	le->leFlags = 0;
-	le->leType = LE_SCOREPLUM;
+	le            = CG_AllocLocalEntity();
+	le->leFlags   = 0;
+	le->leType    = LE_SCOREPLUM;
 	le->startTime = cg.time;
-	le->endTime = cg.time + 4000;
-	le->lifeRate = 1.0 / (le->endTime - le->startTime);
+	le->endTime   = cg.time + 4000;
+	le->lifeRate  = 1.0 / (le->endTime - le->startTime);
 
 	le->color[0] = le->color[1] = le->color[2] = le->color[3] = 1.0;
-	le->radius = score;
+	le->radius                                                = score;
 
 	VectorCopy(origin, le->pos.trBase);
 	if (origin[2] >= lastPos[2] - 20 && origin[2] <= lastPos[2] + 20) {
@@ -416,9 +416,9 @@ void CG_ScorePlum(int client, const vec3_t origin, int score) {
 CG_MakeExplosion
 ====================
 */
-localEntity_t *CG_MakeExplosion(const vec3_t origin, const vec3_t dir, qhandle_t hModel, qhandle_t shader, int msec, qboolean isSprite) {
+localEntity_t* CG_MakeExplosion(const vec3_t origin, const vec3_t dir, qhandle_t hModel, qhandle_t shader, int msec, qboolean isSprite) {
 	float          ang;
-	localEntity_t *ex;
+	localEntity_t* ex;
 	int            offset;
 	vec3_t         tmpVec, newOrigin;
 
@@ -452,7 +452,7 @@ localEntity_t *CG_MakeExplosion(const vec3_t origin, const vec3_t dir, qhandle_t
 	}
 
 	ex->startTime = cg.time - offset;
-	ex->endTime = ex->startTime + msec;
+	ex->endTime   = ex->startTime + msec;
 
 	// bias the time so all shader effects start correctly
 	if (intShaderTime)
@@ -460,7 +460,7 @@ localEntity_t *CG_MakeExplosion(const vec3_t origin, const vec3_t dir, qhandle_t
 	else
 		ex->refEntity.u.shaderTime = ex->startTime / 1000.0f;
 
-	ex->refEntity.hModel = hModel;
+	ex->refEntity.hModel       = hModel;
 	ex->refEntity.customShader = shader;
 
 	// set origin
@@ -480,22 +480,22 @@ This is the spurt of blood when a character gets hit
 =================
 */
 void CG_Bleed(const vec3_t origin, int entityNum) {
-	localEntity_t *ex;
+	localEntity_t* ex;
 
 	if (!cg_blood.integer) {
 		return;
 	}
 
-	ex = CG_AllocLocalEntity();
+	ex         = CG_AllocLocalEntity();
 	ex->leType = LE_EXPLOSION;
 
 	ex->startTime = cg.time;
-	ex->endTime = ex->startTime + 500;
+	ex->endTime   = ex->startTime + 500;
 
 	VectorCopy(origin, ex->refEntity.origin);
-	ex->refEntity.reType = RT_SPRITE;
+	ex->refEntity.reType   = RT_SPRITE;
 	ex->refEntity.rotation = rand() % 360;
-	ex->refEntity.radius = 24;
+	ex->refEntity.radius   = 24;
 
 	ex->refEntity.customShader = cgs.media.bloodExplosionShader;
 
@@ -511,15 +511,15 @@ CG_LaunchGib
 ==================
 */
 static void CG_LaunchGib(const vec3_t origin, const vec3_t velocity, qhandle_t hModel) {
-	localEntity_t *le;
-	refEntity_t   *re;
+	localEntity_t* le;
+	refEntity_t*   re;
 
 	le = CG_AllocLocalEntity();
 	re = &le->refEntity;
 
-	le->leType = LE_FRAGMENT;
+	le->leType    = LE_FRAGMENT;
 	le->startTime = cg.time;
-	le->endTime = le->startTime + 5000 + random() * 3000;
+	le->endTime   = le->startTime + 5000 + random() * 3000;
 
 	VectorCopy(origin, re->origin);
 	AxisCopy(axisDefault, re->axis);
@@ -533,7 +533,7 @@ static void CG_LaunchGib(const vec3_t origin, const vec3_t velocity, qhandle_t h
 	le->bounceFactor = 0.6f;
 
 	le->leBounceSoundType = LEBS_BLOOD;
-	le->leMarkType = LEMT_BLOOD;
+	le->leMarkType        = LEMT_BLOOD;
 }
 
 /*
@@ -544,7 +544,7 @@ Generated a bunch of gibs launching out from the bodies location
 ===================
 */
 #define GIB_VELOCITY 250
-#define GIB_JUMP 250
+#define GIB_JUMP     250
 void CG_GibPlayer(const vec3_t playerOrigin) {
 	vec3_t origin, velocity;
 
@@ -628,15 +628,15 @@ CG_LaunchExplode
 ==================
 */
 void CG_LaunchExplode(vec3_t origin, vec3_t velocity, qhandle_t hModel) {
-	localEntity_t *le;
-	refEntity_t   *re;
+	localEntity_t* le;
+	refEntity_t*   re;
 
 	le = CG_AllocLocalEntity();
 	re = &le->refEntity;
 
-	le->leType = LE_FRAGMENT;
+	le->leType    = LE_FRAGMENT;
 	le->startTime = cg.time;
-	le->endTime = le->startTime + 10000 + random() * 6000;
+	le->endTime   = le->startTime + 10000 + random() * 6000;
 
 	VectorCopy(origin, re->origin);
 	AxisCopy(axisDefault, re->axis);
@@ -650,11 +650,11 @@ void CG_LaunchExplode(vec3_t origin, vec3_t velocity, qhandle_t hModel) {
 	le->bounceFactor = 0.1f;
 
 	le->leBounceSoundType = LEBS_BRASS;
-	le->leMarkType = LEMT_NONE;
+	le->leMarkType        = LEMT_NONE;
 }
 
 #define EXP_VELOCITY 100
-#define EXP_JUMP 150
+#define EXP_JUMP     150
 /*
 ===================
 CG_BigExplode

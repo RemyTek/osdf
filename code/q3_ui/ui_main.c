@@ -57,8 +57,8 @@ DLLEXPORT intptr_t vmMain(int command, int arg0, int arg1) {
 		UI_DrawConnectScreen(arg0);
 		return 0;
 
-	case UI_HASUNIQUECDKEY: // mod authors need to observe this
-		return qtrue;       // change this to qfalse for mods!
+	case UI_HASUNIQUECDKEY:  // mod authors need to observe this
+		return qtrue;        // change this to qfalse for mods!
 	}
 
 	return -1;
@@ -71,9 +71,9 @@ cvars
 */
 
 typedef struct {
-	vmCvar_t *vmCvar;
-	char     *cvarName;
-	char     *defaultString;
+	vmCvar_t* vmCvar;
+	char*     cvarName;
+	char*     defaultString;
 	int       cvarFlags;
 } cvarTable_t;
 
@@ -204,7 +204,7 @@ UI_RegisterCvars
 */
 void UI_RegisterCvars(void) {
 	int          i;
-	cvarTable_t *cv;
+	cvarTable_t* cv;
 
 	for (i = 0, cv = cvarTable; i < cvarTableSize; i++, cv++) {
 		trap_Cvar_Register(cv->vmCvar, cv->cvarName, cv->defaultString, cv->cvarFlags);
@@ -218,7 +218,7 @@ UI_UpdateCvars
 */
 void UI_UpdateCvars(void) {
 	int          i;
-	cvarTable_t *cv;
+	cvarTable_t* cv;
 
 	for (i = 0, cv = cvarTable; i < cvarTableSize; i++, cv++) {
 		trap_Cvar_Update(cv->vmCvar);
@@ -234,7 +234,7 @@ void UI_VideoCheck(int time) {
 	if (abs(time - uis.lastVideoCheck) > 1000) {
 
 		int oldWidth, oldHeight;
-		oldWidth = uis.glconfig.vidWidth;
+		oldWidth  = uis.glconfig.vidWidth;
 		oldHeight = uis.glconfig.vidHeight;
 
 		trap_GetGlconfig(&uis.glconfig);

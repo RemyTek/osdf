@@ -10,7 +10,7 @@ Handles horizontal scrolling and cursor blinking
 x, y, are in pixels
 ===================
 */
-void MField_Draw(mfield_t *edit, int x, int y, int style, vec4_t color) {
+void MField_Draw(mfield_t* edit, int x, int y, int style, vec4_t color) {
 	int  len;
 	int  charw;
 	int  drawLen;
@@ -19,7 +19,7 @@ void MField_Draw(mfield_t *edit, int x, int y, int style, vec4_t color) {
 	char str[MAX_STRING_CHARS];
 
 	drawLen = edit->widthInChars;
-	len = strlen(edit->buffer) + 1;
+	len     = strlen(edit->buffer) + 1;
 
 	// guarantee that cursor will be visible
 	if (len <= drawLen) {
@@ -71,10 +71,10 @@ void MField_Draw(mfield_t *edit, int x, int y, int style, vec4_t color) {
 
 	if (style & UI_CENTER) {
 		len = strlen(str);
-		x = x - len * charw / 2;
+		x   = x - len * charw / 2;
 	} else if (style & UI_RIGHT) {
 		len = strlen(str);
-		x = x - len * charw;
+		x   = x - len * charw;
 	}
 
 	UI_DrawChar(x + (edit->cursor - prestep) * charw, y, cursorChar, style & ~(UI_CENTER | UI_RIGHT), color);
@@ -85,7 +85,7 @@ void MField_Draw(mfield_t *edit, int x, int y, int style, vec4_t color) {
 MField_Paste
 ================
 */
-void MField_Paste(mfield_t *edit) {
+void MField_Paste(mfield_t* edit) {
 	char pasteBuffer[64];
 	int  pasteLen, i;
 
@@ -108,7 +108,7 @@ in-game talk, and menu fields
 Key events are used for non-printable characters, others are gotten from char events.
 =================
 */
-void MField_KeyDownEvent(mfield_t *edit, int key) {
+void MField_KeyDownEvent(mfield_t* edit, int key) {
 	int len;
 
 	// shift-insert is paste
@@ -171,22 +171,22 @@ void MField_KeyDownEvent(mfield_t *edit, int key) {
 MField_CharEvent
 ==================
 */
-void MField_CharEvent(mfield_t *edit, int ch) {
+void MField_CharEvent(mfield_t* edit, int ch) {
 	int len;
 
-	if (ch == 'v' - 'a' + 1) { // ctrl-v is paste
+	if (ch == 'v' - 'a' + 1) {  // ctrl-v is paste
 		MField_Paste(edit);
 		return;
 	}
 
-	if (ch == 'c' - 'a' + 1) { // ctrl-c clears the field
+	if (ch == 'c' - 'a' + 1) {  // ctrl-c clears the field
 		MField_Clear(edit);
 		return;
 	}
 
 	len = strlen(edit->buffer);
 
-	if (ch == 'h' - 'a' + 1) { // ctrl-h is backspace
+	if (ch == 'h' - 'a' + 1) {  // ctrl-h is backspace
 		if (edit->cursor > 0) {
 			memmove(edit->buffer + edit->cursor - 1, edit->buffer + edit->cursor, len + 1 - edit->cursor);
 			edit->cursor--;
@@ -197,13 +197,13 @@ void MField_CharEvent(mfield_t *edit, int ch) {
 		return;
 	}
 
-	if (ch == 'a' - 'a' + 1) { // ctrl-a is home
+	if (ch == 'a' - 'a' + 1) {  // ctrl-a is home
 		edit->cursor = 0;
 		edit->scroll = 0;
 		return;
 	}
 
-	if (ch == 'e' - 'a' + 1) { // ctrl-e is end
+	if (ch == 'e' - 'a' + 1) {  // ctrl-e is end
 		edit->cursor = len;
 		edit->scroll = edit->cursor - edit->widthInChars + 1;
 		if (edit->scroll < 0)
@@ -246,10 +246,10 @@ void MField_CharEvent(mfield_t *edit, int ch) {
 MField_Clear
 ==================
 */
-void MField_Clear(mfield_t *edit) {
+void MField_Clear(mfield_t* edit) {
 	edit->buffer[0] = '\0';
-	edit->cursor = 0;
-	edit->scroll = 0;
+	edit->cursor    = 0;
+	edit->scroll    = 0;
 }
 
 /*
@@ -257,7 +257,7 @@ void MField_Clear(mfield_t *edit) {
 MenuField_Init
 ==================
 */
-void MenuField_Init(menufield_s *m) {
+void MenuField_Init(menufield_s* m) {
 	int l;
 	int w;
 	int h;
@@ -278,9 +278,9 @@ void MenuField_Init(menufield_s *m) {
 		l = 0;
 	}
 
-	m->generic.left = m->generic.x - l;
-	m->generic.top = m->generic.y;
-	m->generic.right = m->generic.x + w + m->field.widthInChars * w;
+	m->generic.left   = m->generic.x - l;
+	m->generic.top    = m->generic.y;
+	m->generic.right  = m->generic.x + w + m->field.widthInChars * w;
 	m->generic.bottom = m->generic.y + h;
 }
 
@@ -289,14 +289,14 @@ void MenuField_Init(menufield_s *m) {
 MenuField_Draw
 ==================
 */
-void MenuField_Draw(menufield_s *f) {
+void MenuField_Draw(menufield_s* f) {
 	int x;
 	int y;
 	int w;
 	// int		h;
 	int      style;
 	qboolean focus;
-	float   *color;
+	float*   color;
 
 	x = f->generic.x;
 	y = f->generic.y;
@@ -343,7 +343,7 @@ void MenuField_Draw(menufield_s *f) {
 MenuField_Key
 ==================
 */
-sfxHandle_t MenuField_Key(menufield_s *m, int *key) {
+sfxHandle_t MenuField_Key(menufield_s* m, int* key) {
 	int keycode;
 
 	keycode = *key;

@@ -42,11 +42,11 @@
 
 // bk001127 - needed for DLL's
 #if !defined(Q3_VM)
-typedef int cmp_t(const void *, const void *);
+typedef int cmp_t(const void*, const void*);
 #endif
 
-static char *med3(char *, char *, char *, cmp_t *);
-static void  swapfunc(char *, char *, int, int);
+static char* med3(char*, char*, char*, cmp_t*);
+static void  swapfunc(char*, char*, int, int);
 
 #ifndef min
 #define min(a, b) ((a) < (b) ? a : b)
@@ -57,17 +57,17 @@ static void  swapfunc(char *, char *, int, int);
  */
 #define swapcode(TYPE, parmi, parmj, n)                                                                                                                        \
 	{                                                                                                                                                          \
-		long           i = (n) / sizeof(TYPE);                                                                                                                 \
-		register TYPE *pi = (TYPE *)(parmi);                                                                                                                   \
-		register TYPE *pj = (TYPE *)(parmj);                                                                                                                   \
+		long           i  = (n) / sizeof(TYPE);                                                                                                                \
+		register TYPE* pi = (TYPE*)(parmi);                                                                                                                    \
+		register TYPE* pj = (TYPE*)(parmj);                                                                                                                    \
 		do {                                                                                                                                                   \
 			register TYPE t = *pi;                                                                                                                             \
-			*pi++ = *pj;                                                                                                                                       \
-			*pj++ = t;                                                                                                                                         \
+			*pi++           = *pj;                                                                                                                             \
+			*pj++           = t;                                                                                                                               \
 		} while (--i > 0);                                                                                                                                     \
 	}
 
-#define SWAPINIT(a, es) swaptype = ((char *)a - (char *)0) % sizeof(long) || es % sizeof(long) ? 2 : es == sizeof(long) ? 0 : 1;
+#define SWAPINIT(a, es) swaptype = ((char*)a - (char*)0) % sizeof(long) || es % sizeof(long) ? 2 : es == sizeof(long) ? 0 : 1;
 
 static void swapfunc(a, b, n, swaptype) char *a, *b;
 int         n, swaptype;
@@ -78,9 +78,9 @@ int         n, swaptype;
 
 #define swap(a, b)                                                                                                                                             \
 	if (swaptype == 0) {                                                                                                                                       \
-		long t = *(long *)(a);                                                                                                                                 \
-		*(long *)(a) = *(long *)(b);                                                                                                                           \
-		*(long *)(b) = t;                                                                                                                                      \
+		long t      = *(long*)(a);                                                                                                                             \
+		*(long*)(a) = *(long*)(b);                                                                                                                             \
+		*(long*)(b) = t;                                                                                                                                       \
 	} else                                                                                                                                                     \
 		swapfunc(a, b, es, swaptype)
 
@@ -88,14 +88,14 @@ int         n, swaptype;
 	if ((n) > 0)                                                                                                                                               \
 	swapfunc(a, b, n, swaptype)
 
-static char *med3(a, b, c, cmp)
-char        *a, *b, *c;
-cmp_t       *cmp;
+static char* med3(a, b, c, cmp)
+char *       a, *b, *c;
+cmp_t*       cmp;
 { return cmp(a, b) < 0 ? (cmp(b, c) < 0 ? b : (cmp(a, c) < 0 ? c : a)) : (cmp(b, c) > 0 ? b : (cmp(a, c) < 0 ? a : c)); }
 
-void   qsort(a, n, es, cmp) void *a;
+void   qsort(a, n, es, cmp) void* a;
 size_t n, es;
-cmp_t *cmp;
+cmp_t* cmp;
 {
 	char *pa, *pb, *pc, *pd, *pl, *pm, *pn;
 	int   d, r, swaptype, swap_cnt;
@@ -104,17 +104,17 @@ loop:
 	SWAPINIT(a, es);
 	swap_cnt = 0;
 	if (n < 7) {
-		for (pm = (char *)a + es; pm < (char *)a + n * es; pm += es)
-			for (pl = pm; pl > (char *)a && cmp(pl - es, pl) > 0; pl -= es)
+		for (pm = (char*)a + es; pm < (char*)a + n * es; pm += es)
+			for (pl = pm; pl > (char*)a && cmp(pl - es, pl) > 0; pl -= es)
 				swap(pl, pl - es);
 		return;
 	}
-	pm = (char *)a + (n / 2) * es;
+	pm = (char*)a + (n / 2) * es;
 	if (n > 7) {
 		pl = a;
-		pn = (char *)a + (n - 1) * es;
+		pn = (char*)a + (n - 1) * es;
 		if (n > 40) {
-			d = (n / 8) * es;
+			d  = (n / 8) * es;
 			pl = med3(pl, pl + d, pl + 2 * d, cmp);
 			pm = med3(pm - d, pm, pm + d, cmp);
 			pn = med3(pn - 2 * d, pn - d, pn, cmp);
@@ -122,9 +122,9 @@ loop:
 		pm = med3(pl, pm, pn, cmp);
 	}
 	swap(a, pm);
-	pa = pb = (char *)a + es;
+	pa = pb = (char*)a + es;
 
-	pc = pd = (char *)a + (n - 1) * es;
+	pc = pd = (char*)a + (n - 1) * es;
 	for (;;) {
 		while (pb <= pc && (r = cmp(pb, a)) <= 0) {
 			if (r == 0) {
@@ -150,14 +150,14 @@ loop:
 		pc -= es;
 	}
 	if (swap_cnt == 0) { /* Switch to insertion sort */
-		for (pm = (char *)a + es; pm < (char *)a + n * es; pm += es)
-			for (pl = pm; pl > (char *)a && cmp(pl - es, pl) > 0; pl -= es)
+		for (pm = (char*)a + es; pm < (char*)a + n * es; pm += es)
+			for (pl = pm; pl > (char*)a && cmp(pl - es, pl) > 0; pl -= es)
 				swap(pl, pl - es);
 		return;
 	}
 
-	pn = (char *)a + n * es;
-	r = min(pa - (char *)a, pb - pa);
+	pn = (char*)a + n * es;
+	r  = min(pa - (char*)a, pb - pa);
 	vecswap(a, pb - r, r);
 	r = min(pd - pc, pn - pd - es);
 	vecswap(pb, pn - r, r);
@@ -178,8 +178,8 @@ loop:
 
 #if defined(Q3_VM)
 
-size_t strlen(const char *string) {
-	const char *s;
+size_t strlen(const char* string) {
+	const char* s;
 
 	s = string;
 	while (*s) {
@@ -188,8 +188,8 @@ size_t strlen(const char *string) {
 	return s - string;
 }
 
-char *strcat(char *strDestination, const char *strSource) {
-	char *s;
+char* strcat(char* strDestination, const char* strSource) {
+	char* s;
 
 	s = strDestination;
 	while (*s) {
@@ -204,8 +204,8 @@ char *strcat(char *strDestination, const char *strSource) {
 	return strDestination;
 }
 
-char *strcpy(char *strDestination, const char *strSource) {
-	char *s;
+char* strcpy(char* strDestination, const char* strSource) {
+	char* s;
 
 	s = strDestination;
 	while (*strSource) {
@@ -217,7 +217,7 @@ char *strcpy(char *strDestination, const char *strSource) {
 	return strDestination;
 }
 
-int strcmp(const char *string1, const char *string2) {
+int strcmp(const char* string1, const char* string2) {
 	while (*string1 == *string2 && *string1 && *string2) {
 		string1++;
 		string2++;
@@ -225,20 +225,20 @@ int strcmp(const char *string1, const char *string2) {
 	return *string1 - *string2;
 }
 
-char *strchr(const char *string, int c) {
+char* strchr(const char* string, int c) {
 	while (*string) {
 		if (*string == c) {
-			return (char *)string;
+			return (char*)string;
 		}
 		string++;
 	}
 	if (c)
 		return NULL;
 	else
-		return (char *)string;
+		return (char*)string;
 }
 
-char *strstr(const char *string, const char *strCharSet) {
+char* strstr(const char* string, const char* strCharSet) {
 	while (*string) {
 		int i;
 
@@ -248,11 +248,11 @@ char *strstr(const char *string, const char *strCharSet) {
 			}
 		}
 		if (!strCharSet[i]) {
-			return (char *)string;
+			return (char*)string;
 		}
 		string++;
 	}
-	return (char *)0;
+	return (char*)0;
 }
 
 int tolower(int c) {
@@ -269,16 +269,16 @@ int toupper(int c) {
 	return c;
 }
 
-void *memmove(void *dest, const void *src, size_t count) {
+void* memmove(void* dest, const void* src, size_t count) {
 	int i;
 
 	if (dest > src) {
 		for (i = count - 1; i >= 0; i--) {
-			((char *)dest)[i] = ((char *)src)[i];
+			((char*)dest)[i] = ((char*)src)[i];
 		}
 	} else {
 		for (i = 0; i < count; i++) {
-			((char *)dest)[i] = ((char *)src)[i];
+			((char*)dest)[i] = ((char*)src)[i];
 		}
 	}
 	return dest;
@@ -550,8 +550,8 @@ double tan(double x) {
 
 static int randSeed = 0;
 
-void srand(unsigned seed) {
-	randSeed = seed;
+void       srand(unsigned seed) {
+		  randSeed = seed;
 }
 
 int rand(void) {
@@ -559,7 +559,7 @@ int rand(void) {
 	return randSeed & 0x7fff;
 }
 
-double atof(const char *string) {
+double atof(const char* string) {
 	float sign;
 	float value;
 	int   c;
@@ -589,7 +589,7 @@ double atof(const char *string) {
 
 	// read digits
 	value = 0;
-	c = string[0];
+	c     = string[0];
 	if (c != '.') {
 		do {
 			c = *string;
@@ -626,11 +626,11 @@ double atof(const char *string) {
 	return value * sign;
 }
 
-double _atof(const char **stringPtr) {
-	const char *string;
+double _atof(const char** stringPtr) {
+	const char* string;
 	float       sign;
 	float       value;
-	int         c = '0'; // bk001211 - uninitialized use possible
+	int         c = '0';  // bk001211 - uninitialized use possible
 
 	string = *stringPtr;
 
@@ -696,7 +696,7 @@ double _atof(const char **stringPtr) {
 }
 
 #if defined(Q3_VM)
-int atoi(const char *string) {
+int atoi(const char* string) {
 	int sign;
 	int value;
 	int c;

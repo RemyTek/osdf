@@ -22,7 +22,7 @@ void CG_CheckAmmo(void) {
 
 	// see about how many seconds of ammo we have remaining
 	weapons = cg.snap->ps.stats[STAT_WEAPONS];
-	total = 0;
+	total   = 0;
 	for (i = WP_MACHINEGUN; i < WP_NUM_WEAPONS; i++) {
 		if (!(weapons & (1 << i))) {
 			continue;
@@ -76,7 +76,7 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage) {
 	vec3_t      angles;
 	float       dist;
 	float       yaw, pitch;
-	const char *info;
+	const char* info;
 
 	// show the attacking player's head and name in corner
 	// but only if client is valid
@@ -90,7 +90,7 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage) {
 		if (*info) {
 			BG_CleanName(Info_ValueForKey(info, "n"), cg.attackerName, sizeof(cg.attackerName), "???");
 			cg.attackerClientNum = attacker;
-			cg.attackerTime = cg.time;
+			cg.attackerTime      = cg.time;
 		}
 	}
 
@@ -110,30 +110,30 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage) {
 
 	// if yaw and pitch are both 255, make the damage always centered (falling, etc)
 	if (yawByte == 255 && pitchByte == 255) {
-		cg.damageX = 0;
-		cg.damageY = 0;
-		cg.v_dmg_roll = 0;
+		cg.damageX     = 0;
+		cg.damageY     = 0;
+		cg.v_dmg_roll  = 0;
 		cg.v_dmg_pitch = -kick;
 	} else {
 		// positional
 		pitch = pitchByte / 255.0 * 360;
-		yaw = yawByte / 255.0 * 360;
+		yaw   = yawByte / 255.0 * 360;
 
 		angles[PITCH] = pitch;
-		angles[YAW] = yaw;
-		angles[ROLL] = 0;
+		angles[YAW]   = yaw;
+		angles[ROLL]  = 0;
 
 		AngleVectors(angles, dir, NULL, NULL);
 		VectorSubtract(vec3_origin, dir, dir);
 
 		front = DotProduct(dir, cg.refdef.viewaxis[0]);
-		left = DotProduct(dir, cg.refdef.viewaxis[1]);
-		up = DotProduct(dir, cg.refdef.viewaxis[2]);
+		left  = DotProduct(dir, cg.refdef.viewaxis[1]);
+		up    = DotProduct(dir, cg.refdef.viewaxis[2]);
 
 		dir[0] = front;
 		dir[1] = left;
 		dir[2] = 0;
-		dist = VectorLength(dir);
+		dist   = VectorLength(dir);
 		if (dist < 0.1) {
 			dist = 0.1f;
 		}
@@ -169,8 +169,8 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage) {
 		kick = 10;
 	}
 	cg.damageValue = kick;
-	cg.v_dmg_time = cg.time + DAMAGE_TIME;
-	cg.damageTime = cg.snap->serverTime;
+	cg.v_dmg_time  = cg.time + DAMAGE_TIME;
+	cg.damageTime  = cg.snap->serverTime;
 }
 
 /*
@@ -198,23 +198,23 @@ void CG_Respawn(void) {
 CG_CheckPlayerstateEvents
 ==============
 */
-extern int eventStack;
-extern int eventParm2[MAX_PREDICTED_EVENTS];
+extern int  eventStack;
+extern int  eventParm2[MAX_PREDICTED_EVENTS];
 
-static void CG_CheckPlayerstateEvents(const playerState_t *ps, const playerState_t *ops) {
+static void CG_CheckPlayerstateEvents(const playerState_t* ps, const playerState_t* ops) {
 	int        i, n;
 	int        event;
-	centity_t *cent;
+	centity_t* cent;
 
 	if (ps->externalEvent && ps->externalEvent != ops->externalEvent) {
-		cent = &cg_entities[ps->clientNum];
-		cent->currentState.event = ps->externalEvent;
+		cent                         = &cg_entities[ps->clientNum];
+		cent->currentState.event     = ps->externalEvent;
 		cent->currentState.eventParm = ps->externalEventParm;
 		CG_EntityEvent(cent, cent->lerpOrigin, -1);
 	}
 
-	cent = &cg.predictedPlayerEntity; // cg_entities[ ps->clientNum ];
-	n = eventStack - MAX_PS_EVENTS;
+	cent = &cg.predictedPlayerEntity;  // cg_entities[ ps->clientNum ];
+	n    = eventStack - MAX_PS_EVENTS;
 	if (n < 0)
 		n = 0;
 	// go through the predictable events buffer
@@ -226,9 +226,9 @@ static void CG_CheckPlayerstateEvents(const playerState_t *ps, const playerState
 		    || (i > ops->eventSequence - MAX_PS_EVENTS && ps->events[i & (MAX_PS_EVENTS - 1)] != ops->events[i & (MAX_PS_EVENTS - 1)])) {
 
 			event = ps->events[i & (MAX_PS_EVENTS - 1)];
-			if (event == EV_NONE) // ignore empty events
+			if (event == EV_NONE)  // ignore empty events
 				continue;
-			cent->currentState.event = event;
+			cent->currentState.event     = event;
 			cent->currentState.eventParm = ps->eventParms[i & (MAX_PS_EVENTS - 1)];
 
 			CG_EntityEvent(cent, cent->lerpOrigin, eventParm2[n++]);
@@ -248,9 +248,9 @@ pushReward
 static void pushReward(sfxHandle_t sfx, qhandle_t shader, int rewardCount) {
 	if (cg.rewardStack < (MAX_REWARDSTACK - 1)) {
 		cg.rewardStack++;
-		cg.rewardSound[cg.rewardStack] = sfx;
+		cg.rewardSound[cg.rewardStack]  = sfx;
 		cg.rewardShader[cg.rewardStack] = shader;
-		cg.rewardCount[cg.rewardStack] = rewardCount;
+		cg.rewardCount[cg.rewardStack]  = rewardCount;
 	}
 }
 
@@ -259,7 +259,7 @@ static void pushReward(sfxHandle_t sfx, qhandle_t shader, int rewardCount) {
 CG_CheckLocalSounds
 ==================
 */
-void CG_CheckLocalSounds(playerState_t *ps, playerState_t *ops) {
+void CG_CheckLocalSounds(playerState_t* ps, playerState_t* ops) {
 #ifdef MISSIONPACK
 	int health, armor;
 #endif
@@ -274,7 +274,7 @@ void CG_CheckLocalSounds(playerState_t *ps, playerState_t *ops) {
 	// hit changes
 	if (ps->persistant[PERS_HITS] > ops->persistant[PERS_HITS]) {
 #ifdef MISSIONPACK
-		armor = ps->persistant[PERS_ATTACKEE_ARMOR] & 0xff;
+		armor  = ps->persistant[PERS_ATTACKEE_ARMOR] & 0xff;
 		health = ps->persistant[PERS_ATTACKEE_ARMOR] >> 8;
 		if (armor > 50) {
 			trap_S_StartLocalSound(cgs.media.hitSoundHighArmor, CHAN_LOCAL_SOUND);
@@ -300,7 +300,7 @@ void CG_CheckLocalSounds(playerState_t *ps, playerState_t *ops) {
 			else
 				index = 0;
 
-			if (cg_hitSounds.integer > 1) // reversed: higher damage - higher tone
+			if (cg_hitSounds.integer > 1)  // reversed: higher damage - higher tone
 				index = 3 - index;
 
 			trap_S_StartLocalSound(cgs.media.hitSounds[index], CHAN_LOCAL_SOUND);
@@ -467,7 +467,7 @@ CG_TransitionPlayerState
 
 ===============
 */
-void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops) {
+void CG_TransitionPlayerState(playerState_t* ps, playerState_t* ops) {
 	qboolean respawn;
 
 	// check for changing follow mode
@@ -508,6 +508,6 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops) {
 	// smooth the ducking viewheight change
 	if (ps->viewheight != ops->viewheight && !respawn) {
 		cg.duckChange = ps->viewheight - ops->viewheight;
-		cg.duckTime = cg.time;
+		cg.duckTime   = cg.time;
 	}
 }

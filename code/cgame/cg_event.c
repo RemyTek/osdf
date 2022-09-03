@@ -5,7 +5,7 @@
 #include "cg_local.h"
 
 // for the voice chats
-#ifdef MISSIONPACK // bk001205
+#ifdef MISSIONPACK  // bk001205
 #include "../../ui/menudef.h"
 #endif
 //==========================================================================
@@ -17,9 +17,9 @@ CG_PlaceString
 Also called by scoreboard drawing
 ===================
 */
-const char *CG_PlaceString(int rank) {
+const char* CG_PlaceString(int rank) {
 	static char str[64];
-	char       *s, *t;
+	char *      s, *t;
 
 	if (rank & RANK_TIED_FLAG) {
 		rank &= ~RANK_TIED_FLAG;
@@ -29,11 +29,11 @@ const char *CG_PlaceString(int rank) {
 	}
 
 	if (rank == 1) {
-		s = S_COLOR_BLUE "1st" S_COLOR_WHITE; // draw in blue
+		s = S_COLOR_BLUE "1st" S_COLOR_WHITE;  // draw in blue
 	} else if (rank == 2) {
-		s = S_COLOR_RED "2nd" S_COLOR_WHITE; // draw in red
+		s = S_COLOR_RED "2nd" S_COLOR_WHITE;  // draw in red
 	} else if (rank == 3) {
-		s = S_COLOR_YELLOW "3rd" S_COLOR_WHITE; // draw in yellow
+		s = S_COLOR_YELLOW "3rd" S_COLOR_WHITE;  // draw in yellow
 	} else if (rank == 11) {
 		s = "11th";
 	} else if (rank == 12) {
@@ -59,22 +59,22 @@ const char *CG_PlaceString(int rank) {
 CG_Obituary
 =============
 */
-static void CG_Obituary(entityState_t *ent) {
+static void CG_Obituary(entityState_t* ent) {
 	int           mod;
 	int           target, attacker;
-	char         *message;
-	char         *message2;
-	const char   *targetInfo;
-	const char   *attackerInfo;
+	char*         message;
+	char*         message2;
+	const char*   targetInfo;
+	const char*   attackerInfo;
 	char          targetName[32];
 	char          attackerName[32];
 	gender_t      gender;
-	clientInfo_t *ci;
+	clientInfo_t* ci;
 	qboolean      following;
 
-	target = ent->otherEntityNum;
+	target   = ent->otherEntityNum;
 	attacker = ent->otherEntityNum2;
-	mod = ent->eventParm;
+	mod      = ent->eventParm;
 
 	if (target < 0 || target >= MAX_CLIENTS) {
 		CG_Error("CG_Obituary: target out of range");
@@ -82,7 +82,7 @@ static void CG_Obituary(entityState_t *ent) {
 	ci = &cgs.clientinfo[target];
 
 	if (attacker < 0 || attacker >= MAX_CLIENTS) {
-		attacker = ENTITYNUM_WORLD;
+		attacker     = ENTITYNUM_WORLD;
 		attackerInfo = NULL;
 	} else {
 		attackerInfo = CG_ConfigString(CS_PLAYERS + attacker);
@@ -194,7 +194,7 @@ static void CG_Obituary(entityState_t *ent) {
 		if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR && cg_followKiller.integer) {
 			if (!cg.followTime && attacker != cg.snap->ps.clientNum && attacker < MAX_CLIENTS) {
 				cg.followClient = attacker;
-				cg.followTime = cg.time;
+				cg.followTime   = cg.time;
 			}
 		}
 		return;
@@ -202,7 +202,7 @@ static void CG_Obituary(entityState_t *ent) {
 
 	// check for kill messages from the current clientNum
 	if (attacker == cg.snap->ps.clientNum) {
-		char *s;
+		char* s;
 
 		if (cgs.gametype < GT_TEAM) {
 			s = va("You fragged %s\n%s place with %i", targetName, CG_PlaceString(cg.snap->ps.persistant[PERS_RANK] + 1), cg.snap->ps.persistant[PERS_SCORE]);
@@ -235,7 +235,7 @@ static void CG_Obituary(entityState_t *ent) {
 			if (following && cg_followKiller.integer) {
 				if (!cg.followTime && attacker != cg.snap->ps.clientNum && attacker < MAX_CLIENTS) {
 					cg.followClient = attacker;
-					cg.followTime = cg.time + 1100;
+					cg.followTime   = cg.time + 1100;
 				}
 			}
 		}
@@ -256,27 +256,27 @@ static void CG_Obituary(entityState_t *ent) {
 			message = "was gunned down by";
 			break;
 		case MOD_GRENADE:
-			message = "ate";
+			message  = "ate";
 			message2 = "'s grenade";
 			break;
 		case MOD_GRENADE_SPLASH:
-			message = "was shredded by";
+			message  = "was shredded by";
 			message2 = "'s shrapnel";
 			break;
 		case MOD_ROCKET:
-			message = "ate";
+			message  = "ate";
 			message2 = "'s rocket";
 			break;
 		case MOD_ROCKET_SPLASH:
-			message = "almost dodged";
+			message  = "almost dodged";
 			message2 = "'s rocket";
 			break;
 		case MOD_PLASMA:
-			message = "was melted by";
+			message  = "was melted by";
 			message2 = "'s plasmagun";
 			break;
 		case MOD_PLASMA_SPLASH:
-			message = "was melted by";
+			message  = "was melted by";
 			message2 = "'s plasmagun";
 			break;
 		case MOD_RAILGUN:
@@ -287,7 +287,7 @@ static void CG_Obituary(entityState_t *ent) {
 			break;
 		case MOD_BFG:
 		case MOD_BFG_SPLASH:
-			message = "was blasted by";
+			message  = "was blasted by";
 			message2 = "'s BFG";
 			break;
 #ifdef MISSIONPACK
@@ -295,15 +295,15 @@ static void CG_Obituary(entityState_t *ent) {
 			message = "was nailed by";
 			break;
 		case MOD_CHAINGUN:
-			message = "got lead poisoning from";
+			message  = "got lead poisoning from";
 			message2 = "'s Chaingun";
 			break;
 		case MOD_PROXIMITY_MINE:
-			message = "was too close to";
+			message  = "was too close to";
 			message2 = "'s Prox Mine";
 			break;
 		case MOD_KAMIKAZE:
-			message = "falls to";
+			message  = "falls to";
 			message2 = "'s Kamikaze blast";
 			break;
 		case MOD_JUICED:
@@ -311,7 +311,7 @@ static void CG_Obituary(entityState_t *ent) {
 			break;
 #endif
 		case MOD_TELEFRAG:
-			message = "tried to invade";
+			message  = "tried to invade";
 			message2 = "'s personal space";
 			break;
 		default:
@@ -325,7 +325,7 @@ static void CG_Obituary(entityState_t *ent) {
 			if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR && cg_followKiller.integer) {
 				if (!cg.followTime && attacker != cg.snap->ps.clientNum && attacker < MAX_CLIENTS) {
 					cg.followClient = attacker;
-					cg.followTime = cg.time;
+					cg.followTime   = cg.time;
 				}
 			}
 			return;
@@ -342,11 +342,11 @@ static void CG_Obituary(entityState_t *ent) {
 CG_UseItem
 ===============
 */
-static void CG_UseItem(centity_t *cent) {
-	clientInfo_t  *ci;
+static void CG_UseItem(centity_t* cent) {
+	clientInfo_t*  ci;
 	int            itemNum, clientNum;
-	gitem_t       *item;
-	entityState_t *es;
+	gitem_t*       item;
+	entityState_t* es;
 
 	es = &cent->currentState;
 
@@ -377,7 +377,7 @@ static void CG_UseItem(centity_t *cent) {
 	case HI_MEDKIT:
 		clientNum = cent->currentState.clientNum;
 		if (clientNum >= 0 && clientNum < MAX_CLIENTS) {
-			ci = &cgs.clientinfo[clientNum];
+			ci                  = &cgs.clientinfo[clientNum];
 			ci->medkitUsageTime = cg.time;
 		}
 		trap_S_StartSound(NULL, es->number, CHAN_BODY, cgs.media.medkitSound);
@@ -406,8 +406,8 @@ A new item was picked up this frame
 static void CG_ItemPickup(int itemNum) {
 	static int oldItem = -1;
 
-	cg.itemPickup = itemNum;
-	cg.itemPickupTime = cg.time;
+	cg.itemPickup          = itemNum;
+	cg.itemPickupTime      = cg.time;
 	cg.itemPickupBlendTime = cg.time;
 
 	if (oldItem != itemNum)
@@ -422,7 +422,7 @@ static void CG_ItemPickup(int itemNum) {
 		// select it immediately
 		if (cg_autoswitch.integer && bg_itemlist[itemNum].giTag != WP_MACHINEGUN) {
 			cg.weaponSelectTime = cg.time;
-			cg.weaponSelect = bg_itemlist[itemNum].giTag;
+			cg.weaponSelect     = bg_itemlist[itemNum].giTag;
 		}
 	}
 }
@@ -434,7 +434,7 @@ CG_WaterLevel
 Returns waterlevel for entity origin
 ================
 */
-int CG_WaterLevel(centity_t *cent) {
+int CG_WaterLevel(centity_t* cent) {
 	vec3_t point;
 	int    contents, sample1, sample2, anim, waterlevel;
 	int    viewheight;
@@ -458,16 +458,16 @@ int CG_WaterLevel(centity_t *cent) {
 	contents = CG_PointContents(point, -1);
 
 	if (contents & MASK_WATER) {
-		sample2 = viewheight - MINS_Z;
-		sample1 = sample2 / 2;
+		sample2    = viewheight - MINS_Z;
+		sample1    = sample2 / 2;
 		waterlevel = 1;
-		point[2] = cent->lerpOrigin[2] + MINS_Z + sample1;
-		contents = CG_PointContents(point, -1);
+		point[2]   = cent->lerpOrigin[2] + MINS_Z + sample1;
+		contents   = CG_PointContents(point, -1);
 
 		if (contents & MASK_WATER) {
 			waterlevel = 2;
-			point[2] = cent->lerpOrigin[2] + MINS_Z + sample2;
-			contents = CG_PointContents(point, -1);
+			point[2]   = cent->lerpOrigin[2] + MINS_Z + sample2;
+			contents   = CG_PointContents(point, -1);
 
 			if (contents & MASK_WATER) {
 				waterlevel = 3;
@@ -485,8 +485,8 @@ CG_PainEvent
 Also called by playerstate transition
 ================
 */
-void CG_PainEvent(centity_t *cent, int health) {
-	const char *snd;
+void CG_PainEvent(centity_t* cent, int health) {
+	const char* snd;
 
 	// don't do more than two pain sounds a second
 	if (cg.time - cent->pe.painTime < 500) {
@@ -533,18 +533,18 @@ An entity has an event value
 also called by CG_CheckPlayerstateEvents
 ==============
 */
-void CG_EntityEvent(centity_t *cent, vec3_t position, int entityNum) {
-	entityState_t *es;
+void CG_EntityEvent(centity_t* cent, vec3_t position, int entityNum) {
+	entityState_t* es;
 	entity_event_t event;
 	vec3_t         dir;
-	const char    *s;
+	const char*    s;
 	int            clientNum;
-	clientInfo_t  *ci;
+	clientInfo_t*  ci;
 	vec3_t         vec;
 	float          fovOffset;
-	centity_t     *ce;
+	centity_t*     ce;
 
-	es = &cent->currentState;
+	es    = &cent->currentState;
 	event = es->event & ~EV_EVENT_BITS;
 
 	if ((unsigned)event >= EV_MAX) {
@@ -605,7 +605,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position, int entityNum) {
 		if (clientNum == cg.predictedPlayerState.clientNum) {
 			// smooth landing z changes
 			cg.landChange = -8;
-			cg.landTime = cg.time;
+			cg.landTime   = cg.time;
 		}
 		break;
 
@@ -613,29 +613,29 @@ void CG_EntityEvent(centity_t *cent, vec3_t position, int entityNum) {
 		// use normal pain sound
 		trap_S_StartSound(NULL, es->number, CHAN_VOICE, CG_CustomSound(es->number, "*pain100_1.wav"));
 		cent->pe.painIgnore = qtrue;
-		cent->pe.painTime = cg.time; // don't play a pain sound right after this
+		cent->pe.painTime   = cg.time;  // don't play a pain sound right after this
 		if (clientNum == cg.predictedPlayerState.clientNum) {
 			// smooth landing z changes
 			cg.landChange = -16;
-			cg.landTime = cg.time;
+			cg.landTime   = cg.time;
 		}
 		break;
 
 	case EV_FALL_FAR:
 		trap_S_StartSound(NULL, es->number, CHAN_AUTO, CG_CustomSound(es->number, "*fall1.wav"));
 		cent->pe.painIgnore = qtrue;
-		cent->pe.painTime = cg.time; // don't play a pain sound right after this
+		cent->pe.painTime   = cg.time;  // don't play a pain sound right after this
 		if (clientNum == cg.predictedPlayerState.clientNum) {
 			// smooth landing z changes
 			cg.landChange = -24;
-			cg.landTime = cg.time;
+			cg.landTime   = cg.time;
 		}
 		break;
 
 	case EV_STEP_4:
 	case EV_STEP_8:
 	case EV_STEP_12:
-	case EV_STEP_16: // smooth out step up transitions
+	case EV_STEP_16:  // smooth out step up transitions
 	{
 		float oldStep;
 		int   delta;
@@ -657,7 +657,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position, int entityNum) {
 		}
 
 		// add this amount
-		step = 4 * (event - EV_STEP_4 + 1);
+		step          = 4 * (event - EV_STEP_4 + 1);
 		cg.stepChange = oldStep + step;
 		if (cg.stepChange > MAX_STEP_CHANGE) {
 			cg.stepChange = MAX_STEP_CHANGE;
@@ -731,10 +731,10 @@ void CG_EntityEvent(centity_t *cent, vec3_t position, int entityNum) {
 		break;
 
 	case EV_ITEM_PICKUP: {
-		gitem_t *item;
+		gitem_t* item;
 		int      index;
 
-		index = es->eventParm; // player predicted
+		index = es->eventParm;  // player predicted
 
 		if (index < 1 || index >= bg_numItems) {
 			break;
@@ -744,7 +744,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position, int entityNum) {
 			// our predicted entity
 			ce = cg_entities + entityNum;
 			if (ce->delaySpawn > cg.time && ce->delaySpawnPlayed) {
-				break; // delay item pickup
+				break;  // delay item pickup
 			}
 		} else {
 			ce = NULL;
@@ -788,10 +788,10 @@ void CG_EntityEvent(centity_t *cent, vec3_t position, int entityNum) {
 	} break;
 
 	case EV_GLOBAL_ITEM_PICKUP: {
-		gitem_t *item;
+		gitem_t* item;
 		int      index;
 
-		index = es->eventParm; // player predicted
+		index = es->eventParm;  // player predicted
 
 		if (index < 1 || index >= bg_numItems) {
 			break;
@@ -880,7 +880,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position, int entityNum) {
 		break;
 
 	case EV_ITEM_RESPAWN:
-		cent->miscTime = cg.time; // scale up from this
+		cent->miscTime = cg.time;  // scale up from this
 		trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.respawnSound);
 		break;
 
@@ -999,7 +999,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position, int entityNum) {
 		}
 		break;
 
-	case EV_GLOBAL_SOUND: // play from the player's head so it never diminishes
+	case EV_GLOBAL_SOUND:  // play from the player's head so it never diminishes
 		if (cgs.gameSounds[es->eventParm]) {
 			trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, cgs.gameSounds[es->eventParm]);
 		} else {
@@ -1008,22 +1008,22 @@ void CG_EntityEvent(centity_t *cent, vec3_t position, int entityNum) {
 		}
 		break;
 
-	case EV_GLOBAL_TEAM_SOUND: // play from the player's head so it never diminishes
+	case EV_GLOBAL_TEAM_SOUND:  // play from the player's head so it never diminishes
 	{
 		switch (es->eventParm) {
-		case GTS_RED_CAPTURE: // CTF: red team captured the blue flag, 1FCTF: red team captured the neutral flag
+		case GTS_RED_CAPTURE:  // CTF: red team captured the blue flag, 1FCTF: red team captured the neutral flag
 			if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED)
 				CG_AddBufferedSound(cgs.media.captureYourTeamSound);
 			else
 				CG_AddBufferedSound(cgs.media.captureOpponentSound);
 			break;
-		case GTS_BLUE_CAPTURE: // CTF: blue team captured the red flag, 1FCTF: blue team captured the neutral flag
+		case GTS_BLUE_CAPTURE:  // CTF: blue team captured the red flag, 1FCTF: blue team captured the neutral flag
 			if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE)
 				CG_AddBufferedSound(cgs.media.captureYourTeamSound);
 			else
 				CG_AddBufferedSound(cgs.media.captureOpponentSound);
 			break;
-		case GTS_RED_RETURN: // CTF: blue flag returned, 1FCTF: never used
+		case GTS_RED_RETURN:  // CTF: blue flag returned, 1FCTF: never used
 			if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED)
 				CG_AddBufferedSound(cgs.media.returnYourTeamSound);
 			else
@@ -1031,7 +1031,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position, int entityNum) {
 			//
 			CG_AddBufferedSound(cgs.media.blueFlagReturnedSound);
 			break;
-		case GTS_BLUE_RETURN: // CTF red flag returned, 1FCTF: neutral flag returned
+		case GTS_BLUE_RETURN:  // CTF red flag returned, 1FCTF: neutral flag returned
 			if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE)
 				CG_AddBufferedSound(cgs.media.returnYourTeamSound);
 			else
@@ -1040,7 +1040,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position, int entityNum) {
 			CG_AddBufferedSound(cgs.media.redFlagReturnedSound);
 			break;
 
-		case GTS_RED_TAKEN: // CTF: red team took blue flag, 1FCTF: blue team took the neutral flag
+		case GTS_RED_TAKEN:  // CTF: red team took blue flag, 1FCTF: blue team took the neutral flag
 			// if this player picked up the flag then a sound is played in CG_CheckLocalSounds
 			if (cg.snap->ps.powerups[PW_BLUEFLAG] || cg.snap->ps.powerups[PW_NEUTRALFLAG]) {
 			} else {
@@ -1061,7 +1061,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position, int entityNum) {
 				}
 			}
 			break;
-		case GTS_BLUE_TAKEN: // CTF: blue team took the red flag, 1FCTF red team took the neutral flag
+		case GTS_BLUE_TAKEN:  // CTF: blue team took the red flag, 1FCTF red team took the neutral flag
 			// if this player picked up the flag then a sound is played in CG_CheckLocalSounds
 			if (cg.snap->ps.powerups[PW_REDFLAG] || cg.snap->ps.powerups[PW_NEUTRALFLAG]) {
 			} else {
@@ -1083,12 +1083,12 @@ void CG_EntityEvent(centity_t *cent, vec3_t position, int entityNum) {
 			}
 			break;
 #ifdef MISSIONPACK
-		case GTS_REDOBELISK_ATTACKED: // Overload: red obelisk is being attacked
+		case GTS_REDOBELISK_ATTACKED:  // Overload: red obelisk is being attacked
 			if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED) {
 				CG_AddBufferedSound(cgs.media.yourBaseIsUnderAttackSound);
 			}
 			break;
-		case GTS_BLUEOBELISK_ATTACKED: // Overload: blue obelisk is being attacked
+		case GTS_BLUEOBELISK_ATTACKED:  // Overload: blue obelisk is being attacked
 			if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE) {
 				CG_AddBufferedSound(cgs.media.yourBaseIsUnderAttackSound);
 			}
@@ -1150,7 +1150,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position, int entityNum) {
 	case EV_POWERUP_QUAD:
 		if (es->number == cg.snap->ps.clientNum) {
 			cg.powerupActive = PW_QUAD;
-			cg.powerupTime = cg.time;
+			cg.powerupTime   = cg.time;
 		}
 		trap_S_StartSound(NULL, es->number, CHAN_ITEM, cgs.media.quadSound);
 		break;
@@ -1158,7 +1158,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position, int entityNum) {
 	case EV_POWERUP_BATTLESUIT:
 		if (es->number == cg.snap->ps.clientNum) {
 			cg.powerupActive = PW_BATTLESUIT;
-			cg.powerupTime = cg.time;
+			cg.powerupTime   = cg.time;
 		}
 		trap_S_StartSound(NULL, es->number, CHAN_ITEM, cgs.media.protectSound);
 		break;
@@ -1166,7 +1166,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position, int entityNum) {
 	case EV_POWERUP_REGEN:
 		if (es->number == cg.snap->ps.clientNum) {
 			cg.powerupActive = PW_REGEN;
-			cg.powerupTime = cg.time;
+			cg.powerupTime   = cg.time;
 		}
 		trap_S_StartSound(NULL, es->number, CHAN_ITEM, cgs.media.regenSound);
 		break;
@@ -1210,11 +1210,11 @@ CG_CheckEvents
 
 ==============
 */
-void CG_CheckEvents(centity_t *cent) {
+void CG_CheckEvents(centity_t* cent) {
 	// check for event-only entities
 	if (cent->currentState.eType > ET_EVENTS) {
 		if (cent->previousEvent) {
-			return; // already fired
+			return;  // already fired
 		}
 		// if this is a player event set the entity number of the client entity number
 		if (cent->currentState.eFlags & EF_PLAYER_EVENT) {

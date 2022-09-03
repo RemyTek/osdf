@@ -5,7 +5,7 @@
 #include "cg_local.h"
 
 #define MAX_LOADING_PLAYER_ICONS 16
-#define MAX_LOADING_ITEM_ICONS 26
+#define MAX_LOADING_ITEM_ICONS   26
 
 static int       loadingPlayerIconCount;
 static int       loadingItemIconCount;
@@ -43,9 +43,9 @@ CG_LoadingString
 
 ======================
 */
-void CG_LoadingString(const char *s) {
+void CG_LoadingString(const char* s) {
 	int i;
-	Q_strncpyz(cg.infoScreenText, DecodedString((char *)s), sizeof(cg.infoScreenText));
+	Q_strncpyz(cg.infoScreenText, DecodedString((char*)s), sizeof(cg.infoScreenText));
 
 	for (i = 0; i < sizeof(cg.infoScreenText); i++) {
 		if (!cg.infoScreenText[i])
@@ -62,7 +62,7 @@ CG_LoadingItem
 ===================
 */
 void CG_LoadingItem(int itemNum) {
-	gitem_t *item;
+	gitem_t* item;
 
 	item = &bg_itemlist[itemNum];
 
@@ -80,8 +80,8 @@ CG_LoadingClient
 ===================
 */
 void CG_LoadingClient(int clientNum) {
-	const char *info;
-	char       *skin;
+	const char* info;
+	char*       skin;
 	char        personality[MAX_QPATH];
 	char        model[MAX_QPATH];
 	char        iconName[MAX_QPATH];
@@ -131,20 +131,20 @@ Draw all the status / pacifier stuff during level loading
 ====================
 */
 void CG_DrawInformation(void) {
-	const char *s;
-	const char *info;
-	const char *sysInfo;
+	const char* s;
+	const char* info;
+	const char* sysInfo;
 	int         y;
 	int         value;
 	qhandle_t   levelshot;
 	qhandle_t   detail;
 	char        buf[1024];
-	char       *ptr;
+	char*       ptr;
 
-	info = CG_ConfigString(CS_SERVERINFO);
+	info    = CG_ConfigString(CS_SERVERINFO);
 	sysInfo = CG_ConfigString(CS_SYSTEMINFO);
 
-	s = Info_ValueForKey(info, "mapname");
+	s         = Info_ValueForKey(info, "mapname");
 	levelshot = trap_R_RegisterShaderNoMip(va("levelshots/%s.tga", s));
 	if (!levelshot) {
 		levelshot = trap_R_RegisterShaderNoMip("menu/art/unknownmap");
@@ -184,7 +184,7 @@ void CG_DrawInformation(void) {
 		y += PROP_HEIGHT;
 
 		buf[0] = '\0';
-		ptr = buf;
+		ptr    = buf;
 
 		// unlagged server
 		s = Info_ValueForKey(info, "g_unlagged");

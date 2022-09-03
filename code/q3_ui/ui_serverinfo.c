@@ -4,12 +4,12 @@
 
 #define SERVERINFO_FRAMEL "menu/art/frame2_l"
 #define SERVERINFO_FRAMER "menu/art/frame1_r"
-#define SERVERINFO_BACK0 "menu/art/back_0"
-#define SERVERINFO_BACK1 "menu/art/back_1"
+#define SERVERINFO_BACK0  "menu/art/back_0"
+#define SERVERINFO_BACK1  "menu/art/back_1"
 
-static char *serverinfo_artlist[] = {SERVERINFO_FRAMEL, SERVERINFO_FRAMER, SERVERINFO_BACK0, SERVERINFO_BACK1, NULL};
+static char* serverinfo_artlist[] = {SERVERINFO_FRAMEL, SERVERINFO_FRAMER, SERVERINFO_BACK0, SERVERINFO_BACK1, NULL};
 
-#define ID_ADD 100
+#define ID_ADD  100
 #define ID_BACK 101
 
 typedef struct {
@@ -25,10 +25,10 @@ typedef struct {
 
 static serverinfo_t s_serverinfo;
 
-#define MAX_INFO_LINES 64
+#define MAX_INFO_LINES  64
 #define INFO_LINE_WIDTH 51
 
-static char *itemnames[MAX_INFO_LINES];
+static char* itemnames[MAX_INFO_LINES];
 static char  show_info[MAX_INFO_LINES][INFO_LINE_WIDTH * 3];
 
 /*
@@ -70,8 +70,8 @@ void Favorites_Add(void) {
 ServerInfo_Event
 =================
 */
-static void ServerInfo_Event(void *ptr, int event) {
-	switch (((menucommon_s *)ptr)->id) {
+static void ServerInfo_Event(void* ptr, int event) {
+	switch (((menucommon_s*)ptr)->id) {
 	case ID_ADD:
 		if (event != QM_ACTIVATED)
 			break;
@@ -120,7 +120,7 @@ UI_ServerInfoMenu
 =================
 */
 void UI_ServerInfoMenu(void) {
-	const char *s;
+	const char* s;
 	char        key[MAX_INFO_KEY], *str;
 	char        value[MAX_INFO_VALUE], buf[MAX_INFO_VALUE * 2];
 	int         i, len, max;
@@ -130,61 +130,61 @@ void UI_ServerInfoMenu(void) {
 
 	ServerInfo_Cache();
 
-	s_serverinfo.menu.key = ServerInfo_MenuKey;
+	s_serverinfo.menu.key        = ServerInfo_MenuKey;
 	s_serverinfo.menu.wrapAround = qtrue;
 	s_serverinfo.menu.fullscreen = qtrue;
 
 	s_serverinfo.banner.generic.type = MTYPE_BTEXT;
-	s_serverinfo.banner.generic.x = 320;
-	s_serverinfo.banner.generic.y = 16;
-	s_serverinfo.banner.string = "SERVER INFO";
-	s_serverinfo.banner.color = color_white;
-	s_serverinfo.banner.style = UI_CENTER;
+	s_serverinfo.banner.generic.x    = 320;
+	s_serverinfo.banner.generic.y    = 16;
+	s_serverinfo.banner.string       = "SERVER INFO";
+	s_serverinfo.banner.color        = color_white;
+	s_serverinfo.banner.style        = UI_CENTER;
 
-	s_serverinfo.framel.generic.type = MTYPE_BITMAP;
-	s_serverinfo.framel.generic.name = SERVERINFO_FRAMEL;
+	s_serverinfo.framel.generic.type  = MTYPE_BITMAP;
+	s_serverinfo.framel.generic.name  = SERVERINFO_FRAMEL;
 	s_serverinfo.framel.generic.flags = QMF_INACTIVE;
-	s_serverinfo.framel.generic.x = 0;
-	s_serverinfo.framel.generic.y = 78;
-	s_serverinfo.framel.width = 256;
-	s_serverinfo.framel.height = 329;
+	s_serverinfo.framel.generic.x     = 0;
+	s_serverinfo.framel.generic.y     = 78;
+	s_serverinfo.framel.width         = 256;
+	s_serverinfo.framel.height        = 329;
 
-	s_serverinfo.framer.generic.type = MTYPE_BITMAP;
-	s_serverinfo.framer.generic.name = SERVERINFO_FRAMER;
+	s_serverinfo.framer.generic.type  = MTYPE_BITMAP;
+	s_serverinfo.framer.generic.name  = SERVERINFO_FRAMER;
 	s_serverinfo.framer.generic.flags = QMF_INACTIVE;
-	s_serverinfo.framer.generic.x = 376;
-	s_serverinfo.framer.generic.y = 76;
-	s_serverinfo.framer.width = 256;
-	s_serverinfo.framer.height = 334;
+	s_serverinfo.framer.generic.x     = 376;
+	s_serverinfo.framer.generic.y     = 76;
+	s_serverinfo.framer.width         = 256;
+	s_serverinfo.framer.height        = 334;
 
-	s_serverinfo.add.generic.type = MTYPE_PTEXT;
-	s_serverinfo.add.generic.flags = QMF_CENTER_JUSTIFY | QMF_PULSEIFFOCUS;
+	s_serverinfo.add.generic.type     = MTYPE_PTEXT;
+	s_serverinfo.add.generic.flags    = QMF_CENTER_JUSTIFY | QMF_PULSEIFFOCUS;
 	s_serverinfo.add.generic.callback = ServerInfo_Event;
-	s_serverinfo.add.generic.id = ID_ADD;
-	s_serverinfo.add.generic.x = 320;
-	s_serverinfo.add.generic.y = 371;
-	s_serverinfo.add.string = "ADD TO FAVORITES";
-	s_serverinfo.add.style = UI_CENTER | UI_SMALLFONT;
-	s_serverinfo.add.color = color_red;
+	s_serverinfo.add.generic.id       = ID_ADD;
+	s_serverinfo.add.generic.x        = 320;
+	s_serverinfo.add.generic.y        = 371;
+	s_serverinfo.add.string           = "ADD TO FAVORITES";
+	s_serverinfo.add.style            = UI_CENTER | UI_SMALLFONT;
+	s_serverinfo.add.color            = color_red;
 	if (trap_Cvar_VariableValue("sv_running")) {
 		s_serverinfo.add.generic.flags |= QMF_GRAYED;
 	}
 
-	s_serverinfo.back.generic.type = MTYPE_BITMAP;
-	s_serverinfo.back.generic.name = SERVERINFO_BACK0;
-	s_serverinfo.back.generic.flags = QMF_LEFT_JUSTIFY | QMF_PULSEIFFOCUS;
+	s_serverinfo.back.generic.type     = MTYPE_BITMAP;
+	s_serverinfo.back.generic.name     = SERVERINFO_BACK0;
+	s_serverinfo.back.generic.flags    = QMF_LEFT_JUSTIFY | QMF_PULSEIFFOCUS;
 	s_serverinfo.back.generic.callback = ServerInfo_Event;
-	s_serverinfo.back.generic.id = ID_BACK;
-	s_serverinfo.back.generic.x = 0;
-	s_serverinfo.back.generic.y = 480 - 64;
-	s_serverinfo.back.width = 128;
-	s_serverinfo.back.height = 64;
-	s_serverinfo.back.focuspic = SERVERINFO_BACK1;
+	s_serverinfo.back.generic.id       = ID_BACK;
+	s_serverinfo.back.generic.x        = 0;
+	s_serverinfo.back.generic.y        = 480 - 64;
+	s_serverinfo.back.width            = 128;
+	s_serverinfo.back.height           = 64;
+	s_serverinfo.back.focuspic         = SERVERINFO_BACK1;
 
 	trap_GetConfigString(CS_SERVERINFO, s_serverinfo.info, MAX_INFO_STRING);
 
 	max = 0;
-	s = s_serverinfo.info;
+	s   = s_serverinfo.info;
 	do {
 		s = Info_NextPair(s, key, value);
 		if (key[0] == '\0') {
@@ -195,26 +195,26 @@ void UI_ServerInfoMenu(void) {
 			max = len;
 	} while (*s != '\0');
 
-	s_serverinfo.list.generic.type = MTYPE_SCROLLLIST;
+	s_serverinfo.list.generic.type  = MTYPE_SCROLLLIST;
 	s_serverinfo.list.generic.flags = QMF_PULSEIFFOCUS;
-	s_serverinfo.list.generic.id = 123;
-	s_serverinfo.list.generic.x = 120;
-	s_serverinfo.list.generic.y = 132;
-	s_serverinfo.list.width = INFO_LINE_WIDTH;
-	s_serverinfo.list.height = 14;
-	s_serverinfo.list.columns = 1;
-	s_serverinfo.list.scroll = 1;
+	s_serverinfo.list.generic.id    = 123;
+	s_serverinfo.list.generic.x     = 120;
+	s_serverinfo.list.generic.y     = 132;
+	s_serverinfo.list.width         = INFO_LINE_WIDTH;
+	s_serverinfo.list.height        = 14;
+	s_serverinfo.list.columns       = 1;
+	s_serverinfo.list.scroll        = 1;
 
-	s_serverinfo.list.itemnames = (const char **)itemnames;
+	s_serverinfo.list.itemnames = (const char**)itemnames;
 
 	s_serverinfo.list.numitems = 0;
-	s = s_serverinfo.info;
+	s                          = s_serverinfo.info;
 	do {
 		s = Info_NextPair(s, key, value);
 		if (key[0] == '\0')
 			break;
 
-		str = show_info[s_serverinfo.list.numitems];
+		str                                                     = show_info[s_serverinfo.list.numitems];
 		s_serverinfo.list.itemnames[s_serverinfo.list.numitems] = str;
 
 		len = strlen(key);
@@ -233,12 +233,12 @@ void UI_ServerInfoMenu(void) {
 			break;
 	} while (*s != '\0');
 
-	Menu_AddItem(&s_serverinfo.menu, (void *)&s_serverinfo.banner);
-	Menu_AddItem(&s_serverinfo.menu, (void *)&s_serverinfo.framel);
-	Menu_AddItem(&s_serverinfo.menu, (void *)&s_serverinfo.framer);
-	Menu_AddItem(&s_serverinfo.menu, (void *)&s_serverinfo.add);
-	Menu_AddItem(&s_serverinfo.menu, (void *)&s_serverinfo.back);
-	Menu_AddItem(&s_serverinfo.menu, (void *)&s_serverinfo.list);
+	Menu_AddItem(&s_serverinfo.menu, (void*)&s_serverinfo.banner);
+	Menu_AddItem(&s_serverinfo.menu, (void*)&s_serverinfo.framel);
+	Menu_AddItem(&s_serverinfo.menu, (void*)&s_serverinfo.framer);
+	Menu_AddItem(&s_serverinfo.menu, (void*)&s_serverinfo.add);
+	Menu_AddItem(&s_serverinfo.menu, (void*)&s_serverinfo.back);
+	Menu_AddItem(&s_serverinfo.menu, (void*)&s_serverinfo.list);
 
 	UI_PushMenu(&s_serverinfo.menu);
 }

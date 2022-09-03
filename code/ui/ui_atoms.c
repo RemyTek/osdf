@@ -7,12 +7,12 @@
 **********************************************************************/
 #include "ui_local.h"
 
-qboolean m_entersound; // after a frame, so caching won't disrupt the sound
+qboolean m_entersound;  // after a frame, so caching won't disrupt the sound
 
 // these are here so the functions in q_shared.c can link
 #ifndef UI_HARD_LINKED
 
-void QDECL Com_Error(int level, const char *error, ...) {
+void QDECL Com_Error(int level, const char* error, ...) {
 	va_list argptr;
 	char    text[1024];
 
@@ -23,7 +23,7 @@ void QDECL Com_Error(int level, const char *error, ...) {
 	trap_Error(va("%s", text));
 }
 
-void QDECL Com_Printf(const char *msg, ...) {
+void QDECL Com_Printf(const char* msg, ...) {
 	va_list argptr;
 	char    text[1024];
 
@@ -60,23 +60,23 @@ void UI_StartDemoLoop(void) {
 	trap_Cmd_ExecuteText(EXEC_APPEND, "d1\n");
 }
 
-#ifndef MISSIONPACK // bk001206
+#ifndef MISSIONPACK  // bk001206
 static void NeedCDAction(qboolean result) {
 	if (!result) {
 		trap_Cmd_ExecuteText(EXEC_APPEND, "quit\n");
 	}
 }
-#endif // MISSIONPACK
+#endif  // MISSIONPACK
 
-#ifndef MISSIONPACK // bk001206
+#ifndef MISSIONPACK  // bk001206
 static void NeedCDKeyAction(qboolean result) {
 	if (!result) {
 		trap_Cmd_ExecuteText(EXEC_APPEND, "quit\n");
 	}
 }
-#endif // MISSIONPACK
+#endif  // MISSIONPACK
 
-char *UI_Argv(int arg) {
+char* UI_Argv(int arg) {
 	static char buffer[MAX_STRING_CHARS];
 
 	trap_Argv(arg, buffer, sizeof(buffer));
@@ -84,7 +84,7 @@ char *UI_Argv(int arg) {
 	return buffer;
 }
 
-char *UI_Cvar_VariableString(const char *var_name) {
+char* UI_Cvar_VariableString(const char* var_name) {
 	static char buffer[MAX_STRING_CHARS];
 
 	trap_Cvar_VariableStringBuffer(var_name, buffer, sizeof(buffer));
@@ -92,7 +92,7 @@ char *UI_Cvar_VariableString(const char *var_name) {
 	return buffer;
 }
 
-void UI_SetBestScores(postGameInfo_t *newInfo, qboolean postGame) {
+void UI_SetBestScores(postGameInfo_t* newInfo, qboolean postGame) {
 	trap_Cvar_Set("ui_scoreAccuracy", va("%i%%", newInfo->accuracy));
 	trap_Cvar_Set("ui_scoreImpressives", va("%i", newInfo->impressives));
 	trap_Cvar_Set("ui_scoreExcellents", va("%i", newInfo->excellents));
@@ -127,7 +127,7 @@ void UI_SetBestScores(postGameInfo_t *newInfo, qboolean postGame) {
 	}
 }
 
-void UI_LoadBestScores(const char *map, int game) {
+void UI_LoadBestScores(const char* map, int game) {
 	char           fileName[MAX_QPATH];
 	fileHandle_t   f;
 	postGameInfo_t newInfo;
@@ -158,7 +158,7 @@ UI_ClearScores
 */
 void UI_ClearScores() {
 	char           gameList[4096];
-	char          *gameFile;
+	char*          gameFile;
 	int            i, len, count, size;
 	fileHandle_t   f;
 	postGameInfo_t newInfo;
@@ -221,18 +221,18 @@ static void UI_CalcPostGameStats() {
 		trap_FS_FCloseFile(f);
 	}
 
-	newInfo.accuracy = atoi(UI_Argv(3));
+	newInfo.accuracy    = atoi(UI_Argv(3));
 	newInfo.impressives = atoi(UI_Argv(4));
-	newInfo.excellents = atoi(UI_Argv(5));
-	newInfo.defends = atoi(UI_Argv(6));
-	newInfo.assists = atoi(UI_Argv(7));
-	newInfo.gauntlets = atoi(UI_Argv(8));
-	newInfo.baseScore = atoi(UI_Argv(9));
-	newInfo.perfects = atoi(UI_Argv(10));
-	newInfo.redScore = atoi(UI_Argv(11));
-	newInfo.blueScore = atoi(UI_Argv(12));
-	time = atoi(UI_Argv(13));
-	newInfo.captures = atoi(UI_Argv(14));
+	newInfo.excellents  = atoi(UI_Argv(5));
+	newInfo.defends     = atoi(UI_Argv(6));
+	newInfo.assists     = atoi(UI_Argv(7));
+	newInfo.gauntlets   = atoi(UI_Argv(8));
+	newInfo.baseScore   = atoi(UI_Argv(9));
+	newInfo.perfects    = atoi(UI_Argv(10));
+	newInfo.redScore    = atoi(UI_Argv(11));
+	newInfo.blueScore   = atoi(UI_Argv(12));
+	time                = atoi(UI_Argv(13));
+	newInfo.captures    = atoi(UI_Argv(14));
 
 	newInfo.time = (time - trap_Cvar_VariableValue("ui_matchStartTime")) / 1000;
 	adjustedTime = uiInfo.mapList[ui_currentMap.integer].timeToBeat[game];
@@ -292,10 +292,10 @@ UI_ConsoleCommand
 =================
 */
 qboolean UI_ConsoleCommand(int realTime) {
-	char *cmd;
+	char* cmd;
 
 	uiInfo.uiDC.frameTime = realTime - uiInfo.uiDC.realTime;
-	uiInfo.uiDC.realTime = realTime;
+	uiInfo.uiDC.realTime  = realTime;
 
 	cmd = UI_Argv(0);
 
@@ -364,7 +364,7 @@ UI_AdjustFrom640
 Adjusted for resolution and screen aspect ratio
 ================
 */
-void UI_AdjustFrom640(float *x, float *y, float *w, float *h) {
+void UI_AdjustFrom640(float* x, float* y, float* w, float* h) {
 	// expect valid pointers
 #if 0
 	*x = *x * uiInfo.uiDC.scale + uiInfo.uiDC.bias;
@@ -379,7 +379,7 @@ void UI_AdjustFrom640(float *x, float *y, float *w, float *h) {
 	*h *= uiInfo.uiDC.yscale;
 }
 
-void UI_DrawNamedPic(float x, float y, float width, float height, const char *picname) {
+void UI_DrawNamedPic(float x, float y, float width, float height, const char* picname) {
 	qhandle_t hShader;
 
 	hShader = trap_R_RegisterShaderNoMip(picname);
@@ -393,8 +393,8 @@ void UI_DrawHandlePic(float x, float y, float w, float h, qhandle_t hShader) {
 	float t0;
 	float t1;
 
-	if (w < 0) { // flip about vertical
-		w = -w;
+	if (w < 0) {  // flip about vertical
+		w  = -w;
 		s0 = 1;
 		s1 = 0;
 	} else {
@@ -402,8 +402,8 @@ void UI_DrawHandlePic(float x, float y, float w, float h, qhandle_t hShader) {
 		s1 = 1;
 	}
 
-	if (h < 0) { // flip about horizontal
-		h = -h;
+	if (h < 0) {  // flip about horizontal
+		h  = -h;
 		t0 = 1;
 		t1 = 0;
 	} else {
@@ -422,7 +422,7 @@ UI_FillRect
 Coordinates are 640*480 virtual values
 =================
 */
-void UI_FillRect(float x, float y, float width, float height, const float *color) {
+void UI_FillRect(float x, float y, float width, float height, const float* color) {
 	trap_R_SetColor(color);
 
 	UI_AdjustFrom640(&x, &y, &width, &height);
@@ -449,7 +449,7 @@ UI_DrawRect
 Coordinates are 640*480 virtual values
 =================
 */
-void UI_DrawRect(float x, float y, float width, float height, const float *color) {
+void UI_DrawRect(float x, float y, float width, float height, const float* color) {
 	trap_R_SetColor(color);
 
 	UI_DrawTopBottom(x, y, width, height);
@@ -458,7 +458,7 @@ void UI_DrawRect(float x, float y, float width, float height, const float *color
 	trap_R_SetColor(NULL);
 }
 
-void UI_SetColor(const float *rgba) {
+void UI_SetColor(const float* rgba) {
 	trap_R_SetColor(rgba);
 }
 
