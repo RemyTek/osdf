@@ -10,7 +10,6 @@
 
 # Unreleased
 ```md
-
 ```
 ... :  
 
@@ -18,6 +17,10 @@
 _v0.2.5-r0_
 ```md
 2022.09.02
+fix : .clang-format file no longer breaks the whole project due to include sorting
+fix : .clang-format file no longer breaks the formatting of array tables (cvar tables, command lists, etc)
+fix : .clang-format file no longer packs single-instruction functions into one line when they fit the line-width
+fix : .clang-format file now aligns variable declarations, like id-Tech3 does
 chg : cg_drawSpeed now defaults to 1
 chg : Bob cvars now default to 0
 chg : Updated project's readme, to better represent its goals.  

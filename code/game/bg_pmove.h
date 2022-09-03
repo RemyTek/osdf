@@ -29,21 +29,21 @@ void trap_SnapVector(float *v);
 
 void PM_AddEvent(int newEvent);
 void PM_AddTouchEnt(int entityNum);
-//TODO: Move back to Static
-void PM_StartTorsoAnim(int anim);
-void PM_StartLegsAnim(int anim);
-void PM_ContinueLegsAnim(int anim);
-void PM_ContinueTorsoAnim(int anim);
-void PM_ForceLegsAnim(int anim);
-void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce);
-void PM_Friction(void);
-void PM_Accelerate(vec3_t wishdir, float wishspeed, float accel);
-float PM_CmdScale(usercmd_t *cmd);
-void PM_SetMovementDir(void);
+// TODO: Move back to Static
+void     PM_StartTorsoAnim(int anim);
+void     PM_StartLegsAnim(int anim);
+void     PM_ContinueLegsAnim(int anim);
+void     PM_ContinueTorsoAnim(int anim);
+void     PM_ForceLegsAnim(int anim);
+void     PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce);
+void     PM_Friction(void);
+void     PM_Accelerate(vec3_t wishdir, float wishspeed, float accel);
+float    PM_CmdScale(usercmd_t *cmd);
+void     PM_SetMovementDir(void);
 qboolean PM_CheckJump(void);
 qboolean PM_CheckWaterJump(void);
-void PM_WaterJumpMove(void);
-void PM_WaterMove(void);
+void     PM_WaterJumpMove(void);
+void     PM_WaterMove(void);
 
 #ifdef TEAMARENA
 void PM_InvulnerabilityMove(void);
@@ -51,12 +51,12 @@ void PM_InvulnerabilityMove(void);
 void PM_AirMove(void);
 void PM_GrappleMove(void);
 void PM_WalkMove(void);
-int PM_FootstepForSurface(void);
+int  PM_FootstepForSurface(void);
 void PM_CrashLand(void);
 /*
 void PM_CheckStuck(void);
 */
-int PM_CorrectAllSolid(trace_t *trace);
+int  PM_CorrectAllSolid(trace_t *trace);
 void PM_GroundTraceMissed(void);
 void PM_Footsteps(void);
 void PM_WaterEvents(void);
@@ -73,6 +73,5 @@ void PM_NoclipMove(void);
 void PM_SetWaterLevel(void);
 void PM_GroundTrace(void);
 void PM_DeadMove(void);
-
 
 #endif // BG_PMOVE_H
