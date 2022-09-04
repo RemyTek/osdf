@@ -10,7 +10,14 @@
 
 # Unreleased
 ```md
+```
+... :  
+
+## 0.2.5
+_v0.2.5b_
+```md
 2022.09.03
+fix : Cursor shader for the new ui is no longer broken
 chg : Extended the content of `docs/contribute.md`. Including PR, Rebasing, Commit style, Guidelines, etc
 new : Added file `docs/bugs.md` to keep a todo list of user bug reports
 new : Added function `isEmpty()` to the `build/linux/helper.py` tools script
@@ -19,10 +26,8 @@ new : Initial Main Menu UI layout, background and theme
 chg : Added `game/mod-info.h` file. For defining mod info defines (version, license, name, etc)
 chg : Removed Quake3 3D banner from the menu. TODO: Cleanup code. Only commented the line where its added to the scene.
 ```
-... :  
 
-## 0.2.5
-_v0.2.5-r0_
+_v0.2.5_
 ```md
 2022.09.02
 chg : CPM Item Pickup: Above size increased from 36u (32u doesn't trigger) to 66 (62u doesn't trigger)  

@@ -10,8 +10,6 @@
 
 # TODO : gpl to sdk
 ```
-fix : cursor shader broken for the new ui
-
 fix : CPM Rocket Launcher: Vertical self knockback scaling reduced to 1  
 chg : CPM Rocket Launcher: Self knockback increased to 1.2  
 chg : Rocket Launcher speed increased from 900 to 1000  
@@ -32,20 +30,22 @@ fix : /cpm and /vq3 commands now work with osdf
 
 new : Test Makefile buildsystem for native windows compilation  
 chg : Moved `build/linux/` folder to `build/make/` to reflect its multiplatform nature
+
+chg : Changed versioning system from `0.0.0x` to `0.00x`
+new : Automated version management from the files `build/linux/build.py` and `code/game/mod-info.h`
 ```
 
 ## TODO
-**Priority Quadrant**
-_Urgent:_
+**Priority Quadrant**  
+_Urgent:_  
 Cause us to react.  
 We stop what we're currently doing and work on the urgent task instead.  
-_Important:_ 
+_Important:_   
 Lead us towards our vision / goals.  
 Require planning, organization and initiative.  
 
 ### 1 : IMP.URG : Critical
 ```
-chg : `g_synchronousClients 1` by default for offline
 ```
 
 ### 2 : IMP.notU : Planned Goals
@@ -60,6 +60,7 @@ new : New hud for Player state configuration (health, ammo, powerups, etc)
 ### 3 : notI.URG : Non-critical Fixes
 ```
 fix : map_restart doesn't reset timer
+chg : `g_synchronousClients 1` by default for offline
 ```
 
 ### 4 : notI.notU : Implement when possible

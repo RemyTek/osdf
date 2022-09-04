@@ -124,10 +124,12 @@ fix : Bugfix
 rmv : Removed feature  
 dep : Soon-to-be removed feature  
 sec : Security. Fix for vulnerabilities.  
+rls : Last commit before a release. Includes version
 
 # Development changes
 bld : Changes to the buildsystem. New and fixes
 doc : Changes to the documentation. New and fixes
+org : Project organization / structuring. Not related to code (use ref for code organization)
 ref : Refactor of code. Naming, organizing, reflow, etc. No behavior changes
 sty : Formatting, styling, etc; No behavior changes
 

@@ -21,7 +21,7 @@ def thisDir(): return thisFile("dir")
 # Configuration
 #...............
 # Mod
-modVers  = "0.2.5"
+modVers  = "0.2.5b"
 modName  = "osdf"
 fullName = "opensource-defrag"
 
