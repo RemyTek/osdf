@@ -34,29 +34,34 @@ new : Test Makefile buildsystem for native windows compilation
 chg : Moved `build/linux/` folder to `build/make/` to reflect its multiplatform nature
 ```
 
-# TODO
-#::::::::::::::
-_Urgent    : Cause us to react. We stop what we're currently doing and work on the urgent task instead._
-_Important : Lead us towards our mission/goals. Require planning, organization and initiative._
-#::::::::::::::
-# 1 : IMP.URG : Critical
-#::::::::::::::
-chg : `g_synchronousClients 1` by default for offline
+## TODO
+**Priority Quadrant**
+_Urgent:_
+Cause us to react.  
+We stop what we're currently doing and work on the urgent task instead.  
+_Important:_ 
+Lead us towards our vision / goals.  
+Require planning, organization and initiative.  
 
-#:::::::::::::::
-# 2 : IMP.notU : Planned Goals
-#:::::::::::::::
+### 1 : IMP.URG : Critical
+```
+chg : `g_synchronousClients 1` by default for offline
+```
+
+### 2 : IMP.notU : Planned Goals
+```
 new : Velocity pads  
 new : Proxymod support  
 new : Hud element: Current map & Internal version  
 new : Map loader UI  
 new : New hud for Player state configuration (health, ammo, powerups, etc)  
+```
 
-#:::::::::::::::
-# 3 : notI.URG : Non-critical Fixes
-#:::::::::::::::
+### 3 : notI.URG : Non-critical Fixes
+```
 fix : map_restart doesn't reset timer
+```
 
-#::::::::::::::::
-# 4 : notI.notU : Implement when possible
-#::::::::::::::::
+### 4 : notI.notU : Implement when possible
+```
+```

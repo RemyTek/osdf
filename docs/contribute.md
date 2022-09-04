@@ -29,7 +29,7 @@ Follow the instructions in `assets/readme.md`
 
 
 ## Git management
-### PR process overview:
+### Submission Process overview:
 1. Pick something to work on from the lists:  `docs/todo.md`, `docs/roadmap.md`, `docs/bugs.md`
 2. Create a new branch and start doing your work
 3. Rebase workflow: goal is to have very clean, self-contained commits.   
