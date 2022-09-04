@@ -79,7 +79,7 @@ MULTIPLAYER MENU (SERVER BROWSER)
 
 static const char* master_items[] = {"Local", "Internet", "Favorites", NULL};
 
-static const char* servertype_items[] = {"All", "Free For All", "Tournament", "Team Deathmatch", "Capture the Flag", NULL};
+static const char* servertype_items[] = {"All", "Defrag Run", "Tournament", "Team Deathmatch", "Capture the Flag", NULL};
 
 static const char* sortkey_items[] = {"Server Name", "Map Name", "Open Player Spots", "Game Type", "Ping Time", NULL};
 
@@ -412,7 +412,7 @@ static void ArenaServers_UpdateList(void) {
 			break;
 
 		case GAMES_FFA:
-			if (servernodeptr->gametype != GT_FFA) {
+			if (servernodeptr->gametype != GT_RUN) {
 				continue;
 			}
 			break;

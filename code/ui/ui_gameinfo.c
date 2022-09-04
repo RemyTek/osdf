@@ -158,7 +158,7 @@ void UI_LoadArenas(void) {
 		// if no type specified, it will be treated as "ffa"
 		if (*type) {
 			if (strstr(type, "ffa")) {
-				uiInfo.mapList[uiInfo.mapCount].typeBits |= (1 << GT_FFA);
+				uiInfo.mapList[uiInfo.mapCount].typeBits |= (1 << GT_RUN);
 			}
 			if (strstr(type, "tourney")) {
 				uiInfo.mapList[uiInfo.mapCount].typeBits |= (1 << GT_TOURNAMENT);
@@ -176,7 +176,7 @@ void UI_LoadArenas(void) {
 				uiInfo.mapList[uiInfo.mapCount].typeBits |= (1 << GT_HARVESTER);
 			}
 		} else {
-			uiInfo.mapList[uiInfo.mapCount].typeBits |= (1 << GT_FFA);
+			uiInfo.mapList[uiInfo.mapCount].typeBits |= (1 << GT_RUN);
 		}
 
 		uiInfo.mapCount++;

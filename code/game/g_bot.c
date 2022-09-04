@@ -433,7 +433,7 @@ void G_CheckMinimumPlayers(void) {
 				G_RemoveRandomBot(-1);
 			}
 		}
-	} else if (g_gametype.integer == GT_FFA) {
+	} else if (g_gametype.integer == GT_RUN) {
 		if (minplayers >= level.maxclients) {
 			minplayers = level.maxclients - 1;
 		}

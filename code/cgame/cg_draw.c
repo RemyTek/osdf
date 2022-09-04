@@ -2354,7 +2354,8 @@ static void CG_DrawProxWarning(void) {
 		}
 
 		if (cg.warmup < 0) {
-			CG_DrawString(320, 24, "Waiting for players", colorWhite, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0, DS_PROPORTIONAL | DS_CENTER | DS_SHADOW);
+			// Remove waiting for players message in all modes.  TODO: Do this correctly, for future gamemodes that might have warmup
+			// CG_DrawString(320, 24, "Waiting for players", colorWhite, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0, DS_PROPORTIONAL | DS_CENTER | DS_SHADOW);
 			return;
 		}
 
@@ -2388,8 +2389,8 @@ static void CG_DrawProxWarning(void) {
 #endif
 			}
 		} else {
-			if (cgs.gametype == GT_FFA) {
-				s = "Free For All";
+			if (cgs.gametype == GT_RUN) {
+				s = "Defrag Run";
 			} else if (cgs.gametype == GT_TEAM) {
 				s = "Team Deathmatch";
 			} else if (cgs.gametype == GT_CTF) {

@@ -396,7 +396,7 @@ void G_SpawnGEntityFromSpawnVars(void) {
 			return;
 		}
 	}
-	// check for "notteam" flag (GT_FFA, GT_TOURNAMENT, GT_SINGLE_PLAYER)
+	// check for "notteam" flag (GT_RUN, GT_TOURNAMENT, GT_SINGLE_PLAYER)
 	if (g_gametype.integer >= GT_TEAM) {
 		G_SpawnInt("notteam", "0", &i);
 		if (i) {
@@ -426,7 +426,7 @@ void G_SpawnGEntityFromSpawnVars(void) {
 #endif
 
 	if (G_SpawnString("gametype", NULL, &value)) {
-		if (g_gametype.integer >= GT_FFA && g_gametype.integer < GT_MAX_GAME_TYPE) {
+		if (g_gametype.integer >= GT_RUN && g_gametype.integer < GT_MAX_GAME_TYPE) {
 			gametypeName = gametypeNames[g_gametype.integer];
 
 			s = strstr(value, gametypeName);

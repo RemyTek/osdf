@@ -21,6 +21,26 @@ void ScorePlum(gentity_t* ent, vec3_t origin, int score) {
 	plum->s.time           = score;
 }
 
+// SetScore
+// ============
+// Set score to both the client and his team
+void SetScore( gentity_t *ent, vec3_t origin, int score ) {
+	if ( !ent->client ) {
+		return;
+	}
+	// no scoring during pre-match warmup
+	if ( level.warmupTime ) {
+		return;
+	}
+	// show score plum
+	//ScorePlum(ent, origin, score);
+	//
+	ent->client->ps.persistant[PERS_SCORE] = score;
+	if ( g_gametype.integer == GT_TEAM )
+		level.teamScores[ ent->client->ps.persistant[PERS_TEAM] ] = score;
+	CalculateRanks();
+}
+
 /*
 ============
 AddScore
@@ -457,7 +477,7 @@ void player_die(gentity_t* self, gentity_t* inflictor, gentity_t* attacker, int 
 		attacker->client->lastkilled_client = self->s.number;
 
 		if (attacker == self || OnSameTeam(self, attacker)) {
-			AddScore(attacker, self->r.currentOrigin, -1);
+			SetScore(attacker, self->r.currentOrigin, 0);
 		} else {
 			AddScore(attacker, self->r.currentOrigin, 1);
 
@@ -491,7 +511,7 @@ void player_die(gentity_t* self, gentity_t* inflictor, gentity_t* attacker, int 
 			attacker->client->lastKillTime = level.time;
 		}
 	} else {
-		AddScore(self, self->r.currentOrigin, -1);
+		SetScore(self, self->r.currentOrigin, 0);
 	}
 
 	// Add team bonuses
@@ -517,7 +537,7 @@ void player_die(gentity_t* self, gentity_t* inflictor, gentity_t* attacker, int 
 	// if client is in a nodrop area, don't drop anything (but return CTF flags!)
 	contents = trap_PointContents(self->r.currentOrigin, -1);
 	if (!(contents & CONTENTS_NODROP)) {
-		TossClientItems(self);
+		// TossClientItems(self); // Never drop client items on the ground
 	} else {
 		if (self->client->ps.powerups[PW_NEUTRALFLAG]) {  // only happens in One Flag CTF
 			Team_ReturnFlag(TEAM_FREE);
@@ -570,7 +590,7 @@ void player_die(gentity_t* self, gentity_t* inflictor, gentity_t* attacker, int 
 
 	// don't allow respawn until the death anim is done
 	// g_forcerespawn may force spawning at some later time
-	self->client->respawnTime = level.time + 1700;
+	self->client->respawnTime = level.time; // + 1700;  // Allow Instant Respawn
 
 	// remove powerups
 	memset(self->client->ps.powerups, 0, sizeof(self->client->ps.powerups));
@@ -846,7 +866,16 @@ void G_Damage(gentity_t* targ, gentity_t* inflictor, gentity_t* attacker, vec3_t
 
 		mass = 200;
 
-		VectorScale(dir, g_knockback.value * (float)knockback / mass, kvel);
+		float scale = 1;  // Default knockback scaling
+		// Increased rocket knockback for CPM
+		if ((targ == attacker) && (mod == MOD_ROCKET_SPLASH || mod == MOD_ROCKET) && (phy_movetype.integer == 0)) {
+			scale = 1.2;
+		}
+		// Calculate vertical knockback without scale
+		float kvel_z = dir[2] * g_knockback.value * (float)knockback / mass;
+		VectorScale(dir, scale * g_knockback.value * (float)knockback / mass, kvel);
+		kvel[2] = kvel_z;  // Restore vertical scale
+
 		VectorAdd(targ->client->ps.velocity, kvel, targ->client->ps.velocity);
 
 		// set the timer so that the other client can't cancel

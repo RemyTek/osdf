@@ -39,7 +39,7 @@ static const char* teamArenaGameTypes[] = {"FFA", "TOURNAMENT", "SP", "TEAM DM",
 static int const   numTeamArenaGameTypes = sizeof(teamArenaGameTypes) / sizeof(const char*);
 
 static const char* teamArenaGameNames[] = {
-	"Free For All", "Tournament", "Single Player", "Team Deathmatch", "Capture the Flag", "One Flag CTF", "Overload", "Harvester", "Team Tournament",
+	"Defrag Run", "Tournament", "Single Player", "Team Deathmatch", "Capture the Flag", "One Flag CTF", "Overload", "Harvester", "Team Tournament",
 };
 
 static int const   numTeamArenaGameNames = sizeof(teamArenaGameNames) / sizeof(const char*);
@@ -1995,14 +1995,14 @@ static qboolean UI_OwnerDrawVisible(int flags) {
 	while (flags) {
 
 		if (flags & UI_SHOW_FFA) {
-			if (trap_Cvar_VariableValue("g_gametype") != GT_FFA) {
+			if (trap_Cvar_VariableValue("g_gametype") != GT_RUN) {
 				vis = qfalse;
 			}
 			flags &= ~UI_SHOW_FFA;
 		}
 
 		if (flags & UI_SHOW_NOTFFA) {
-			if (trap_Cvar_VariableValue("g_gametype") == GT_FFA) {
+			if (trap_Cvar_VariableValue("g_gametype") == GT_RUN) {
 				vis = qfalse;
 			}
 			flags &= ~UI_SHOW_NOTFFA;
@@ -2850,7 +2850,7 @@ static void UI_StartSkirmish(qboolean next) {
 		trap_Cvar_Set("sv_maxClients", va("%d", temp));
 		for (i = 0; i < uiInfo.mapList[ui_currentMap.integer].teamMembers; i++) {
 			Com_sprintf(
-				buff, sizeof(buff), "addbot %s %f %s %i %s\n", UI_AIFromName(uiInfo.teamList[k].teamMembers[i]), skill, (g == GT_FFA) ? "" : "Blue", delay,
+				buff, sizeof(buff), "addbot %s %f %s %i %s\n", UI_AIFromName(uiInfo.teamList[k].teamMembers[i]), skill, (g == GT_RUN) ? "" : "Blue", delay,
 				uiInfo.teamList[k].teamMembers[i]);
 			trap_Cmd_ExecuteText(EXEC_APPEND, buff);
 			delay += 500;
@@ -2858,7 +2858,7 @@ static void UI_StartSkirmish(qboolean next) {
 		k = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_teamName"));
 		for (i = 0; i < uiInfo.mapList[ui_currentMap.integer].teamMembers - 1; i++) {
 			Com_sprintf(
-				buff, sizeof(buff), "addbot %s %f %s %i %s\n", UI_AIFromName(uiInfo.teamList[k].teamMembers[i]), skill, (g == GT_FFA) ? "" : "Red", delay,
+				buff, sizeof(buff), "addbot %s %f %s %i %s\n", UI_AIFromName(uiInfo.teamList[k].teamMembers[i]), skill, (g == GT_RUN) ? "" : "Red", delay,
 				uiInfo.teamList[k].teamMembers[i]);
 			trap_Cmd_ExecuteText(EXEC_APPEND, buff);
 			delay += 500;
@@ -3390,7 +3390,7 @@ static int UI_MapCountByGameType(qboolean singlePlayer) {
 		game++;
 	}
 	if (game == GT_TEAM) {
-		game = GT_FFA;
+		game = GT_RUN;
 	}
 
 	for (i = 0; i < uiInfo.mapCount; i++) {

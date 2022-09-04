@@ -14,6 +14,25 @@
 ... :  
 
 ## 0.2.5
+_v0.2.5c_
+```md
+2022.09.04
+fix : .clang-format file no longer breaks the formatting of the Cvar lists in g_main.c and cg_main.c
+chg : g_forcerespawn now means miliseconds, instead of seconds  
+... : g_forcerespawn default value changed to 1. Previous behavior is now `g_forcerespawn 20000`  
+new : Gamemode "run" (basic). Replaces FFA, `g_gametype 0`  
+... : Replaced all GT_FFA enum entries with GT_RUN (value stays the same)
+... : Replaced all "Free for All" text strings with "Defrag Run"
+chg : Removed the "Waiting for players" message when cg.warmup is < 0
+chg : Respawn minimum delay changed from 1700 to 0 on player_die()
+chg : Powerups no longer drop on player_die()
+chg : Score is now set to 0 on player_die()
+new : New function SetScore() on g_combat.c. Modified version of AddScore()
+chg : (CPM) Rocket Launcher: Missile speed increased from 900 to 1000  
+fix : (CPM) Rocket Launcher: Vertical self knockback scaling reduced to 1  
+chg : (CPM) Rocket Launcher: Self knockback increased to 1.2  
+```
+
 _v0.2.5b_
 ```md
 2022.09.03

@@ -402,7 +402,7 @@ qboolean CG_DrawOldScoreboard(void) {
 
 	} else {
 		//
-		// free for all scoreboard
+		// Defrag Run scoreboard
 		//
 		n1 = CG_TeamScoreboard(y, TEAM_FREE, fade, maxClients, lineHeight);
 		y += (n1 * lineHeight) + BIGCHAR_HEIGHT;
@@ -493,7 +493,7 @@ void CG_DrawOldTourneyScoreboard(void) {
 
 	} else {
 		//
-		// free for all scoreboard
+		// Defrag Run scoreboard
 		//
 		for (i = 0; i < MAX_CLIENTS; i++) {
 			ci = &cgs.clientinfo[i];

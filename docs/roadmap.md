@@ -71,6 +71,8 @@ _// Requires a non-qvm environment (depends on <stdlib.h> for math)_
   - [ ] nottm
   - [ ] notfc
   - [ ] notdefrag
+- [ ] EntityPlus port
+- [ ] Warp entities (aka portals)
 
 ## Gamemodes (0.7.0)
 - [ ] Run (complete)
@@ -110,6 +112,7 @@ _[this section is not a todo, but more like a wishlist of sorts]_
   - [ ] Native race mode (like AG, first to finish wins. also FFA race, standings based on finish order)
   - [ ] PVP race mode (can interact with other players, and do things to change their movement)
   - [ ] Timed Duel maps : Pick all key items to set a time (like ctf, but for duel maps instead)
+  - [ ] Killrun
 - [ ] Look-behind command (map-based, not global)
 - [ ] Improved replay tools (q3mme inspired, using the new UI tools)
 - [ ] New data and stats:
@@ -129,6 +132,7 @@ _[this section is not a todo, but more like a wishlist of sorts]_
   - [ ] serverside rollback
   - [ ] clientside prediction for projectiles
   - [ ] predicted explosions
+- [ ] SURF_FORCESTEPUP forces VQ3 stepup behavior on ledges (for CPM/CQ3)
 
 
 ## Wishlist
