@@ -189,7 +189,7 @@ static void CG_Obituary(entityState_t* ent) {
 	}
 
 	if (message) {
-		CG_Printf("%s %s.\n", targetName, message);
+		// CG_Printf("%s %s.\n", targetName, message);
 		// switch to first killer if not following anyone
 		if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR && cg_followKiller.integer) {
 			if (!cg.followTime && attacker != cg.snap->ps.clientNum && attacker < MAX_CLIENTS) {

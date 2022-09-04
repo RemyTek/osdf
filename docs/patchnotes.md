@@ -13,10 +13,20 @@
 ```
 ... :  
 
-## 0.2.5
-_v0.2.5c_
+_v0.31a_
 ```md
 2022.09.04
+chg : Changed versioning system from `0.0.0x` to `0.00x` (start with 0.31a)
+chg : Changed default player model from `sarge` to `ranger/pm`
+chg : TEMP: All trigger_multiple entities are switched to 0.5 automatically. FIXME: This behavior should be to reset the entity state for player individually instead. Temp Hack until client-based entities are implemented.
+chg : Disabled self dead messages in cg_event.c . Code is unchanged, only commented out the printf call
+new : Skim Timer. Represents the value of pm_time, but skimming is its primary usage
+... : Cvars for skim timer positioning: cg_timerSkim_x  cg_timerSkim_y
+new : Cvars for run timer positioning: cg_timerActive_x  cg_timerActive_y  cg_timerBest_x  cg_timerBest_y
+new : Cvars for speedmeter positioning: cg_speed_x  cg_speed_y
+new : target_startTimer entity support  
+new : target_stopTimer entity support  
+new : Local Timer. Best per session. All maps have TimeReset (temporary hack until better Timer support)  
 fix : .clang-format file no longer breaks the formatting of the Cvar lists in g_main.c and cg_main.c
 chg : g_forcerespawn now means miliseconds, instead of seconds  
 ... : g_forcerespawn default value changed to 1. Previous behavior is now `g_forcerespawn 20000`  
@@ -26,13 +36,15 @@ new : Gamemode "run" (basic). Replaces FFA, `g_gametype 0`
 chg : Removed the "Waiting for players" message when cg.warmup is < 0
 chg : Respawn minimum delay changed from 1700 to 0 on player_die()
 chg : Powerups no longer drop on player_die()
-chg : Score is now set to 0 on player_die()
+chg : Score is now set to 0 on player_die(). For fragfilters
+chg : Player persistant score is set to 0 on ClientSpawn(). For fragfilters
 new : New function SetScore() on g_combat.c. Modified version of AddScore()
 chg : (CPM) Rocket Launcher: Missile speed increased from 900 to 1000  
 fix : (CPM) Rocket Launcher: Vertical self knockback scaling reduced to 1  
 chg : (CPM) Rocket Launcher: Self knockback increased to 1.2  
 ```
 
+## 0.2.5
 _v0.2.5b_
 ```md
 2022.09.03

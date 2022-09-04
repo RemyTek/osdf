@@ -202,6 +202,14 @@ vmCvar_t cg_deadBodyDarken;
 vmCvar_t cg_fovAdjust;
 vmCvar_t cg_followKiller;
 
+vmCvar_t cg_speed_x;
+vmCvar_t cg_speed_y;
+vmCvar_t cg_timerActive_x;
+vmCvar_t cg_timerActive_y;
+vmCvar_t cg_timerBest_x;
+vmCvar_t cg_timerBest_y;
+vmCvar_t cg_timerSkim_x;
+vmCvar_t cg_timerSkim_y;
 vmCvar_t phy_movetype;
 
 typedef struct {
@@ -331,6 +339,16 @@ static const cvarTable_t cvarTable[] = {
 	{&cg_deadBodyDarken, "cg_deadBodyDarken", "1", CVAR_ARCHIVE},
 	{&cg_fovAdjust, "cg_fovAdjust", "0", CVAR_ARCHIVE},
 	{&cg_followKiller, "cg_followKiller", "0", CVAR_ARCHIVE},
+
+	{&cg_speed_x, "cg_speed_x", "0.5", CVAR_USERINFO},
+	{&cg_speed_y, "cg_speed_y", "0.55", CVAR_USERINFO},
+	{&cg_timerActive_x, "cg_timerActive_x", "0.5", CVAR_USERINFO},
+	{&cg_timerActive_y, "cg_timerActive_y", "0.0", CVAR_USERINFO},
+	{&cg_timerBest_x, "cg_timerBest_x", "0.8", CVAR_USERINFO},
+	{&cg_timerBest_y, "cg_timerBest_y", "0.0", CVAR_USERINFO},
+	{&cg_timerSkim_x, "cg_timerSkim_x", "0.5", CVAR_USERINFO},
+	{&cg_timerSkim_y, "cg_timerSkim_y", "0.7", CVAR_USERINFO},
+
 	{&phy_movetype, "phy_movetype", "0", CVAR_SYSTEMINFO},
 };  // clang-format on
 

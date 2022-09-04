@@ -10,14 +10,11 @@
 
 # TODO : gpl to sdk
 ```
-new : target_startTimer entity support  
-new : target_stopTimer entity support  
-new : Local Timer. Best per session. All maps have TimeReset (temporary hack until better Timer support)  
+fix : .clang-format file no longer breaks function indentation in between macros
 
 new : Test Makefile buildsystem for native windows compilation  
 chg : Moved `build/linux/` folder to `build/make/` to reflect its multiplatform nature
 
-chg : Changed versioning system from `0.0.0x` to `0.00x` (start with 0.31a)
 new : Automated version management from the files `build/linux/build.py` and `code/game/mod-info.h`
 ```
 

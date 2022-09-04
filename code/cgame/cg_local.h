@@ -65,7 +65,7 @@
 #define TEAM_OVERLAY_MAXNAME_WIDTH     12
 #define TEAM_OVERLAY_MAXLOCATION_WIDTH 16
 
-#define DEFAULT_MODEL "sarge"
+#define DEFAULT_MODEL "ranger/pm"
 #ifdef MISSIONPACK
 #define DEFAULT_TEAM_MODEL "james"
 #define DEFAULT_TEAM_HEAD  "*james"
@@ -673,6 +673,12 @@ typedef struct {
 	int           followClient;
 
 	qboolean      skipDFshaders;
+
+	// Basic Start/End timer support
+	int timer_start;  // cg.snap->servertime at the moment of hitting start trigger
+	int timer_stop;   // cg.snap->servertime - timer_start at the moment of stopping the timer (no trigger)
+	int timer_end;    // cg.snap->servertime - timer_start achieved on hitting end trigger
+	int timer_best;   // best cg.snap->servertime - timer_start achieved on hitting end trigger
 } cg_t;
 
 // all of the model, shader, and sound references that are
@@ -1257,6 +1263,14 @@ extern vmCvar_t    cg_deadBodyDarken;
 extern vmCvar_t    cg_fovAdjust;
 extern vmCvar_t    cg_followKiller;
 
+extern vmCvar_t    cg_speed_x;
+extern vmCvar_t    cg_speed_y;
+extern vmCvar_t    cg_timerSkim_x;
+extern vmCvar_t    cg_timerSkim_y;
+extern vmCvar_t    cg_timerActive_x;
+extern vmCvar_t    cg_timerActive_y;
+extern vmCvar_t    cg_timerBest_x;
+extern vmCvar_t    cg_timerBest_y;
 extern vmCvar_t    phy_movetype;
 
 extern const char* eventnames[EV_MAX];

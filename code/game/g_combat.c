@@ -24,20 +24,20 @@ void ScorePlum(gentity_t* ent, vec3_t origin, int score) {
 // SetScore
 // ============
 // Set score to both the client and his team
-void SetScore( gentity_t *ent, vec3_t origin, int score ) {
-	if ( !ent->client ) {
+void SetScore(gentity_t* ent, vec3_t origin, int score) {
+	if (!ent->client) {
 		return;
 	}
 	// no scoring during pre-match warmup
-	if ( level.warmupTime ) {
+	if (level.warmupTime) {
 		return;
 	}
 	// show score plum
-	//ScorePlum(ent, origin, score);
+	// ScorePlum(ent, origin, score);
 	//
 	ent->client->ps.persistant[PERS_SCORE] = score;
-	if ( g_gametype.integer == GT_TEAM )
-		level.teamScores[ ent->client->ps.persistant[PERS_TEAM] ] = score;
+	if (g_gametype.integer == GT_TEAM)
+		level.teamScores[ent->client->ps.persistant[PERS_TEAM]] = score;
 	CalculateRanks();
 }
 
@@ -590,7 +590,10 @@ void player_die(gentity_t* self, gentity_t* inflictor, gentity_t* attacker, int 
 
 	// don't allow respawn until the death anim is done
 	// g_forcerespawn may force spawning at some later time
-	self->client->respawnTime = level.time; // + 1700;  // Allow Instant Respawn
+	// + 1700;  // Allow Instant Respawn
+	self->client->respawnTime = level.time;
+	// Send server time at the time of respawn.
+	trap_SendServerCommand(self - g_entities, va("timerStop %i", self->client->ps.commandTime));
 
 	// remove powerups
 	memset(self->client->ps.powerups, 0, sizeof(self->client->ps.powerups));

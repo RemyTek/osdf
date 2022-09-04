@@ -1035,6 +1035,7 @@ void ClientSpawn(gentity_t* ent) {
 	// clear entity values
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
 	client->ps.eFlags                 = flags;
+	client->ps.persistant[PERS_SCORE] = 0;  // Resets score on every spawn (for fragfilters)
 
 	ent->s.groundEntityNum = ENTITYNUM_NONE;
 	ent->client            = &level.clients[index];
@@ -1094,6 +1095,8 @@ void ClientSpawn(gentity_t* ent) {
 	// don't allow full run speed for a bit
 	client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
 	client->ps.pm_time = 100;
+
+	client->timer_start = -1;  // Mark run timer as stopped
 
 	client->respawnTime     = level.time;
 	client->inactivityTime  = level.time + g_inactivity.integer * 1000;

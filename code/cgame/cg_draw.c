@@ -802,7 +802,9 @@ static float CG_DrawSpeedMeter(float y) {
 		return y + BIGCHAR_HEIGHT + 4;
 	} else {
 		/* center of screen */
-		CG_DrawString(320, 260, s, colorWhite, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0, DS_SHADOW | DS_CENTER | DS_PROPORTIONAL);
+		int xpos = SCREEN_WIDTH * cg_speed_x.value;
+		int ypos = SCREEN_HEIGHT * cg_speed_y.value;
+		CG_DrawString(xpos, ypos, s, colorWhite, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0, DS_SHADOW | DS_CENTER | DS_PROPORTIONAL);
 		return y;
 	}
 }
@@ -2479,6 +2481,70 @@ static void CG_DrawProxWarning(void) {
 	}
 #endif
 
+	//:::::::::::::::::::::::::::::::::::::::::
+	static void CG_DrawTimerActive(float x, float y, float alpha) {
+		x = x * SCREEN_WIDTH;
+		y = y * SCREEN_HEIGHT;
+
+		// Timers set to -1 are considered disabled. On player_die(), ClientSpawn(), etc
+		int timer;
+		if (cg.timer_stop >= 0) {  // If there is a timer_stop active, draw it and ignore active timer
+			timer = cg.timer_stop;
+		} else if (cg.timer_start >= 0) {  // Draw active timer instead
+			timer = cg.snap->serverTime - cg.timer_start;
+		} else {  // None of them is active, so draw a static 0 timer
+			timer = 0;
+		}
+
+		int msec = timer % 1000;
+		int sec  = timer / 1000;
+		int min  = sec / 60;
+		sec -= min * 60;
+		int ten = sec / 10;
+		sec -= ten * 10;
+
+		char* s = (min > 0) ? va("%i:%i%i:%03i", min, ten, sec, msec) : va("%i%i:%03i", ten, sec, msec);
+		int   w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH * 0.5;
+		CG_DrawString(x+w, y, s, colorWhite, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0, DS_SHADOW | DS_RIGHT | DS_PROPORTIONAL);
+	}
+	//..............................................
+	static void CG_DrawTimerBest(float x, float y, float alpha) {
+		// Don't draw the best timer when its 0 or negative
+		if (cg.timer_best <= 0) {
+			return;
+		}
+
+		x = x * SCREEN_WIDTH;
+		y = y * SCREEN_HEIGHT;
+
+		int timer = cg.timer_best;
+
+		int msec = timer % 1000;
+		int sec  = timer / 1000;
+		int min  = sec / 60;
+		sec -= min * 60;
+		int ten = sec / 10;
+		sec -= ten * 10;
+
+		char* s = (min > 0) ? va("%i:%i%i:%03i", min, ten, sec, msec) : va("%i%i:%03i", ten, sec, msec);
+		int   w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH * 0.5;
+		CG_DrawString(x+w, y, s, colorWhite, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0, DS_SHADOW | DS_RIGHT | DS_PROPORTIONAL);
+	}
+	//..............................................
+	static void CG_DrawSmallIntCentered(int num, float x, float y, float alpha) {
+		// Convert [0-1] input range to ui expected range
+		x          = x * SCREEN_WIDTH;
+		y          = y * SCREEN_HEIGHT;
+		char* time = va("%i", num);
+		int   w    = CG_DrawStrlen(time) * SMALLCHAR_WIDTH * 0.5;
+		CG_DrawString(x+w, y, time, colorWhite, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0, DS_SHADOW | DS_RIGHT | DS_PROPORTIONAL);
+	}
+	//..............................................
+	static void CG_DrawPMTime(float x, float y, float alpha) {
+		CG_DrawSmallIntCentered(cg.snap->ps.pm_time, x, y, alpha);
+	}
+	//:::::::::::::::::::::::::::::::::::::::::
+
 	/*
 	=================
 	CG_Draw2D
@@ -2576,6 +2642,11 @@ static void CG_DrawProxWarning(void) {
 		cg.scoreBoardShowing = CG_DrawScoreboard();
 		if (!cg.scoreBoardShowing) {
 			CG_DrawCenterString();
+			CG_DrawTimerActive(cg_timerActive_x.value, cg_timerActive_y.value, 1.0F);
+			CG_DrawTimerBest(cg_timerBest_x.value, cg_timerBest_y.value, 1.0F);
+			if (cg.snap->ps.pm_time) {
+				CG_DrawPMTime(cg_timerSkim_x.value, cg_timerSkim_y.value, 1.0F);
+			}
 		}
 
 		if (cgs.score_catched) {
