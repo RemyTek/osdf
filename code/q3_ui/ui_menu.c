@@ -127,6 +127,8 @@ TTimo: this function is common to the main menu and errorMessage menu
 ===============
 */
 
+#define BANNER_SEP  " | "
+#define BANNER_TEXT MODNAME BANNER_SEP MODVERSION BANNER_SEP MODLICENSE
 static void Main_MenuDraw(void) {
 	refdef_t    refdef;
 	refEntity_t ent;
@@ -134,7 +136,7 @@ static void Main_MenuDraw(void) {
 	vec3_t      angles;
 	float       adjust;
 	float       x, y, w, h;
-	vec4_t      color = {0.5, 0, 0, 1};
+	vec4_t      color = {0.5, 0.5, 0.5, 1};
 
 	// setup the refdef
 
@@ -179,7 +181,7 @@ static void Main_MenuDraw(void) {
 	ent.renderfx = RF_LIGHTING_ORIGIN | RF_NOSHADOW;
 	VectorCopy(ent.origin, ent.oldorigin);
 
-	trap_R_AddRefEntityToScene(&ent);
+	// trap_R_AddRefEntityToScene(&ent);
 
 	trap_R_RenderScene(&refdef);
 
@@ -192,9 +194,9 @@ static void Main_MenuDraw(void) {
 
 	if (uis.demoversion) {
 		UI_DrawProportionalString(320, 372, "DEMO      FOR MATURE AUDIENCES      DEMO", UI_CENTER | UI_SMALLFONT, color);
-		UI_DrawString(320, 400, "Quake III Arena(c) 1999-2000, Id Software, Inc.  All Rights Reserved", UI_CENTER | UI_SMALLFONT, color);
+		UI_DrawString(320, 400, BANNER_TEXT, UI_CENTER | UI_SMALLFONT, color);
 	} else {
-		UI_DrawString(320, 450, "Quake III Arena(c) 1999-2000, Id Software, Inc.  All Rights Reserved", UI_CENTER | UI_SMALLFONT, color);
+		UI_DrawString(320, 450, BANNER_TEXT, UI_CENTER | UI_SMALLFONT, color);
 	}
 }
 
@@ -234,9 +236,9 @@ and that local cinematics are killed
 ===============
 */
 void UI_MainMenu(void) {
-	int      y;
 	qboolean teamArena = qfalse;
-	int      style     = UI_CENTER | UI_DROPSHADOW;
+	int      style     = UI_LEFT | UI_DROPSHADOW;
+	int      flags     = QMF_LEFT_JUSTIFY | QMF_PULSEIFFOCUS;
 
 	trap_Cvar_Set("sv_killserver", "1");
 
@@ -276,102 +278,106 @@ void UI_MainMenu(void) {
 	s_main.menu.wrapAround = qtrue;
 	s_main.menu.showlogo   = qtrue;
 
-	y                                    = 134;
-	s_main.singleplayer.generic.type     = MTYPE_PTEXT;
-	s_main.singleplayer.generic.flags    = QMF_CENTER_JUSTIFY | QMF_PULSEIFFOCUS;
-	s_main.singleplayer.generic.x        = 320;
-	s_main.singleplayer.generic.y        = y;
-	s_main.singleplayer.generic.id       = ID_SINGLEPLAYER;
-	s_main.singleplayer.generic.callback = Main_MenuEvent;
-	s_main.singleplayer.string           = "SINGLE PLAYER";
-	s_main.singleplayer.color            = color_red;
-	s_main.singleplayer.style            = style;
+	int x = 0;
+	int y = 160;
 
-	y += MAIN_MENU_VERTICAL_SPACING;
 	s_main.multiplayer.generic.type     = MTYPE_PTEXT;
-	s_main.multiplayer.generic.flags    = QMF_CENTER_JUSTIFY | QMF_PULSEIFFOCUS;
-	s_main.multiplayer.generic.x        = 320;
+	s_main.multiplayer.generic.flags    = QMF_LEFT_JUSTIFY | QMF_PULSEIFFOCUS;
+	s_main.multiplayer.generic.x        = x;
 	s_main.multiplayer.generic.y        = y;
 	s_main.multiplayer.generic.id       = ID_MULTIPLAYER;
 	s_main.multiplayer.generic.callback = Main_MenuEvent;
-	s_main.multiplayer.string           = "MULTIPLAYER";
-	s_main.multiplayer.color            = color_red;
+	s_main.multiplayer.string           = "Online";
+	s_main.multiplayer.color            = color_white;
 	s_main.multiplayer.style            = style;
 
 	y += MAIN_MENU_VERTICAL_SPACING;
+	s_main.singleplayer.generic.type     = MTYPE_PTEXT;
+	s_main.singleplayer.generic.flags    = flags;
+	s_main.singleplayer.generic.x        = x;
+	s_main.singleplayer.generic.y        = y;
+	s_main.singleplayer.generic.id       = ID_SINGLEPLAYER;
+	s_main.singleplayer.generic.callback = Main_MenuEvent;
+	s_main.singleplayer.string           = "Offline";
+	s_main.singleplayer.color            = color_white;
+	s_main.singleplayer.style            = style;
+
+	y += MAIN_MENU_VERTICAL_SPACING;
+
+	y += MAIN_MENU_VERTICAL_SPACING;
 	s_main.setup.generic.type     = MTYPE_PTEXT;
-	s_main.setup.generic.flags    = QMF_CENTER_JUSTIFY | QMF_PULSEIFFOCUS;
-	s_main.setup.generic.x        = 320;
+	s_main.setup.generic.flags    = QMF_LEFT_JUSTIFY | QMF_PULSEIFFOCUS;
+	s_main.setup.generic.x        = x;
 	s_main.setup.generic.y        = y;
 	s_main.setup.generic.id       = ID_SETUP;
 	s_main.setup.generic.callback = Main_MenuEvent;
 	s_main.setup.string           = "SETUP";
-	s_main.setup.color            = color_red;
+	s_main.setup.color            = color_white;
 	s_main.setup.style            = style;
 
 	y += MAIN_MENU_VERTICAL_SPACING;
 	s_main.demos.generic.type     = MTYPE_PTEXT;
-	s_main.demos.generic.flags    = QMF_CENTER_JUSTIFY | QMF_PULSEIFFOCUS;
-	s_main.demos.generic.x        = 320;
+	s_main.demos.generic.flags    = QMF_LEFT_JUSTIFY | QMF_PULSEIFFOCUS;
+	s_main.demos.generic.x        = x;
 	s_main.demos.generic.y        = y;
 	s_main.demos.generic.id       = ID_DEMOS;
 	s_main.demos.generic.callback = Main_MenuEvent;
 	s_main.demos.string           = "DEMOS";
-	s_main.demos.color            = color_red;
+	s_main.demos.color            = color_white;
 	s_main.demos.style            = style;
 
-	y += MAIN_MENU_VERTICAL_SPACING;
+	// y += MAIN_MENU_VERTICAL_SPACING;
 	s_main.cinematics.generic.type     = MTYPE_PTEXT;
-	s_main.cinematics.generic.flags    = QMF_CENTER_JUSTIFY | QMF_PULSEIFFOCUS;
-	s_main.cinematics.generic.x        = 320;
+	s_main.cinematics.generic.flags    = QMF_LEFT_JUSTIFY | QMF_PULSEIFFOCUS;
+	s_main.cinematics.generic.x        = x;
 	s_main.cinematics.generic.y        = y;
 	s_main.cinematics.generic.id       = ID_CINEMATICS;
 	s_main.cinematics.generic.callback = Main_MenuEvent;
 	s_main.cinematics.string           = "CINEMATICS";
-	s_main.cinematics.color            = color_red;
+	s_main.cinematics.color            = color_white;
 	s_main.cinematics.style            = style;
 
 	if (UI_TeamArenaExists()) {
 		teamArena = qtrue;
 		y += MAIN_MENU_VERTICAL_SPACING;
 		s_main.teamArena.generic.type     = MTYPE_PTEXT;
-		s_main.teamArena.generic.flags    = QMF_CENTER_JUSTIFY | QMF_PULSEIFFOCUS;
-		s_main.teamArena.generic.x        = 320;
+		s_main.teamArena.generic.flags    = QMF_LEFT_JUSTIFY | QMF_PULSEIFFOCUS;
+		s_main.teamArena.generic.x        = x;
 		s_main.teamArena.generic.y        = y;
 		s_main.teamArena.generic.id       = ID_TEAMARENA;
 		s_main.teamArena.generic.callback = Main_MenuEvent;
 		s_main.teamArena.string           = "TEAM ARENA";
-		s_main.teamArena.color            = color_red;
+		s_main.teamArena.color            = color_white;
 		s_main.teamArena.style            = style;
 	}
 
 	y += MAIN_MENU_VERTICAL_SPACING;
 	s_main.mods.generic.type     = MTYPE_PTEXT;
-	s_main.mods.generic.flags    = QMF_CENTER_JUSTIFY | QMF_PULSEIFFOCUS;
-	s_main.mods.generic.x        = 320;
+	s_main.mods.generic.flags    = QMF_LEFT_JUSTIFY | QMF_PULSEIFFOCUS;
+	s_main.mods.generic.x        = x;
 	s_main.mods.generic.y        = y;
 	s_main.mods.generic.id       = ID_MODS;
 	s_main.mods.generic.callback = Main_MenuEvent;
 	s_main.mods.string           = "MODS";
-	s_main.mods.color            = color_red;
+	s_main.mods.color            = color_white;
 	s_main.mods.style            = style;
 
 	y += MAIN_MENU_VERTICAL_SPACING;
 	s_main.exit.generic.type     = MTYPE_PTEXT;
-	s_main.exit.generic.flags    = QMF_CENTER_JUSTIFY | QMF_PULSEIFFOCUS;
-	s_main.exit.generic.x        = 320;
+	s_main.exit.generic.flags    = QMF_LEFT_JUSTIFY | QMF_PULSEIFFOCUS;
+	s_main.exit.generic.x        = x;
 	s_main.exit.generic.y        = y;
 	s_main.exit.generic.id       = ID_EXIT;
 	s_main.exit.generic.callback = Main_MenuEvent;
 	s_main.exit.string           = "EXIT";
-	s_main.exit.color            = color_red;
+	s_main.exit.color            = color_white;
 	s_main.exit.style            = style;
 
-	Menu_AddItem(&s_main.menu, &s_main.singleplayer);
 	Menu_AddItem(&s_main.menu, &s_main.multiplayer);
+	Menu_AddItem(&s_main.menu, &s_main.singleplayer);
 	Menu_AddItem(&s_main.menu, &s_main.setup);
 	Menu_AddItem(&s_main.menu, &s_main.demos);
-	Menu_AddItem(&s_main.menu, &s_main.cinematics);
+	// Menu_AddItem(&s_main.menu, &s_main.cinematics);
 	if (teamArena) {
 		Menu_AddItem(&s_main.menu, &s_main.teamArena);
 	}

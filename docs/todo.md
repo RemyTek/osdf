@@ -8,15 +8,10 @@
 > ... : Part of the feature listed above it
 
 
-
-
-# TODO: Clang Formatting
-```
-```
-
 # TODO : gpl to sdk
 ```
-chg : CPM Item Pickup: Above size increased from 36u (32u doesn't trigger) to 66 (62u doesn't trigger)  
+fix : cursor shader broken for the new ui
+
 fix : CPM Rocket Launcher: Vertical self knockback scaling reduced to 1  
 chg : CPM Rocket Launcher: Self knockback increased to 1.2  
 chg : Rocket Launcher speed increased from 900 to 1000  
@@ -32,11 +27,11 @@ new : target_startTimer entity support
 new : target_stopTimer entity support  
 new : Local Timer. Best per session. All maps have TimeReset (temporary hack until better Timer support)  
 
-new : Initial Main Menu UI layout, background and theme
 new : Custom fork of oDFe. Loads osdf mod directly
 fix : /cpm and /vq3 commands now work with osdf
 
 new : Test Makefile buildsystem for native windows compilation  
+chg : Moved `build/linux/` folder to `build/make/` to reflect its multiplatform nature
 ```
 
 # TODO

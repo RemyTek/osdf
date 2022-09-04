@@ -4,14 +4,12 @@
 # GNU Make required
 #
 
-ifndef COMPILE_PLATFORM
-	COMPILE_PLATFORM=$(shell uname | sed -e 's/_.*//' | tr '[:upper:]' '[:lower:]' | sed -e 's/\//_/g')
-endif
-COMPILE_ARCH=$(shell uname -m | sed -e 's/i.86/x86/' | sed -e 's/^arm.*/arm/')
+CURRENT_PLATFORM=$(shell uname | sed -e 's/_.*//' | tr '[:upper:]' '[:lower:]' | sed -e 's/\//_/g')
+CURRENT_ARCH=$(shell uname -m | sed -e 's/i.86/x86/' | sed -e 's/^arm.*/arm/')
 
-ifeq ($(COMPILE_PLATFORM),mingw32)
-  ifeq ($(COMPILE_ARCH),i386)
-    COMPILE_ARCH=x86
+ifeq ($(CURRENT_PLATFORM),mingw32)
+  ifeq ($(CURRENT_ARCH),i386)
+    CURRENT_ARCH=x86
   endif
 endif
 
@@ -29,12 +27,12 @@ ifndef MOD
 MOD=osdf
 endif
 
-ifeq ($(COMPILE_PLATFORM),cygwin)
+ifeq ($(CURRENT_PLATFORM),cygwin)
   PLATFORM=mingw32
 endif
 
 ifndef PLATFORM
-PLATFORM=$(COMPILE_PLATFORM)
+PLATFORM=$(CURRENT_PLATFORM)
 endif
 export PLATFORM
 
@@ -45,28 +43,28 @@ ifeq ($(PLATFORM),mingw64)
   MINGW=1
 endif
 
-ifeq ($(COMPILE_ARCH),i86pc)
-  COMPILE_ARCH=x86
+ifeq ($(CURRENT_ARCH),i86pc)
+  CURRENT_ARCH=x86
 endif
 
-ifeq ($(COMPILE_ARCH),amd64)
-  COMPILE_ARCH=x86_64
+ifeq ($(CURRENT_ARCH),amd64)
+  CURRENT_ARCH=x86_64
 endif
-ifeq ($(COMPILE_ARCH),x64)
-  COMPILE_ARCH=x86_64
+ifeq ($(CURRENT_ARCH),x64)
+  CURRENT_ARCH=x86_64
 endif
 
 ifndef ARCH
-ARCH=$(COMPILE_ARCH)
+ARCH=$(CURRENT_ARCH)
 endif
 export ARCH
 
-ifneq ($(PLATFORM),$(COMPILE_PLATFORM))
+ifneq ($(PLATFORM),$(CURRENT_PLATFORM))
   CROSS_COMPILING=1
 else
   CROSS_COMPILING=0
 
-  ifneq ($(ARCH),$(COMPILE_ARCH))
+  ifneq ($(ARCH),$(CURRENT_ARCH))
     CROSS_COMPILING=1
   endif
 endif
@@ -139,8 +137,7 @@ endif #Linux
 ifdef MINGW
 
   ifeq ($(CROSS_COMPILING),1)
-    # If CC is already set to something generic, we probably want to use
-    # something more specific
+    # If CC is already set to something generic, we probably want to use something more specific
     ifneq ($(findstring $(strip $(CC)),cc gcc),)
       CC=
     endif
@@ -157,6 +154,11 @@ ifdef MINGW
     ifndef CC
       CC=$(firstword $(strip $(foreach MINGW_PREFIX, $(MINGW_PREFIXES), \
          $(call bin_path, $(MINGW_PREFIX)-gcc))))
+    endif
+
+    # Safeguard, for mingw not found
+    ifeq ($(CC),)
+	    CC=x86_64-w64-mingw32-gcc
     endif
 
 #   STRIP=$(MINGW_PREFIX)-strip -g
@@ -267,11 +269,11 @@ all: debug release
 
 debug:
 	@$(MAKE) targets B=$(BD) CFLAGS="$(CFLAGS) $(BASE_CFLAGS)" \
-	  OPTIMIZE="$(DEBUG_CFLAGS)" V=$(V)
+		OPTIMIZE="$(DEBUG_CFLAGS)" V=$(V)
 
 release:
 	@$(MAKE) targets B=$(BR) CFLAGS="$(CFLAGS) $(BASE_CFLAGS)" \
-	  OPTIMIZE="-DNDEBUG $(OPTIMIZE)" V=$(V)
+		OPTIMIZE="-DNDEBUG $(OPTIMIZE)" V=$(V)
 
 # Create the build directories, check libraries and print out
 # an informational message, then start building
@@ -280,8 +282,8 @@ targets: makedirs
 	@echo "Building $(CLIENTBIN) in $(B):"
 	@echo "  PLATFORM: $(PLATFORM)"
 	@echo "  ARCH: $(ARCH)"
-	@echo "  COMPILE_PLATFORM: $(COMPILE_PLATFORM)"
-	@echo "  COMPILE_ARCH: $(COMPILE_ARCH)"
+	@echo "  CURRENT_PLATFORM: $(CURRENT_PLATFORM)"
+	@echo "  CURRENT_ARCH: $(CURRENT_ARCH)"
 	@echo "  CC: $(CC)"
 	@echo ""
 	@echo "  CFLAGS:"

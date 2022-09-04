@@ -1165,7 +1165,9 @@ void UI_Refresh(int realtime) {
 			// draw the background
 			trap_R_DrawStretchPic(0, 0, uis.glconfig.vidWidth, uis.glconfig.vidHeight, 0, 0, 1, 1, uis.menuBackNoLogoShader);
 			if (uis.activemenu->showlogo) {
-				UI_DrawHandlePic(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, uis.menuBackShader);
+				trap_R_DrawStretchPic(0, 0, uis.glconfig.vidWidth, uis.glconfig.vidHeight, 0, 0, 1, 1, uis.menuBackShader);
+				// trap_R_DrawStretchPic(0, 0, uis.glconfig.vidWidth*0.1, uis.glconfig.vidHeight*0.1, 0, 0, 1, 1, uis.logo_q3);
+				// UI_DrawHandlePic(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, uis.menuBackShader);
 			}
 		}
 

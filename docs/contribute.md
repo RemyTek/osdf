@@ -24,53 +24,132 @@ The information contained in the `docs/style.md` file is required for contributi
 ## Building
 Follow the instructions in `docs/build.md` for compiling the project.
 
----
-# TODO
-## Buildsystem
-- [ ] write documentation about contributing 
-  - [x] style guidelines for code, commits, and general practices
-  - [ ] a process for submitting work to be included (PRs, code review, merging/rebasing, testing or CI)
-- [ ] Clarify what the expectations are
+## Assets management
+Follow the instructions in `assets/readme.md`
 
-## Github systems
-- [ ] can it take .clang-format files?
-  - [ ] can styling be automated?
-- [ ] Multi-user way to track progress, todo and task assignment
-- [ ] github also has an issue tracker that can be used to keep track of work that needs to be done
----
 
-## Other TODO
-Not important exactly which process you choose
-- Choose one and make sure it works for the team and is documented
+## Git management
+### PR process overview:
+1. Pick something to work on from the lists:  `docs/todo.md`, `docs/roadmap.md`, `docs/bugs.md`
+2. Create a new branch and start doing your work
+3. Rebase workflow: goal is to have very clean, self-contained commits.   
+  - Do a bunch of work, maybe make some WIP commits   
+  - When the code is ready, Rebase+Squash your branch until your commit history is clean   
+4. Open a PR for your branch into the base mainline branch you originally forked from  
+5. Your code will be reviewed. If your code needs changes, fix them and squash again until its approved.  
+6. PR is approved:   
+  - Someone with permissions has to do the Rebasing into mainline  
+  - Once that's done, the process is complete.  
 
-Steps:
-1. pick something to work on. If its an issue on github, then assign that issue to yourself so theres no duplicate work
-2. branch off the main branch and start doing your work
-3. rebase workflow. goal is to have very clean, self-contained commits. 
-  - do a bunch of work, maybe make some WIP commits 
-  - when it's ready, go back through and amend, fixup, and rebase your branch until its clean 
-  - if merge workflow, instead: The process looks a bit different, but probably not by much.
-4. open a PR for your branch into the main branch. 
-  - mmod requires 3 code reviews. I would say that's too much for a smaller project. Require only 1 or 2 people to give it their approval
-5. PR is approved: 
-  - Someone with permissions has to do the rebasing and fast-forwarding (to get the PR branch into the main branch)
-  - Once that's done, the process is complete.
-
-Automatically testing something interactive and complicated like a game engine is pretty hard, and writing a whole suite of tests is an entire project by itself, so it's not important to worry about.
-
-General rules that pretty much every projects follow are
-- Don't do work on the main branch, always make a new branch so that you don't break something horribly
-- Restrict access to the main branch so that you make sure it doesn't break horribly
-- Have basic standards for merging things into main. 
-  - Code review and automated testing (even if it's just "does this PR compile") are pretty good
-- Some "commit style" is enforced. 
-  - Commits should be small, self contained, and have descriptive messages. 
-  - Adopt a standardized format. mmod uses this: https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716.
-  - Some web projects use some evil notation involving emojis, etc.
-
+### Review process overview:
 Code reviews consist of people:
 - Reading over code 
 - Pointing out potential bugs 
 - Pointing out opportunities for things to be refactored
 - Asking questions about things that are unclear
 - Making small nitpicks on formatting and style
+
+### General rules;
+- Don't do work on the main branch, always make a new branch so that you don't break something  
+- Access to the main branch is restricted, to make sure it doesn't break horribly  
+- Follow the contributing standards for merging things into mainline.   
+- Code review and automated testing (even if it's just "does this PR compile") are pretty good  
+- Use the project's commit-style  
+
+### Mainline branches
+This projects currently maintains only one active mainline branch, called `master`.  
+Releases will be published from code in that branch, when the feature list needs to be playtested by players.  
+
+Given the current alpha state of the whole project, code in the `master` branch might end up broken due to unknown reasons.  
+And that (for now) is ok.  
+
+The project aspires to be stable enough in the future, that releases can actually be called true `Release quality` software.  
+At that point, a separate `next` branch will be created, that will contain the latest bleeding-edge set of features.  
+And the `master` branch will then contain only stable / production code.  
+
+We are not at that stage yet.  
+But this doesn't mean that your code can be completely broken, and/or not compile at all.  
+Do not submit PRs into mainline that have not been tested to work on all supported platforms _(currenly windows+linux)_.  
+
+### Rebasing vs Merging 
+This project uses the [Rebase workflow](https://www.youtube.com/watch?v=7Mh259hfxJg).  
+Contributors are expected to condense their branch history as much as possible with the aid of [Rebase Squashing](https://www.youtube.com/watch?v=RwvTrSm7zEY).  
+This process only needs to be done right before submitting a PR.  
+
+The resulting history should reflect the big picture perspective of your changes, and only contain information strictly necessary for understanding what was changed.  
+This history shouldn't resemble the look of a very detailed patchnotes list.   
+Rather, it should reflect the list of overarching categories that the changes include, and let the diff list and `docs/patchnotes.md` file contain a full list of individual/atomic changes.  
+```md 
+# Undesirable Git history
+fix : Code in line 1505 of file asdf.c missing a symbol
+chg : Commit for the weekend, nothing changed
+new : Function for doing new thing in file asdf9i.c
+fix : File in folder fjgo/ renamed from 0sdf0.c to i0g.c
+new : Initial branching from master
+ ^
+ |.. Nothing in them expresses what category these changes belong to.
+ |.. The changes are too atomic for git history, but would be fine for docs/patchnotes.md
+```
+```
+# Better
+new : Simple early implementation of feature X
+new : Full implementation of feature Y
+ ^
+ |.. Concise and big picture perspective, but understandable
+ |.. Whoever needs more data will rely on git, diff tools and/or the docs/patchnotes.md file, to find specific changes, 
+```
+
+### Branching
+Never branch off of a non-mainline branch.  
+Git history might be rewritten on the branch you are using, and you will be responsible for merging your code back into that branch, and solving the problems that this created.  
+If you do, you need to communicate with its creator, so that your branch doesn't end up broken due to Squashing/Cleaning rewriting the history.  
+At that point, people working on that branch will need to cooperate as one, to merge back into mainline together as a single Rebased and Squashed branch.  
+
+### Commit message style
+Follows a format similar to that of the patchnotes:  
+```md 
+key : Add category of fancy new features
+^--^  ^---------------------------------^
+|     |
+|     +-> Summary of the change/changes
+|
++-------> Type: new, fix, rmv, doc, bld, etc
+
+Valid Keywords are:
+
+# User facing changes
+new : New features
+chg : Change in existing functionality  
+fix : Bugfix
+rmv : Removed feature  
+dep : Soon-to-be removed feature  
+sec : Security. Fix for vulnerabilities.  
+
+# Development changes
+bld : Changes to the buildsystem. New and fixes
+doc : Changes to the documentation. New and fixes
+ref : Refactor of code. Naming, organizing, reflow, etc. No behavior changes
+sty : Formatting, styling, etc; No behavior changes
+
+# Not used:
+tst : (not used) Changes to tests code. No production code changed
+... : (dont use) Part of the feature listed above it. Ok in patchnotes, but not on git history
+```
+
+---
+# TODO
+## Buildsystem
+- [ ] write documentation about contributing 
+  - [x] style guidelines for code, commits, and general practices
+  - [ ] a process for submitting work to be included 
+    - [x] PRs
+    - [x] Code review 
+    - [x] Merging/rebasing
+    - [x] Testing 
+    - [ ] CI
+- [ ] Clarify what the expectations are
+
+## Github systems
+- [ ] automate formatting with the .clang-format file (hooks or github actions)
+- [ ] Multi-user way to track progress, todo and task assignment (issue tracker, maybe other systems)
+

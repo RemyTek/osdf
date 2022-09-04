@@ -804,7 +804,7 @@ void cq3_init(void) {
 	phy_stopspeed    = pm_stopspeed;
 	phy_crouch_scale = pm_duckScale;
 	// Slick
-	phy_slick_accel = 15;  // CPM groundaccel
+	phy_slick_accel = 15;  // CPM groundaccel value
 	// Acceleration
 	phy_fly_accel = pm_flyaccelerate;
 	// Friction

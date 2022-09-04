@@ -48,6 +48,22 @@ def writeStr(string, file, type='w'):
   f.write(string)
   f.close()
 #.....................................
+def isEmpty(trg):
+  from os.path import isdir, isfile, exists, getsize
+  from os import listdir
+  unkn = True if not trg or not exists(trg) else False
+  dir  = trg.is_dir() or isdir(trg)
+  file = trg.is_file  or isfile(trg)
+  if dir:
+    empty = not listdir(trg)
+    return True if empty or unkn else False
+  elif file:
+    try:    empty = getsize(trg)
+    except: empty = True  # If file does not exist, getsize will raise an exception
+    return True if empty or unkn else False
+  else:  # Input is not a dir or a file. Treat it as a python variable
+    return True if not trg else False
+#.....................................
 def bash(cmd, dir="", type='print'):
   import subprocess
   com = " ".join(list(filter(None, cmd.split(";")))).split(" ")
@@ -102,9 +118,9 @@ def Pk3(list, trg, rel=None):
   p = splitext(trg)[0]+".pk3" 
   Zip(list, z, rel)
   mv(z,p)
-
+#.....................................
 def ZipDir(src,trg,rel=None):
-  from os.path import relpath, join, dirname; from os import walk
+  from os.path import relpath, join; from os import walk
   from zipfile import ZipFile, ZIP_DEFLATED
   if not rel: rel = src
   z = ZipFile(trg, 'w', ZIP_DEFLATED)
@@ -120,6 +136,15 @@ def Pk3Dir(src, trg, rel=None):
   p = splitext(basename(trg))[0]+".pk3"
   ZipDir(src, z, rel)
   mv(z, join(dirname(trg), p))
+#.....................................
+def Pk3CreateAll(src, trg, prefix=None):
+  from os.path import join, basename, isdir 
+  if prefix is None: prefix = "y.custom."
+  dirs = [d for d in glob(src, "*") if d.is_dir() or isdir(d)]
+  for it in dirs:  # For every folder in src
+    if isEmpty(it): continue # Skip empty folder
+    pk3 = join(trg, f"{prefix}{basename(it)}.pk3")
+    Pk3Dir(it, pk3)
 #.....................................
 
 

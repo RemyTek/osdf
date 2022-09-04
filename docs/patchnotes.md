@@ -10,6 +10,14 @@
 
 # Unreleased
 ```md
+2022.09.03
+chg : Extended the content of `docs/contribute.md`. Including PR, Rebasing, Commit style, Guidelines, etc
+new : Added file `docs/bugs.md` to keep a todo list of user bug reports
+new : Added function `isEmpty()` to the `build/linux/helper.py` tools script
+new : Added function `Pk3CreateAll()` to the `build/linux/helper.py` tools script
+new : Initial Main Menu UI layout, background and theme
+chg : Added `game/mod-info.h` file. For defining mod info defines (version, license, name, etc)
+chg : Removed Quake3 3D banner from the menu. TODO: Cleanup code. Only commented the line where its added to the scene.
 ```
 ... :  
 
@@ -17,6 +25,10 @@
 _v0.2.5-r0_
 ```md
 2022.09.02
+chg : CPM Item Pickup: Above size increased from 36u (32u doesn't trigger) to 66 (62u doesn't trigger)  
+new : Added verbose switch `-v` to the build/linux/build.py file
+chg : Renamed `COMPILE_` to `CURRENT_` in the file build/linux/Makefile
+fix : Reverted COMPILE_PLATFORM changes to the makefile. Automated buildscript now uses PLATFORM instead (as it was intended. compile_platform actually means current_platform)
 fix : .clang-format file no longer breaks the whole project due to include sorting
 fix : .clang-format file no longer breaks the formatting of array tables (cvar tables, command lists, etc)
 fix : .clang-format file no longer packs single-instruction functions into one line when they fit the line-width

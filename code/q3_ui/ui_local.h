@@ -526,6 +526,7 @@ typedef struct {
 	qhandle_t        cursor;
 	qhandle_t        rb_on;
 	qhandle_t        rb_off;
+	qhandle_t        logo_q3;
 
 	float            scale;
 	float            biasX;

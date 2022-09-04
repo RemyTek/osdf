@@ -5,7 +5,8 @@
 // because games can change separately from the main system version, we need a
 // second version that must match between game and cgame
 
-#define GAME_VERSION "baseq3-1"
+#include "mod-info.h"
+#define GAME_VERSION MODNAME MODSEP MODVERSION
 
 #define DEFAULT_GRAVITY  800
 #define GIB_HEALTH       -40

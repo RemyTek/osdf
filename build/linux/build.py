@@ -33,6 +33,10 @@ binDir  = join(thisDir(), "build")
 cfgDir  = join(rootDir, "cfg")
 srcDir  = join(rootDir, "code")
 astDir  = join(rootDir, "assets")
+b3aDir  = join(astDir, "b3a")
+cgDir   = join(astDir, "cgame")
+gDir    = join(astDir, "game")
+uiDir   = join(astDir, "q3ui")
 rlsDir  = join(binDir, "releases", modVers)
 rlsBase = join(rlsDir, modName)
 winDir  = join(binDir, "release-mingw64-x86_64", modName)  # TODO generate based on keywords
@@ -40,25 +44,29 @@ lnxDir  = join(binDir, "release-linux-x86_64", modName)    # TODO generate based
 
 #.....................................
 # Files
+#.............
+# Config files
 dscFile  = join(cfgDir, "description.txt")
 cfgFiles = glob(cfgDir, "*.cfg")
-pk3Files = glob(astDir, "*.pk3")  # Every pk3 file in the asset folder
-astFiles = [f for f in glob(astDir, "*") if ".pk3" not in f.name]  # Everything thats not a pk3 in the asset folder
-astPk3   = join(rlsBase, f"y.{modName}-b3a.pk3")  # Resulting pk3 file after compressing all asset files
+# Assets:
+pk3Files = glob(astDir, "*.pk3")  # Every pk3 file in the root asset folder
+# Binaries and Code
 winFiles = glob(winDir, "*.dll")
 lnxFiles = glob(lnxDir, "*.so")
 srcFiles = glob(srcDir, "*")
 srcZip   = join(rlsBase, "sourceCode.zip")
+# Final zip
 rlsZip   = join(rlsDir, f"{fullName}-{modVers}.zip")
 
 #.....................................
 # CLI options
 #.............
-addOpts("bpdr")
+addOpts("bpdrv")
 build   = getOpt("b")  # Builds with default options for current system only
 debug   = getOpt("d")  # Builds debug version for current system only
 release = getOpt("r")  # Builds release version for current system only
 pack    = getOpt("p")  # Builds release for all platforms and Packs all files into the releases folder for distribution
+verbose = getOpt('v')  # Makes the output of building completely verbose
 noOpts = not pack and not build and not debug and not release
 if noOpts: build = True  # Override to `b` when no options are given
 distribute = pack        # Builds release for all platforms when packing
@@ -69,12 +77,12 @@ distribute = pack        # Builds release for all platforms when packing
 from multiprocessing import cpu_count
 coresPc = 0.8
 cores   = int(cpu_count()*coresPc)
-makeCmd = f"make -j{cores}"
+makeCmd = f"make -j{cores} V={1 if verbose else 0}"
 #.....................................
 if build:                 bash(f"{makeCmd}", dir=thisDir())
 if debug:                 bash(f"{makeCmd} debug", dir=thisDir())
 if release or distribute: bash(f"{makeCmd} release", dir=thisDir())
-if distribute:            bash(f"{makeCmd} release COMPILE_PLATFORM=mingw64", dir=thisDir())
+if distribute:            bash(f"{makeCmd} release PLATFORM=mingw64", dir=thisDir())
 
 #.....................................
 # Packing
@@ -89,9 +97,9 @@ if pack:   # if -p
   # Copy library files
   for file in winFiles: cp(file, rlsBase)
   for file in lnxFiles: cp(file, rlsBase)
-  # Assets: Create b3a.pk3 and Copy all pk3 asset files
-  Pk3(astFiles, astPk3, astDir)
-  for file in pk3Files: cp(file, rlsBase)
+  # Assets: 
+  for file in pk3Files: cp(file, rlsBase)  # Copy all pk3 asset files at root assets folder
+  Pk3CreateAll(astDir, rlsBase, prefix=f"y.{modName}.")  # Pack all asset/ subfolders as separate pk3 files
   # Zip and Copy source code
   ZipDir(srcDir, srcZip)
   # Pack everything

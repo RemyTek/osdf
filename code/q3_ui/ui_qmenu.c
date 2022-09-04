@@ -13,6 +13,7 @@ sfxHandle_t      menu_out_sound;
 sfxHandle_t      menu_buzz_sound;
 sfxHandle_t      menu_null_sound;
 sfxHandle_t      weaponChangeSound;
+qhandle_t        logo_q3;
 
 static qhandle_t sliderBar;
 static qhandle_t sliderButton_0;
@@ -1629,9 +1630,11 @@ void Menu_Cache(void) {
 		// the blend effect turns to shit with the normal
 		uis.menuBackShader = trap_R_RegisterShaderNoMip("menubackRagePro");
 	} else {
-		uis.menuBackShader = trap_R_RegisterShaderNoMip("menuback");
+		// uis.menuBackShader = trap_R_RegisterShaderNoMip("menuback");
+		uis.menuBackShader = trap_R_RegisterShaderNoMip("ui/bg.jpg");
 	}
 	uis.menuBackNoLogoShader = trap_R_RegisterShaderNoMip("menubacknologo");
+	// uis.logo_q3              = trap_R_RegisterShaderNoMip("ui/logoQ3.jpg");
 
 	menu_in_sound     = trap_S_RegisterSound("sound/misc/menu1.wav", qfalse);
 	menu_move_sound   = trap_S_RegisterSound("sound/misc/menu2.wav", qfalse);
