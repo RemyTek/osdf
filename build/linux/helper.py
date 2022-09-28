@@ -52,8 +52,8 @@ def isEmpty(trg):
   from os.path import isdir, isfile, exists, getsize
   from os import listdir
   unkn = True if not trg or not exists(trg) else False
-  dir  = trg.is_dir() or isdir(trg)
-  file = trg.is_file  or isfile(trg)
+  dir  = trg.is_dir()  or isdir(trg)
+  file = trg.is_file() or isfile(trg)
   if dir:
     empty = not listdir(trg)
     return True if empty or unkn else False

@@ -13,6 +13,7 @@
 ```
 ... :  
 
+## 0.31
 _v0.31a_
 ```md
 2022.09.04
@@ -20,7 +21,7 @@ chg : Changed versioning system from `0.0.0x` to `0.00x` (start with 0.31a)
 chg : Changed default player model from `sarge` to `ranger/pm`
 chg : TEMP: All trigger_multiple entities are switched to 0.5 automatically. FIXME: This behavior should be to reset the entity state for player individually instead. Temp Hack until client-based entities are implemented.
 chg : Disabled self dead messages in cg_event.c . Code is unchanged, only commented out the printf call
-new : Skim Timer. Represents the value of pm_time, but skimming is its primary usage
+new : Skim Timer Hud element. Represents the value of pm_time, but skimming is its primary usage
 ... : Cvars for skim timer positioning: cg_timerSkim_x  cg_timerSkim_y
 new : Cvars for run timer positioning: cg_timerActive_x  cg_timerActive_y  cg_timerBest_x  cg_timerBest_y
 new : Cvars for speedmeter positioning: cg_speed_x  cg_speed_y
