@@ -866,16 +866,18 @@ void G_Damage(gentity_t* targ, gentity_t* inflictor, gentity_t* attacker, vec3_t
 	if (knockback && targ->client) {
 		vec3_t kvel;
 		float  mass;
+		float scale;
+		float kvel_z;
 
 		mass = 200;
 
-		float scale = 1;  // Default knockback scaling
+		scale = 1;  // Default knockback scaling
 		// Increased rocket knockback for CPM
 		if ((targ == attacker) && (mod == MOD_ROCKET_SPLASH || mod == MOD_ROCKET) && (phy_movetype.integer == 0)) {
 			scale = 1.2;
 		}
 		// Calculate vertical knockback without scale
-		float kvel_z = dir[2] * g_knockback.value * (float)knockback / mass;
+		kvel_z = dir[2] * g_knockback.value * (float)knockback / mass;
 		VectorScale(dir, scale * g_knockback.value * (float)knockback / mass, kvel);
 		kvel[2] = kvel_z;  // Restore vertical scale
 

@@ -239,6 +239,8 @@ void UI_MainMenu(void) {
 	qboolean teamArena = qfalse;
 	int      style     = UI_LEFT | UI_DROPSHADOW;
 	int      flags     = QMF_LEFT_JUSTIFY | QMF_PULSEIFFOCUS;
+	int x;
+	int y;
 
 	trap_Cvar_Set("sv_killserver", "1");
 
@@ -278,8 +280,8 @@ void UI_MainMenu(void) {
 	s_main.menu.wrapAround = qtrue;
 	s_main.menu.showlogo   = qtrue;
 
-	int x = 0;
-	int y = 160;
+	x = 0;
+	y = 160;
 
 	s_main.multiplayer.generic.type     = MTYPE_PTEXT;
 	s_main.multiplayer.generic.flags    = QMF_LEFT_JUSTIFY | QMF_PULSEIFFOCUS;

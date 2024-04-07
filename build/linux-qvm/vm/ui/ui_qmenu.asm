@@ -1,0 +1,11638 @@
+data
+export menu_text_color
+align 4
+LABELV menu_text_color
+byte 4 1065353216
+byte 4 1065353216
+byte 4 1065353216
+byte 4 1065353216
+export menu_dim_color
+align 4
+LABELV menu_dim_color
+byte 4 0
+byte 4 0
+byte 4 0
+byte 4 1061158912
+export color_black
+align 4
+LABELV color_black
+byte 4 0
+byte 4 0
+byte 4 0
+byte 4 1065353216
+export color_white
+align 4
+LABELV color_white
+byte 4 1065353216
+byte 4 1065353216
+byte 4 1065353216
+byte 4 1065353216
+export color_yellow
+align 4
+LABELV color_yellow
+byte 4 1065353216
+byte 4 1065353216
+byte 4 0
+byte 4 1065353216
+export color_blue
+align 4
+LABELV color_blue
+byte 4 0
+byte 4 0
+byte 4 1065353216
+byte 4 1065353216
+export color_lightOrange
+align 4
+LABELV color_lightOrange
+byte 4 1065353216
+byte 4 1059984507
+byte 4 0
+byte 4 1065353216
+export color_orange
+align 4
+LABELV color_orange
+byte 4 1065353216
+byte 4 1054615798
+byte 4 0
+byte 4 1065353216
+export color_red
+align 4
+LABELV color_red
+byte 4 1065353216
+byte 4 0
+byte 4 0
+byte 4 1065353216
+export color_dim
+align 4
+LABELV color_dim
+byte 4 0
+byte 4 0
+byte 4 0
+byte 4 1048576000
+export pulse_color
+align 4
+LABELV pulse_color
+byte 4 1065353216
+byte 4 1065353216
+byte 4 1065353216
+byte 4 1065353216
+export text_color_disabled
+align 4
+LABELV text_color_disabled
+byte 4 1056964608
+byte 4 1056964608
+byte 4 1056964608
+byte 4 1065353216
+export text_color_normal
+align 4
+LABELV text_color_normal
+byte 4 1065353216
+byte 4 1054615798
+byte 4 0
+byte 4 1065353216
+export text_color_highlight
+align 4
+LABELV text_color_highlight
+byte 4 1065353216
+byte 4 1065353216
+byte 4 0
+byte 4 1065353216
+export listbar_color
+align 4
+LABELV listbar_color
+byte 4 1065353216
+byte 4 1054615798
+byte 4 0
+byte 4 1050253722
+export text_color_status
+align 4
+LABELV text_color_status
+byte 4 1065353216
+byte 4 1065353216
+byte 4 1065353216
+byte 4 1065353216
+code
+proc Text_Init 4 0
+file "../../../../code/q3_ui/ui_qmenu.c"
+line 81
+;1:// Copyright (C) 1999-2000 Id Software, Inc.
+;2://
+;3:/**********************************************************************
+;4:    UI_QMENU.C
+;5:
+;6:    Quake's menu framework system.
+;7:**********************************************************************/
+;8:#include "ui_local.h"
+;9:
+;10:sfxHandle_t      menu_in_sound;
+;11:sfxHandle_t      menu_move_sound;
+;12:sfxHandle_t      menu_out_sound;
+;13:sfxHandle_t      menu_buzz_sound;
+;14:sfxHandle_t      menu_null_sound;
+;15:sfxHandle_t      weaponChangeSound;
+;16:qhandle_t        logo_q3;
+;17:
+;18:static qhandle_t sliderBar;
+;19:static qhandle_t sliderButton_0;
+;20:static qhandle_t sliderButton_1;
+;21:
+;22:vec4_t           menu_text_color   = {1.0f, 1.0f, 1.0f, 1.0f};
+;23:vec4_t           menu_dim_color    = {0.0f, 0.0f, 0.0f, 0.75f};
+;24:vec4_t           color_black       = {0.00f, 0.00f, 0.00f, 1.00f};
+;25:vec4_t           color_white       = {1.00f, 1.00f, 1.00f, 1.00f};
+;26:vec4_t           color_yellow      = {1.00f, 1.00f, 0.00f, 1.00f};
+;27:vec4_t           color_blue        = {0.00f, 0.00f, 1.00f, 1.00f};
+;28:vec4_t           color_lightOrange = {1.00f, 0.68f, 0.00f, 1.00f};
+;29:vec4_t           color_orange      = {1.00f, 0.43f, 0.00f, 1.00f};
+;30:vec4_t           color_red         = {1.00f, 0.00f, 0.00f, 1.00f};
+;31:vec4_t           color_dim         = {0.00f, 0.00f, 0.00f, 0.25f};
+;32:
+;33:// current color scheme
+;34:vec4_t pulse_color          = {1.00f, 1.00f, 1.00f, 1.00f};
+;35:vec4_t text_color_disabled  = {0.50f, 0.50f, 0.50f, 1.00f};  // light gray
+;36:vec4_t text_color_normal    = {1.00f, 0.43f, 0.00f, 1.00f};  // light orange
+;37:vec4_t text_color_highlight = {1.00f, 1.00f, 0.00f, 1.00f};  // bright yellow
+;38:vec4_t listbar_color        = {1.00f, 0.43f, 0.00f, 0.30f};  // transluscent orange
+;39:vec4_t text_color_status    = {1.00f, 1.00f, 1.00f, 1.00f};  // bright white
+;40:
+;41:// action widget
+;42:static void Action_Init(menuaction_s* a);
+;43:static void Action_Draw(menuaction_s* a);
+;44:
+;45:// radio button widget
+;46:static void        RadioButton_Init(menuradiobutton_s* rb);
+;47:static void        RadioButton_Draw(menuradiobutton_s* rb);
+;48:static sfxHandle_t RadioButton_Key(menuradiobutton_s* rb, int key);
+;49:
+;50:// slider widget
+;51:static void        Slider_Init(menuslider_s* s);
+;52:static sfxHandle_t Slider_Key(menuslider_s* s, int key);
+;53:static void        Slider_Draw(menuslider_s* s);
+;54:
+;55:// spin control widget
+;56:static void        SpinControl_Init(menulist_s* s);
+;57:static void        SpinControl_Draw(menulist_s* s);
+;58:static sfxHandle_t SpinControl_Key(menulist_s* l, int key);
+;59:
+;60:// text widget
+;61:static void Text_Init(menutext_s* b);
+;62:static void Text_Draw(menutext_s* b);
+;63:
+;64:// scrolllist widget
+;65:static void ScrollList_Init(menulist_s* l);
+;66:sfxHandle_t ScrollList_Key(menulist_s* l, int key);
+;67:
+;68:// proportional text widget
+;69:static void PText_Init(menutext_s* b);
+;70:static void PText_Draw(menutext_s* b);
+;71:
+;72:// proportional banner text widget
+;73:static void BText_Init(menutext_s* b);
+;74:static void BText_Draw(menutext_s* b);
+;75:
+;76:/*
+;77:=================
+;78:Text_Init
+;79:=================
+;80:*/
+;81:static void Text_Init(menutext_s* t) {
+line 82
+;82:	t->generic.flags |= QMF_INACTIVE;
+ADDRLP4 0
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+ASGNP4
+ADDRLP4 0
+INDIRP4
+ADDRLP4 0
+INDIRP4
+INDIRU4
+CNSTU4 16384
+BORU4
+ASGNU4
+line 83
+;83:}
+LABELV $68
+endproc Text_Init 4 0
+proc Text_Draw 524 20
+line 90
+;84:
+;85:/*
+;86:=================
+;87:Text_Draw
+;88:=================
+;89:*/
+;90:static void Text_Draw(menutext_s* t) {
+line 96
+;91:	int    x;
+;92:	int    y;
+;93:	char   buff[512];
+;94:	float* color;
+;95:
+;96:	x = t->generic.x;
+ADDRLP4 512
+ADDRFP4 0
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+ASGNI4
+line 97
+;97:	y = t->generic.y;
+ADDRLP4 516
+ADDRFP4 0
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRI4
+ASGNI4
+line 99
+;98:
+;99:	buff[0] = '\0';
+ADDRLP4 0
+CNSTI1 0
+ASGNI1
+line 102
+;100:
+;101:	// possible label
+;102:	if (t->generic.name)
+ADDRFP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $70
+line 103
+;103:		strcpy(buff, t->generic.name);
+ADDRLP4 0
+ARGP4
+ADDRFP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRP4
+ARGP4
+ADDRGP4 strcpy
+CALLP4
+pop
+LABELV $70
+line 106
+;104:
+;105:	// possible value
+;106:	if (t->string)
+ADDRFP4 0
+INDIRP4
+CNSTI4 64
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $72
+line 107
+;107:		strcat(buff, t->string);
+ADDRLP4 0
+ARGP4
+ADDRFP4 0
+INDIRP4
+CNSTI4 64
+ADDP4
+INDIRP4
+ARGP4
+ADDRGP4 strcat
+CALLP4
+pop
+LABELV $72
+line 109
+;108:
+;109:	if (t->generic.flags & QMF_GRAYED)
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 8192
+BANDU4
+CNSTU4 0
+EQU4 $74
+line 110
+;110:		color = text_color_disabled;
+ADDRLP4 520
+ADDRGP4 text_color_disabled
+ASGNP4
+ADDRGP4 $75
+JUMPV
+LABELV $74
+line 112
+;111:	else
+;112:		color = t->color;
+ADDRLP4 520
+ADDRFP4 0
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRP4
+ASGNP4
+LABELV $75
+line 114
+;113:
+;114:	UI_DrawString(x, y, buff, t->style, color);
+ADDRLP4 512
+INDIRI4
+ARGI4
+ADDRLP4 516
+INDIRI4
+ARGI4
+ADDRLP4 0
+ARGP4
+ADDRFP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ARGI4
+ADDRLP4 520
+INDIRP4
+ARGP4
+ADDRGP4 UI_DrawString
+CALLV
+pop
+line 115
+;115:}
+LABELV $69
+endproc Text_Draw 524 20
+proc BText_Init 4 0
+line 122
+;116:
+;117:/*
+;118:=================
+;119:BText_Init
+;120:=================
+;121:*/
+;122:static void BText_Init(menutext_s* t) {
+line 123
+;123:	t->generic.flags |= QMF_INACTIVE;
+ADDRLP4 0
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+ASGNP4
+ADDRLP4 0
+INDIRP4
+ADDRLP4 0
+INDIRP4
+INDIRU4
+CNSTU4 16384
+BORU4
+ASGNU4
+line 124
+;124:}
+LABELV $76
+endproc BText_Init 4 0
+proc BText_Draw 16 20
+line 131
+;125:
+;126:/*
+;127:=================
+;128:BText_Draw
+;129:=================
+;130:*/
+;131:static void BText_Draw(menutext_s* t) {
+line 136
+;132:	int    x;
+;133:	int    y;
+;134:	float* color;
+;135:
+;136:	x = t->generic.x;
+ADDRLP4 0
+ADDRFP4 0
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+ASGNI4
+line 137
+;137:	y = t->generic.y;
+ADDRLP4 4
+ADDRFP4 0
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRI4
+ASGNI4
+line 139
+;138:
+;139:	if (t->generic.flags & QMF_GRAYED)
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 8192
+BANDU4
+CNSTU4 0
+EQU4 $78
+line 140
+;140:		color = text_color_disabled;
+ADDRLP4 8
+ADDRGP4 text_color_disabled
+ASGNP4
+ADDRGP4 $79
+JUMPV
+LABELV $78
+line 142
+;141:	else
+;142:		color = t->color;
+ADDRLP4 8
+ADDRFP4 0
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRP4
+ASGNP4
+LABELV $79
+line 144
+;143:
+;144:	UI_DrawBannerString(x, y, t->string, t->style, color);
+ADDRLP4 0
+INDIRI4
+ARGI4
+ADDRLP4 4
+INDIRI4
+ARGI4
+ADDRLP4 12
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 12
+INDIRP4
+CNSTI4 64
+ADDP4
+INDIRP4
+ARGP4
+ADDRLP4 12
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ARGI4
+ADDRLP4 8
+INDIRP4
+ARGP4
+ADDRGP4 UI_DrawBannerString
+CALLV
+pop
+line 145
+;145:}
+LABELV $77
+endproc BText_Draw 16 20
+proc PText_Init 28 4
+line 152
+;146:
+;147:/*
+;148:=================
+;149:PText_Init
+;150:=================
+;151:*/
+;152:static void PText_Init(menutext_s* t) {
+line 159
+;153:	int   x;
+;154:	int   y;
+;155:	int   w;
+;156:	int   h;
+;157:	float sizeScale;
+;158:
+;159:	sizeScale = UI_ProportionalSizeScale(t->style);
+ADDRFP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ARGI4
+ADDRLP4 20
+ADDRGP4 UI_ProportionalSizeScale
+CALLF4
+ASGNF4
+ADDRLP4 0
+ADDRLP4 20
+INDIRF4
+ASGNF4
+line 161
+;160:
+;161:	x = t->generic.x;
+ADDRLP4 4
+ADDRFP4 0
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+ASGNI4
+line 162
+;162:	y = t->generic.y;
+ADDRLP4 8
+ADDRFP4 0
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRI4
+ASGNI4
+line 163
+;163:	w = UI_ProportionalStringWidth(t->string) * sizeScale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 64
+ADDP4
+INDIRP4
+ARGP4
+ADDRLP4 24
+ADDRGP4 UI_ProportionalStringWidth
+CALLI4
+ASGNI4
+ADDRLP4 12
+ADDRLP4 24
+INDIRI4
+CVIF4 4
+ADDRLP4 0
+INDIRF4
+MULF4
+CVFI4 4
+ASGNI4
+line 164
+;164:	h = PROP_HEIGHT * sizeScale;
+ADDRLP4 16
+ADDRLP4 0
+INDIRF4
+CNSTF4 1104674816
+MULF4
+CVFI4 4
+ASGNI4
+line 166
+;165:
+;166:	if (t->generic.flags & QMF_RIGHT_JUSTIFY) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 16
+BANDU4
+CNSTU4 0
+EQU4 $81
+line 167
+;167:		x -= w;
+ADDRLP4 4
+ADDRLP4 4
+INDIRI4
+ADDRLP4 12
+INDIRI4
+SUBI4
+ASGNI4
+line 168
+;168:	} else if (t->generic.flags & QMF_CENTER_JUSTIFY) {
+ADDRGP4 $82
+JUMPV
+LABELV $81
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 8
+BANDU4
+CNSTU4 0
+EQU4 $83
+line 169
+;169:		x -= w / 2;
+ADDRLP4 4
+ADDRLP4 4
+INDIRI4
+ADDRLP4 12
+INDIRI4
+CNSTI4 2
+DIVI4
+SUBI4
+ASGNI4
+line 170
+;170:	}
+LABELV $83
+LABELV $82
+line 172
+;171:
+;172:	t->generic.left   = x - PROP_GAP_WIDTH * sizeScale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 20
+ADDP4
+ADDRLP4 4
+INDIRI4
+CVIF4 4
+ADDRLP4 0
+INDIRF4
+CNSTF4 1077936128
+MULF4
+SUBF4
+CVFI4 4
+ASGNI4
+line 173
+;173:	t->generic.right  = x + w + PROP_GAP_WIDTH * sizeScale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 28
+ADDP4
+ADDRLP4 4
+INDIRI4
+ADDRLP4 12
+INDIRI4
+ADDI4
+CVIF4 4
+ADDRLP4 0
+INDIRF4
+CNSTF4 1077936128
+MULF4
+ADDF4
+CVFI4 4
+ASGNI4
+line 174
+;174:	t->generic.top    = y;
+ADDRFP4 0
+INDIRP4
+CNSTI4 24
+ADDP4
+ADDRLP4 8
+INDIRI4
+ASGNI4
+line 175
+;175:	t->generic.bottom = y + h;
+ADDRFP4 0
+INDIRP4
+CNSTI4 32
+ADDP4
+ADDRLP4 8
+INDIRI4
+ADDRLP4 16
+INDIRI4
+ADDI4
+ASGNI4
+line 176
+;176:}
+LABELV $80
+endproc PText_Init 28 4
+proc PText_Draw 24 20
+line 183
+;177:
+;178:/*
+;179:=================
+;180:PText_Draw
+;181:=================
+;182:*/
+;183:static void PText_Draw(menutext_s* t) {
+line 189
+;184:	int    x;
+;185:	int    y;
+;186:	float* color;
+;187:	int    style;
+;188:
+;189:	x = t->generic.x;
+ADDRLP4 4
+ADDRFP4 0
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+ASGNI4
+line 190
+;190:	y = t->generic.y;
+ADDRLP4 8
+ADDRFP4 0
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRI4
+ASGNI4
+line 192
+;191:
+;192:	if (t->generic.flags & QMF_GRAYED)
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 8192
+BANDU4
+CNSTU4 0
+EQU4 $86
+line 193
+;193:		color = text_color_disabled;
+ADDRLP4 12
+ADDRGP4 text_color_disabled
+ASGNP4
+ADDRGP4 $87
+JUMPV
+LABELV $86
+line 195
+;194:	else
+;195:		color = t->color;
+ADDRLP4 12
+ADDRFP4 0
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRP4
+ASGNP4
+LABELV $87
+line 197
+;196:
+;197:	style = t->style;
+ADDRLP4 0
+ADDRFP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ASGNI4
+line 198
+;198:	if (t->generic.flags & QMF_PULSEIFFOCUS) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 256
+BANDU4
+CNSTU4 0
+EQU4 $88
+line 199
+;199:		if (Menu_ItemAtCursor(t->generic.parent) == t) {
+ADDRLP4 16
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 16
+INDIRP4
+CNSTI4 36
+ADDP4
+INDIRP4
+ARGP4
+ADDRLP4 20
+ADDRGP4 Menu_ItemAtCursor
+CALLP4
+ASGNP4
+ADDRLP4 16
+INDIRP4
+CVPU4 4
+ADDRLP4 20
+INDIRP4
+CVPU4 4
+NEU4 $90
+line 200
+;200:			style |= UI_PULSE;
+ADDRLP4 0
+ADDRLP4 0
+INDIRI4
+CNSTI4 16384
+BORI4
+ASGNI4
+line 201
+;201:		} else {
+ADDRGP4 $91
+JUMPV
+LABELV $90
+line 202
+;202:			style |= UI_INVERSE;
+ADDRLP4 0
+ADDRLP4 0
+INDIRI4
+CNSTI4 8192
+BORI4
+ASGNI4
+line 203
+;203:		}
+LABELV $91
+line 204
+;204:	}
+LABELV $88
+line 206
+;205:
+;206:	UI_DrawProportionalString(x, y, t->string, style, color);
+ADDRLP4 4
+INDIRI4
+ARGI4
+ADDRLP4 8
+INDIRI4
+ARGI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 64
+ADDP4
+INDIRP4
+ARGP4
+ADDRLP4 0
+INDIRI4
+ARGI4
+ADDRLP4 12
+INDIRP4
+ARGP4
+ADDRGP4 UI_DrawProportionalString
+CALLV
+pop
+line 207
+;207:}
+LABELV $85
+endproc PText_Draw 24 20
+export Bitmap_Init
+proc Bitmap_Init 16 0
+line 214
+;208:
+;209:/*
+;210:=================
+;211:Bitmap_Init
+;212:=================
+;213:*/
+;214:void Bitmap_Init(menubitmap_s* b) {
+line 220
+;215:	int x;
+;216:	int y;
+;217:	int w;
+;218:	int h;
+;219:
+;220:	x = b->generic.x;
+ADDRLP4 4
+ADDRFP4 0
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+ASGNI4
+line 221
+;221:	y = b->generic.y;
+ADDRLP4 12
+ADDRFP4 0
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRI4
+ASGNI4
+line 222
+;222:	w = b->width;
+ADDRLP4 0
+ADDRFP4 0
+INDIRP4
+CNSTI4 80
+ADDP4
+INDIRI4
+ASGNI4
+line 223
+;223:	h = b->height;
+ADDRLP4 8
+ADDRFP4 0
+INDIRP4
+CNSTI4 84
+ADDP4
+INDIRI4
+ASGNI4
+line 224
+;224:	if (w < 0) {
+ADDRLP4 0
+INDIRI4
+CNSTI4 0
+GEI4 $93
+line 225
+;225:		w = -w;
+ADDRLP4 0
+ADDRLP4 0
+INDIRI4
+NEGI4
+ASGNI4
+line 226
+;226:	}
+LABELV $93
+line 227
+;227:	if (h < 0) {
+ADDRLP4 8
+INDIRI4
+CNSTI4 0
+GEI4 $95
+line 228
+;228:		h = -h;
+ADDRLP4 8
+ADDRLP4 8
+INDIRI4
+NEGI4
+ASGNI4
+line 229
+;229:	}
+LABELV $95
+line 231
+;230:
+;231:	if (b->generic.flags & QMF_RIGHT_JUSTIFY) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 16
+BANDU4
+CNSTU4 0
+EQU4 $97
+line 232
+;232:		x = x - w;
+ADDRLP4 4
+ADDRLP4 4
+INDIRI4
+ADDRLP4 0
+INDIRI4
+SUBI4
+ASGNI4
+line 233
+;233:	} else if (b->generic.flags & QMF_CENTER_JUSTIFY) {
+ADDRGP4 $98
+JUMPV
+LABELV $97
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 8
+BANDU4
+CNSTU4 0
+EQU4 $99
+line 234
+;234:		x = x - w / 2;
+ADDRLP4 4
+ADDRLP4 4
+INDIRI4
+ADDRLP4 0
+INDIRI4
+CNSTI4 2
+DIVI4
+SUBI4
+ASGNI4
+line 235
+;235:	}
+LABELV $99
+LABELV $98
+line 237
+;236:
+;237:	b->generic.left   = x;
+ADDRFP4 0
+INDIRP4
+CNSTI4 20
+ADDP4
+ADDRLP4 4
+INDIRI4
+ASGNI4
+line 238
+;238:	b->generic.right  = x + w;
+ADDRFP4 0
+INDIRP4
+CNSTI4 28
+ADDP4
+ADDRLP4 4
+INDIRI4
+ADDRLP4 0
+INDIRI4
+ADDI4
+ASGNI4
+line 239
+;239:	b->generic.top    = y;
+ADDRFP4 0
+INDIRP4
+CNSTI4 24
+ADDP4
+ADDRLP4 12
+INDIRI4
+ASGNI4
+line 240
+;240:	b->generic.bottom = y + h;
+ADDRFP4 0
+INDIRP4
+CNSTI4 32
+ADDP4
+ADDRLP4 12
+INDIRI4
+ADDRLP4 8
+INDIRI4
+ADDI4
+ASGNI4
+line 242
+;241:
+;242:	b->shader      = 0;
+ADDRFP4 0
+INDIRP4
+CNSTI4 72
+ADDP4
+CNSTI4 0
+ASGNI4
+line 243
+;243:	b->focusshader = 0;
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+CNSTI4 0
+ASGNI4
+line 244
+;244:}
+LABELV $92
+endproc Bitmap_Init 16 0
+export Bitmap_Draw
+proc Bitmap_Draw 72 20
+line 251
+;245:
+;246:/*
+;247:=================
+;248:Bitmap_Draw
+;249:=================
+;250:*/
+;251:void Bitmap_Draw(menubitmap_s* b) {
+line 259
+;252:	float  x;
+;253:	float  y;
+;254:	float  w;
+;255:	float  h;
+;256:	vec4_t tempcolor;
+;257:	float* color;
+;258:
+;259:	x = b->generic.x;
+ADDRLP4 0
+ADDRFP4 0
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+CVIF4 4
+ASGNF4
+line 260
+;260:	y = b->generic.y;
+ADDRLP4 8
+ADDRFP4 0
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRI4
+CVIF4 4
+ASGNF4
+line 261
+;261:	w = b->width;
+ADDRLP4 4
+ADDRFP4 0
+INDIRP4
+CNSTI4 80
+ADDP4
+INDIRI4
+CVIF4 4
+ASGNF4
+line 262
+;262:	h = b->height;
+ADDRLP4 12
+ADDRFP4 0
+INDIRP4
+CNSTI4 84
+ADDP4
+INDIRI4
+CVIF4 4
+ASGNF4
+line 264
+;263:
+;264:	if (b->generic.flags & QMF_RIGHT_JUSTIFY) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 16
+BANDU4
+CNSTU4 0
+EQU4 $102
+line 265
+;265:		x = x - w;
+ADDRLP4 0
+ADDRLP4 0
+INDIRF4
+ADDRLP4 4
+INDIRF4
+SUBF4
+ASGNF4
+line 266
+;266:	} else if (b->generic.flags & QMF_CENTER_JUSTIFY) {
+ADDRGP4 $103
+JUMPV
+LABELV $102
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 8
+BANDU4
+CNSTU4 0
+EQU4 $104
+line 267
+;267:		x = x - w / 2;
+ADDRLP4 0
+ADDRLP4 0
+INDIRF4
+ADDRLP4 4
+INDIRF4
+CNSTF4 1056964608
+MULF4
+SUBF4
+ASGNF4
+line 268
+;268:	}
+LABELV $104
+LABELV $103
+line 271
+;269:
+;270:	// used to refresh shader
+;271:	if (b->generic.name && !b->shader) {
+ADDRLP4 36
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 36
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $106
+ADDRLP4 36
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+CNSTI4 0
+NEI4 $106
+line 272
+;272:		b->shader = trap_R_RegisterShaderNoMip(b->generic.name);
+ADDRLP4 40
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 40
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRP4
+ARGP4
+ADDRLP4 44
+ADDRGP4 trap_R_RegisterShaderNoMip
+CALLI4
+ASGNI4
+ADDRLP4 40
+INDIRP4
+CNSTI4 72
+ADDP4
+ADDRLP4 44
+INDIRI4
+ASGNI4
+line 273
+;273:		if (!b->shader && b->errorpic)
+ADDRLP4 48
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 48
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+CNSTI4 0
+NEI4 $108
+ADDRLP4 48
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $108
+line 274
+;274:			b->shader = trap_R_RegisterShaderNoMip(b->errorpic);
+ADDRLP4 52
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 52
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRP4
+ARGP4
+ADDRLP4 56
+ADDRGP4 trap_R_RegisterShaderNoMip
+CALLI4
+ASGNI4
+ADDRLP4 52
+INDIRP4
+CNSTI4 72
+ADDP4
+ADDRLP4 56
+INDIRI4
+ASGNI4
+LABELV $108
+line 275
+;275:	}
+LABELV $106
+line 277
+;276:
+;277:	if (b->focuspic && !b->focusshader)
+ADDRLP4 40
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 40
+INDIRP4
+CNSTI4 64
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $110
+ADDRLP4 40
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRI4
+CNSTI4 0
+NEI4 $110
+line 278
+;278:		b->focusshader = trap_R_RegisterShaderNoMip(b->focuspic);
+ADDRLP4 44
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 44
+INDIRP4
+CNSTI4 64
+ADDP4
+INDIRP4
+ARGP4
+ADDRLP4 48
+ADDRGP4 trap_R_RegisterShaderNoMip
+CALLI4
+ASGNI4
+ADDRLP4 44
+INDIRP4
+CNSTI4 76
+ADDP4
+ADDRLP4 48
+INDIRI4
+ASGNI4
+LABELV $110
+line 280
+;279:
+;280:	if (b->generic.flags & QMF_GRAYED) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 8192
+BANDU4
+CNSTU4 0
+EQU4 $112
+line 281
+;281:		if (b->shader) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+CNSTI4 0
+EQI4 $113
+line 282
+;282:			trap_R_SetColor(colorMdGrey);
+ADDRGP4 colorMdGrey
+ARGP4
+ADDRGP4 trap_R_SetColor
+CALLV
+pop
+line 283
+;283:			UI_DrawHandlePic(x, y, w, h, b->shader);
+ADDRLP4 0
+INDIRF4
+ARGF4
+ADDRLP4 8
+INDIRF4
+ARGF4
+ADDRLP4 4
+INDIRF4
+ARGF4
+ADDRLP4 12
+INDIRF4
+ARGF4
+ADDRFP4 0
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+ARGI4
+ADDRGP4 UI_DrawHandlePic
+CALLV
+pop
+line 284
+;284:			trap_R_SetColor(NULL);
+CNSTP4 0
+ARGP4
+ADDRGP4 trap_R_SetColor
+CALLV
+pop
+line 285
+;285:		}
+line 286
+;286:	} else {
+ADDRGP4 $113
+JUMPV
+LABELV $112
+line 287
+;287:		if (b->shader)
+ADDRFP4 0
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+CNSTI4 0
+EQI4 $116
+line 288
+;288:			UI_DrawHandlePic(x, y, w, h, b->shader);
+ADDRLP4 0
+INDIRF4
+ARGF4
+ADDRLP4 8
+INDIRF4
+ARGF4
+ADDRLP4 4
+INDIRF4
+ARGF4
+ADDRLP4 12
+INDIRF4
+ARGF4
+ADDRFP4 0
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+ARGI4
+ADDRGP4 UI_DrawHandlePic
+CALLV
+pop
+LABELV $116
+line 291
+;289:
+;290:		// bk001204 - parentheses
+;291:		if (((b->generic.flags & QMF_PULSE) || (b->generic.flags & QMF_PULSEIFFOCUS)) && (Menu_ItemAtCursor(b->generic.parent) == b)) {
+ADDRLP4 52
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 52
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 131072
+BANDU4
+CNSTU4 0
+NEU4 $120
+ADDRLP4 52
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 256
+BANDU4
+CNSTU4 0
+EQU4 $118
+LABELV $120
+ADDRLP4 56
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 56
+INDIRP4
+CNSTI4 36
+ADDP4
+INDIRP4
+ARGP4
+ADDRLP4 60
+ADDRGP4 Menu_ItemAtCursor
+CALLP4
+ASGNP4
+ADDRLP4 56
+INDIRP4
+CVPU4 4
+ADDRLP4 60
+INDIRP4
+CVPU4 4
+NEU4 $118
+line 292
+;292:			if (b->focuscolor) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 88
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $121
+line 293
+;293:				tempcolor[0] = b->focuscolor[0];
+ADDRLP4 20
+ADDRFP4 0
+INDIRP4
+CNSTI4 88
+ADDP4
+INDIRP4
+INDIRF4
+ASGNF4
+line 294
+;294:				tempcolor[1] = b->focuscolor[1];
+ADDRLP4 20+4
+ADDRFP4 0
+INDIRP4
+CNSTI4 88
+ADDP4
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRF4
+ASGNF4
+line 295
+;295:				tempcolor[2] = b->focuscolor[2];
+ADDRLP4 20+8
+ADDRFP4 0
+INDIRP4
+CNSTI4 88
+ADDP4
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRF4
+ASGNF4
+line 296
+;296:				color        = tempcolor;
+ADDRLP4 16
+ADDRLP4 20
+ASGNP4
+line 297
+;297:			} else
+ADDRGP4 $122
+JUMPV
+LABELV $121
+line 298
+;298:				color = pulse_color;
+ADDRLP4 16
+ADDRGP4 pulse_color
+ASGNP4
+LABELV $122
+line 299
+;299:			color[3] = 0.5 + 0.5 * sin((uis.realtime % TMOD_075) / PULSE_DIVISOR);
+ADDRGP4 uis+4
+INDIRI4
+CNSTI4 2292106
+MODI4
+CNSTI4 75
+DIVI4
+CVIF4 4
+ARGF4
+ADDRLP4 64
+ADDRGP4 sin
+CALLF4
+ASGNF4
+ADDRLP4 16
+INDIRP4
+CNSTI4 12
+ADDP4
+ADDRLP4 64
+INDIRF4
+CNSTF4 1056964608
+MULF4
+CNSTF4 1056964608
+ADDF4
+ASGNF4
+line 301
+;300:
+;301:			trap_R_SetColor(color);
+ADDRLP4 16
+INDIRP4
+ARGP4
+ADDRGP4 trap_R_SetColor
+CALLV
+pop
+line 302
+;302:			UI_DrawHandlePic(x, y, w, h, b->focusshader);
+ADDRLP4 0
+INDIRF4
+ARGF4
+ADDRLP4 8
+INDIRF4
+ARGF4
+ADDRLP4 4
+INDIRF4
+ARGF4
+ADDRLP4 12
+INDIRF4
+ARGF4
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRI4
+ARGI4
+ADDRGP4 UI_DrawHandlePic
+CALLV
+pop
+line 303
+;303:			trap_R_SetColor(NULL);
+CNSTP4 0
+ARGP4
+ADDRGP4 trap_R_SetColor
+CALLV
+pop
+line 304
+;304:		} else if ((b->generic.flags & QMF_HIGHLIGHT) || ((b->generic.flags & QMF_HIGHLIGHT_IF_FOCUS) && (Menu_ItemAtCursor(b->generic.parent) == b))) {
+ADDRGP4 $119
+JUMPV
+LABELV $118
+ADDRLP4 64
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 64
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 64
+BANDU4
+CNSTU4 0
+NEU4 $128
+ADDRLP4 64
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 128
+BANDU4
+CNSTU4 0
+EQU4 $126
+ADDRLP4 64
+INDIRP4
+CNSTI4 36
+ADDP4
+INDIRP4
+ARGP4
+ADDRLP4 68
+ADDRGP4 Menu_ItemAtCursor
+CALLP4
+ASGNP4
+ADDRLP4 64
+INDIRP4
+CVPU4 4
+ADDRLP4 68
+INDIRP4
+CVPU4 4
+NEU4 $126
+LABELV $128
+line 305
+;305:			if (b->focuscolor) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 88
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $129
+line 306
+;306:				trap_R_SetColor(b->focuscolor);
+ADDRFP4 0
+INDIRP4
+CNSTI4 88
+ADDP4
+INDIRP4
+ARGP4
+ADDRGP4 trap_R_SetColor
+CALLV
+pop
+line 307
+;307:				UI_DrawHandlePic(x, y, w, h, b->focusshader);
+ADDRLP4 0
+INDIRF4
+ARGF4
+ADDRLP4 8
+INDIRF4
+ARGF4
+ADDRLP4 4
+INDIRF4
+ARGF4
+ADDRLP4 12
+INDIRF4
+ARGF4
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRI4
+ARGI4
+ADDRGP4 UI_DrawHandlePic
+CALLV
+pop
+line 308
+;308:				trap_R_SetColor(NULL);
+CNSTP4 0
+ARGP4
+ADDRGP4 trap_R_SetColor
+CALLV
+pop
+line 309
+;309:			} else
+ADDRGP4 $130
+JUMPV
+LABELV $129
+line 310
+;310:				UI_DrawHandlePic(x, y, w, h, b->focusshader);
+ADDRLP4 0
+INDIRF4
+ARGF4
+ADDRLP4 8
+INDIRF4
+ARGF4
+ADDRLP4 4
+INDIRF4
+ARGF4
+ADDRLP4 12
+INDIRF4
+ARGF4
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRI4
+ARGI4
+ADDRGP4 UI_DrawHandlePic
+CALLV
+pop
+LABELV $130
+line 311
+;311:		}
+LABELV $126
+LABELV $119
+line 312
+;312:	}
+LABELV $113
+line 313
+;313:}
+LABELV $101
+endproc Bitmap_Draw 72 20
+proc Action_Init 24 4
+line 320
+;314:
+;315:/*
+;316:=================
+;317:Action_Init
+;318:=================
+;319:*/
+;320:static void Action_Init(menuaction_s* a) {
+line 324
+;321:	int len;
+;322:
+;323:	// calculate bounds
+;324:	if (a->generic.name)
+ADDRFP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $132
+line 325
+;325:		len = strlen(a->generic.name);
+ADDRFP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRP4
+ARGP4
+ADDRLP4 4
+ADDRGP4 strlen
+CALLI4
+ASGNI4
+ADDRLP4 0
+ADDRLP4 4
+INDIRI4
+ASGNI4
+ADDRGP4 $133
+JUMPV
+LABELV $132
+line 327
+;326:	else
+;327:		len = 0;
+ADDRLP4 0
+CNSTI4 0
+ASGNI4
+LABELV $133
+line 330
+;328:
+;329:	// left justify text
+;330:	a->generic.left   = a->generic.x;
+ADDRLP4 8
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 8
+INDIRP4
+CNSTI4 20
+ADDP4
+ADDRLP4 8
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+ASGNI4
+line 331
+;331:	a->generic.right  = a->generic.x + len * BIGCHAR_WIDTH;
+ADDRLP4 12
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 12
+INDIRP4
+CNSTI4 28
+ADDP4
+ADDRLP4 12
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+ADDRLP4 0
+INDIRI4
+CNSTI4 4
+LSHI4
+ADDI4
+ASGNI4
+line 332
+;332:	a->generic.top    = a->generic.y;
+ADDRLP4 16
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 16
+INDIRP4
+CNSTI4 24
+ADDP4
+ADDRLP4 16
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRI4
+ASGNI4
+line 333
+;333:	a->generic.bottom = a->generic.y + BIGCHAR_HEIGHT;
+ADDRLP4 20
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 20
+INDIRP4
+CNSTI4 32
+ADDP4
+ADDRLP4 20
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRI4
+CNSTI4 16
+ADDI4
+ASGNI4
+line 334
+;334:}
+LABELV $131
+endproc Action_Init 24 4
+proc Action_Draw 28 20
+line 341
+;335:
+;336:/*
+;337:=================
+;338:Action_Draw
+;339:=================
+;340:*/
+;341:static void Action_Draw(menuaction_s* a) {
+line 346
+;342:	int    x, y;
+;343:	int    style;
+;344:	float* color;
+;345:
+;346:	style = 0;
+ADDRLP4 12
+CNSTI4 0
+ASGNI4
+line 347
+;347:	color = menu_text_color;
+ADDRLP4 0
+ADDRGP4 menu_text_color
+ASGNP4
+line 348
+;348:	if (a->generic.flags & QMF_GRAYED) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 8192
+BANDU4
+CNSTU4 0
+EQU4 $135
+line 349
+;349:		color = text_color_disabled;
+ADDRLP4 0
+ADDRGP4 text_color_disabled
+ASGNP4
+line 350
+;350:	} else if ((a->generic.flags & QMF_PULSEIFFOCUS) && (a->generic.parent->cursor == a->generic.menuPosition)) {
+ADDRGP4 $136
+JUMPV
+LABELV $135
+ADDRLP4 16
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 16
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 256
+BANDU4
+CNSTU4 0
+EQU4 $137
+ADDRLP4 16
+INDIRP4
+CNSTI4 36
+ADDP4
+INDIRP4
+INDIRI4
+ADDRLP4 16
+INDIRP4
+CNSTI4 40
+ADDP4
+INDIRI4
+NEI4 $137
+line 351
+;351:		color = text_color_highlight;
+ADDRLP4 0
+ADDRGP4 text_color_highlight
+ASGNP4
+line 352
+;352:		style = UI_PULSE;
+ADDRLP4 12
+CNSTI4 16384
+ASGNI4
+line 353
+;353:	} else if ((a->generic.flags & QMF_HIGHLIGHT_IF_FOCUS) && (a->generic.parent->cursor == a->generic.menuPosition)) {
+ADDRGP4 $138
+JUMPV
+LABELV $137
+ADDRLP4 20
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 20
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 128
+BANDU4
+CNSTU4 0
+EQU4 $139
+ADDRLP4 20
+INDIRP4
+CNSTI4 36
+ADDP4
+INDIRP4
+INDIRI4
+ADDRLP4 20
+INDIRP4
+CNSTI4 40
+ADDP4
+INDIRI4
+NEI4 $139
+line 354
+;354:		color = text_color_highlight;
+ADDRLP4 0
+ADDRGP4 text_color_highlight
+ASGNP4
+line 355
+;355:	} else if (a->generic.flags & QMF_BLINK) {
+ADDRGP4 $140
+JUMPV
+LABELV $139
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 1
+BANDU4
+CNSTU4 0
+EQU4 $141
+line 356
+;356:		style = UI_BLINK;
+ADDRLP4 12
+CNSTI4 4096
+ASGNI4
+line 357
+;357:		color = text_color_highlight;
+ADDRLP4 0
+ADDRGP4 text_color_highlight
+ASGNP4
+line 358
+;358:	}
+LABELV $141
+LABELV $140
+LABELV $138
+LABELV $136
+line 360
+;359:
+;360:	x = a->generic.x;
+ADDRLP4 4
+ADDRFP4 0
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+ASGNI4
+line 361
+;361:	y = a->generic.y;
+ADDRLP4 8
+ADDRFP4 0
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRI4
+ASGNI4
+line 363
+;362:
+;363:	UI_DrawString(x, y, a->generic.name, UI_LEFT | style, color);
+ADDRLP4 4
+INDIRI4
+ARGI4
+ADDRLP4 8
+INDIRI4
+ARGI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRP4
+ARGP4
+ADDRLP4 12
+INDIRI4
+ARGI4
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRGP4 UI_DrawString
+CALLV
+pop
+line 365
+;364:
+;365:	if (a->generic.parent->cursor == a->generic.menuPosition) {
+ADDRLP4 24
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 24
+INDIRP4
+CNSTI4 36
+ADDP4
+INDIRP4
+INDIRI4
+ADDRLP4 24
+INDIRP4
+CNSTI4 40
+ADDP4
+INDIRI4
+NEI4 $143
+line 367
+;366:		// draw cursor
+;367:		UI_DrawChar(x - BIGCHAR_WIDTH, y, 13, UI_LEFT | UI_BLINK, color);
+ADDRLP4 4
+INDIRI4
+CNSTI4 16
+SUBI4
+ARGI4
+ADDRLP4 8
+INDIRI4
+ARGI4
+CNSTI4 13
+ARGI4
+CNSTI4 4096
+ARGI4
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRGP4 UI_DrawChar
+CALLV
+pop
+line 368
+;368:	}
+LABELV $143
+line 369
+;369:}
+LABELV $134
+endproc Action_Draw 28 20
+proc RadioButton_Init 24 4
+line 376
+;370:
+;371:/*
+;372:=================
+;373:RadioButton_Init
+;374:=================
+;375:*/
+;376:static void RadioButton_Init(menuradiobutton_s* rb) {
+line 380
+;377:	int len;
+;378:
+;379:	// calculate bounds
+;380:	if (rb->generic.name)
+ADDRFP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $146
+line 381
+;381:		len = strlen(rb->generic.name);
+ADDRFP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRP4
+ARGP4
+ADDRLP4 4
+ADDRGP4 strlen
+CALLI4
+ASGNI4
+ADDRLP4 0
+ADDRLP4 4
+INDIRI4
+ASGNI4
+ADDRGP4 $147
+JUMPV
+LABELV $146
+line 383
+;382:	else
+;383:		len = 0;
+ADDRLP4 0
+CNSTI4 0
+ASGNI4
+LABELV $147
+line 385
+;384:
+;385:	rb->generic.left   = rb->generic.x - (len + 1) * SMALLCHAR_WIDTH;
+ADDRLP4 8
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 8
+INDIRP4
+CNSTI4 20
+ADDP4
+ADDRLP4 8
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+ADDRLP4 0
+INDIRI4
+CNSTI4 3
+LSHI4
+CNSTI4 8
+ADDI4
+SUBI4
+ASGNI4
+line 386
+;386:	rb->generic.right  = rb->generic.x + 6 * SMALLCHAR_WIDTH;
+ADDRLP4 12
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 12
+INDIRP4
+CNSTI4 28
+ADDP4
+ADDRLP4 12
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+CNSTI4 48
+ADDI4
+ASGNI4
+line 387
+;387:	rb->generic.top    = rb->generic.y;
+ADDRLP4 16
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 16
+INDIRP4
+CNSTI4 24
+ADDP4
+ADDRLP4 16
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRI4
+ASGNI4
+line 388
+;388:	rb->generic.bottom = rb->generic.y + SMALLCHAR_HEIGHT;
+ADDRLP4 20
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 20
+INDIRP4
+CNSTI4 32
+ADDP4
+ADDRLP4 20
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRI4
+CNSTI4 16
+ADDI4
+ASGNI4
+line 389
+;389:}
+LABELV $145
+endproc RadioButton_Init 24 4
+proc RadioButton_Key 32 8
+line 396
+;390:
+;391:/*
+;392:=================
+;393:RadioButton_Key
+;394:=================
+;395:*/
+;396:static sfxHandle_t RadioButton_Key(menuradiobutton_s* rb, int key) {
+line 397
+;397:	switch (key) {
+ADDRLP4 0
+ADDRFP4 4
+INDIRI4
+ASGNI4
+ADDRLP4 0
+INDIRI4
+CNSTI4 163
+EQI4 $154
+ADDRLP4 0
+INDIRI4
+CNSTI4 165
+EQI4 $154
+ADDRLP4 0
+INDIRI4
+CNSTI4 165
+GTI4 $161
+LABELV $160
+ADDRLP4 4
+ADDRFP4 4
+INDIRI4
+ASGNI4
+ADDRLP4 4
+INDIRI4
+CNSTI4 13
+EQI4 $154
+ADDRLP4 4
+INDIRI4
+CNSTI4 13
+LTI4 $149
+LABELV $162
+ADDRLP4 8
+ADDRFP4 4
+INDIRI4
+ASGNI4
+ADDRLP4 8
+INDIRI4
+CNSTI4 134
+EQI4 $154
+ADDRLP4 8
+INDIRI4
+CNSTI4 135
+EQI4 $154
+ADDRGP4 $149
+JUMPV
+LABELV $161
+ADDRLP4 12
+ADDRFP4 4
+INDIRI4
+ASGNI4
+ADDRLP4 12
+INDIRI4
+CNSTI4 178
+EQI4 $151
+ADDRLP4 12
+INDIRI4
+CNSTI4 178
+GTI4 $164
+LABELV $163
+ADDRFP4 4
+INDIRI4
+CNSTI4 169
+EQI4 $154
+ADDRGP4 $149
+JUMPV
+LABELV $164
+ADDRLP4 16
+ADDRFP4 4
+INDIRI4
+ASGNI4
+ADDRLP4 16
+INDIRI4
+CNSTI4 185
+LTI4 $149
+ADDRLP4 16
+INDIRI4
+CNSTI4 188
+GTI4 $149
+ADDRLP4 16
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRGP4 $165-740
+ADDP4
+INDIRP4
+JUMPV
+data
+align 4
+LABELV $165
+address $154
+address $154
+address $154
+address $154
+code
+LABELV $151
+line 399
+;398:	case K_MOUSE1:
+;399:		if (!(rb->generic.flags & QMF_HASMOUSEFOCUS))
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 512
+BANDU4
+CNSTU4 0
+NEU4 $152
+line 400
+;400:			break;
+ADDRGP4 $150
+JUMPV
+LABELV $152
+LABELV $154
+line 412
+;401:
+;402:	case K_JOY1:
+;403:	case K_JOY2:
+;404:	case K_JOY3:
+;405:	case K_JOY4:
+;406:	case K_ENTER:
+;407:	case K_KP_ENTER:
+;408:	case K_KP_LEFTARROW:
+;409:	case K_LEFTARROW:
+;410:	case K_KP_RIGHTARROW:
+;411:	case K_RIGHTARROW:
+;412:		rb->curvalue = !rb->curvalue;
+ADDRLP4 24
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 24
+INDIRP4
+CNSTI4 64
+ADDP4
+INDIRI4
+CNSTI4 0
+NEI4 $156
+ADDRLP4 20
+CNSTI4 1
+ASGNI4
+ADDRGP4 $157
+JUMPV
+LABELV $156
+ADDRLP4 20
+CNSTI4 0
+ASGNI4
+LABELV $157
+ADDRLP4 24
+INDIRP4
+CNSTI4 64
+ADDP4
+ADDRLP4 20
+INDIRI4
+ASGNI4
+line 413
+;413:		if (rb->generic.callback)
+ADDRFP4 0
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $158
+line 414
+;414:			rb->generic.callback(rb, QM_ACTIVATED);
+ADDRLP4 28
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 28
+INDIRP4
+ARGP4
+CNSTI4 3
+ARGI4
+ADDRLP4 28
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CALLV
+pop
+LABELV $158
+line 416
+;415:
+;416:		return (menu_move_sound);
+ADDRGP4 menu_move_sound
+INDIRI4
+RETI4
+ADDRGP4 $148
+JUMPV
+LABELV $149
+LABELV $150
+line 420
+;417:	}
+;418:
+;419:	// key not handled
+;420:	return 0;
+CNSTI4 0
+RETI4
+LABELV $148
+endproc RadioButton_Key 32 8
+proc RadioButton_Draw 32 20
+line 428
+;421:}
+;422:
+;423:/*
+;424:=================
+;425:RadioButton_Draw
+;426:=================
+;427:*/
+;428:static void RadioButton_Draw(menuradiobutton_s* rb) {
+line 435
+;429:	int      x;
+;430:	int      y;
+;431:	float*   color;
+;432:	int      style;
+;433:	qboolean focus;
+;434:
+;435:	x = rb->generic.x;
+ADDRLP4 0
+ADDRFP4 0
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+ASGNI4
+line 436
+;436:	y = rb->generic.y;
+ADDRLP4 4
+ADDRFP4 0
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRI4
+ASGNI4
+line 438
+;437:
+;438:	focus = (rb->generic.parent->cursor == rb->generic.menuPosition);
+ADDRLP4 24
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 24
+INDIRP4
+CNSTI4 36
+ADDP4
+INDIRP4
+INDIRI4
+ADDRLP4 24
+INDIRP4
+CNSTI4 40
+ADDP4
+INDIRI4
+NEI4 $169
+ADDRLP4 20
+CNSTI4 1
+ASGNI4
+ADDRGP4 $170
+JUMPV
+LABELV $169
+ADDRLP4 20
+CNSTI4 0
+ASGNI4
+LABELV $170
+ADDRLP4 12
+ADDRLP4 20
+INDIRI4
+ASGNI4
+line 440
+;439:
+;440:	if (rb->generic.flags & QMF_GRAYED) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 8192
+BANDU4
+CNSTU4 0
+EQU4 $171
+line 441
+;441:		color = text_color_disabled;
+ADDRLP4 8
+ADDRGP4 text_color_disabled
+ASGNP4
+line 442
+;442:		style = UI_LEFT | UI_SMALLFONT;
+ADDRLP4 16
+CNSTI4 16
+ASGNI4
+line 443
+;443:	} else if (focus) {
+ADDRGP4 $172
+JUMPV
+LABELV $171
+ADDRLP4 12
+INDIRI4
+CNSTI4 0
+EQI4 $173
+line 444
+;444:		color = text_color_highlight;
+ADDRLP4 8
+ADDRGP4 text_color_highlight
+ASGNP4
+line 445
+;445:		style = UI_LEFT | UI_PULSE | UI_SMALLFONT;
+ADDRLP4 16
+CNSTI4 16400
+ASGNI4
+line 446
+;446:	} else {
+ADDRGP4 $174
+JUMPV
+LABELV $173
+line 447
+;447:		color = text_color_normal;
+ADDRLP4 8
+ADDRGP4 text_color_normal
+ASGNP4
+line 448
+;448:		style = UI_LEFT | UI_SMALLFONT;
+ADDRLP4 16
+CNSTI4 16
+ASGNI4
+line 449
+;449:	}
+LABELV $174
+LABELV $172
+line 451
+;450:
+;451:	if (focus) {
+ADDRLP4 12
+INDIRI4
+CNSTI4 0
+EQI4 $175
+line 453
+;452:		// draw cursor
+;453:		UI_FillRect(rb->generic.left, rb->generic.top, rb->generic.right - rb->generic.left + 1, rb->generic.bottom - rb->generic.top + 1, listbar_color);
+ADDRLP4 28
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 28
+INDIRP4
+CNSTI4 20
+ADDP4
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 28
+INDIRP4
+CNSTI4 24
+ADDP4
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 28
+INDIRP4
+CNSTI4 28
+ADDP4
+INDIRI4
+ADDRLP4 28
+INDIRP4
+CNSTI4 20
+ADDP4
+INDIRI4
+SUBI4
+CNSTI4 1
+ADDI4
+CVIF4 4
+ARGF4
+ADDRLP4 28
+INDIRP4
+CNSTI4 32
+ADDP4
+INDIRI4
+ADDRLP4 28
+INDIRP4
+CNSTI4 24
+ADDP4
+INDIRI4
+SUBI4
+CNSTI4 1
+ADDI4
+CVIF4 4
+ARGF4
+ADDRGP4 listbar_color
+ARGP4
+ADDRGP4 UI_FillRect
+CALLV
+pop
+line 454
+;454:		UI_DrawChar(x, y, 13, UI_CENTER | UI_BLINK | UI_SMALLFONT, color);
+ADDRLP4 0
+INDIRI4
+ARGI4
+ADDRLP4 4
+INDIRI4
+ARGI4
+CNSTI4 13
+ARGI4
+CNSTI4 4113
+ARGI4
+ADDRLP4 8
+INDIRP4
+ARGP4
+ADDRGP4 UI_DrawChar
+CALLV
+pop
+line 455
+;455:	}
+LABELV $175
+line 457
+;456:
+;457:	if (rb->generic.name)
+ADDRFP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $177
+line 458
+;458:		UI_DrawString(x - SMALLCHAR_WIDTH, y, rb->generic.name, UI_RIGHT | UI_SMALLFONT, color);
+ADDRLP4 0
+INDIRI4
+CNSTI4 8
+SUBI4
+ARGI4
+ADDRLP4 4
+INDIRI4
+ARGI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRP4
+ARGP4
+CNSTI4 18
+ARGI4
+ADDRLP4 8
+INDIRP4
+ARGP4
+ADDRGP4 UI_DrawString
+CALLV
+pop
+LABELV $177
+line 460
+;459:
+;460:	if (!rb->curvalue) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 64
+ADDP4
+INDIRI4
+CNSTI4 0
+NEI4 $179
+line 461
+;461:		UI_DrawHandlePic(x + SMALLCHAR_WIDTH, y + 2, 16, 16, uis.rb_off);
+ADDRLP4 0
+INDIRI4
+CNSTI4 8
+ADDI4
+CVIF4 4
+ARGF4
+ADDRLP4 4
+INDIRI4
+CNSTI4 2
+ADDI4
+CVIF4 4
+ARGF4
+CNSTF4 1098907648
+ARGF4
+CNSTF4 1098907648
+ARGF4
+ADDRGP4 uis+11428
+INDIRI4
+ARGI4
+ADDRGP4 UI_DrawHandlePic
+CALLV
+pop
+line 462
+;462:		UI_DrawString(x + SMALLCHAR_WIDTH + 16, y, "off", style, color);
+ADDRLP4 0
+INDIRI4
+CNSTI4 8
+ADDI4
+CNSTI4 16
+ADDI4
+ARGI4
+ADDRLP4 4
+INDIRI4
+ARGI4
+ADDRGP4 $182
+ARGP4
+ADDRLP4 16
+INDIRI4
+ARGI4
+ADDRLP4 8
+INDIRP4
+ARGP4
+ADDRGP4 UI_DrawString
+CALLV
+pop
+line 463
+;463:	} else {
+ADDRGP4 $180
+JUMPV
+LABELV $179
+line 464
+;464:		UI_DrawHandlePic(x + SMALLCHAR_WIDTH, y + 2, 16, 16, uis.rb_on);
+ADDRLP4 0
+INDIRI4
+CNSTI4 8
+ADDI4
+CVIF4 4
+ARGF4
+ADDRLP4 4
+INDIRI4
+CNSTI4 2
+ADDI4
+CVIF4 4
+ARGF4
+CNSTF4 1098907648
+ARGF4
+CNSTF4 1098907648
+ARGF4
+ADDRGP4 uis+11424
+INDIRI4
+ARGI4
+ADDRGP4 UI_DrawHandlePic
+CALLV
+pop
+line 465
+;465:		UI_DrawString(x + SMALLCHAR_WIDTH + 16, y, "on", style, color);
+ADDRLP4 0
+INDIRI4
+CNSTI4 8
+ADDI4
+CNSTI4 16
+ADDI4
+ARGI4
+ADDRLP4 4
+INDIRI4
+ARGI4
+ADDRGP4 $184
+ARGP4
+ADDRLP4 16
+INDIRI4
+ARGI4
+ADDRLP4 8
+INDIRP4
+ARGP4
+ADDRGP4 UI_DrawString
+CALLV
+pop
+line 466
+;466:	}
+LABELV $180
+line 467
+;467:}
+LABELV $167
+endproc RadioButton_Draw 32 20
+proc Slider_Init 24 4
+line 474
+;468:
+;469:/*
+;470:=================
+;471:Slider_Init
+;472:=================
+;473:*/
+;474:static void Slider_Init(menuslider_s* s) {
+line 478
+;475:	int len;
+;476:
+;477:	// calculate bounds
+;478:	if (s->generic.name)
+ADDRFP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $186
+line 479
+;479:		len = strlen(s->generic.name);
+ADDRFP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRP4
+ARGP4
+ADDRLP4 4
+ADDRGP4 strlen
+CALLI4
+ASGNI4
+ADDRLP4 0
+ADDRLP4 4
+INDIRI4
+ASGNI4
+ADDRGP4 $187
+JUMPV
+LABELV $186
+line 481
+;480:	else
+;481:		len = 0;
+ADDRLP4 0
+CNSTI4 0
+ASGNI4
+LABELV $187
+line 483
+;482:
+;483:	s->generic.left   = s->generic.x - (len + 1) * SMALLCHAR_WIDTH;
+ADDRLP4 8
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 8
+INDIRP4
+CNSTI4 20
+ADDP4
+ADDRLP4 8
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+ADDRLP4 0
+INDIRI4
+CNSTI4 3
+LSHI4
+CNSTI4 8
+ADDI4
+SUBI4
+ASGNI4
+line 484
+;484:	s->generic.right  = s->generic.x + (SLIDER_RANGE + 2 + 1) * SMALLCHAR_WIDTH;
+ADDRLP4 12
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 12
+INDIRP4
+CNSTI4 28
+ADDP4
+ADDRLP4 12
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+CNSTI4 104
+ADDI4
+ASGNI4
+line 485
+;485:	s->generic.top    = s->generic.y;
+ADDRLP4 16
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 16
+INDIRP4
+CNSTI4 24
+ADDP4
+ADDRLP4 16
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRI4
+ASGNI4
+line 486
+;486:	s->generic.bottom = s->generic.y + SMALLCHAR_HEIGHT;
+ADDRLP4 20
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 20
+INDIRP4
+CNSTI4 32
+ADDP4
+ADDRLP4 20
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRI4
+CNSTI4 16
+ADDI4
+ASGNI4
+line 487
+;487:}
+LABELV $185
+endproc Slider_Init 24 4
+proc Slider_Key 52 8
+line 494
+;488:
+;489:/*
+;490:=================
+;491:Slider_Key
+;492:=================
+;493:*/
+;494:static sfxHandle_t Slider_Key(menuslider_s* s, int key) {
+line 499
+;495:	sfxHandle_t sound;
+;496:	int         x;
+;497:	int         oldvalue;
+;498:
+;499:	switch (key) {
+ADDRLP4 12
+ADDRFP4 4
+INDIRI4
+ASGNI4
+ADDRLP4 12
+INDIRI4
+CNSTI4 163
+EQI4 $199
+ADDRLP4 12
+INDIRI4
+CNSTI4 165
+EQI4 $202
+ADDRLP4 12
+INDIRI4
+CNSTI4 165
+GTI4 $206
+LABELV $205
+ADDRLP4 16
+ADDRFP4 4
+INDIRI4
+ASGNI4
+ADDRLP4 16
+INDIRI4
+CNSTI4 134
+EQI4 $199
+ADDRLP4 16
+INDIRI4
+CNSTI4 135
+EQI4 $202
+ADDRGP4 $189
+JUMPV
+LABELV $206
+ADDRFP4 4
+INDIRI4
+CNSTI4 178
+EQI4 $191
+ADDRGP4 $189
+JUMPV
+LABELV $191
+line 501
+;500:	case K_MOUSE1:
+;501:		x           = uis.cursorx - s->generic.x - 2 * SMALLCHAR_WIDTH;
+ADDRLP4 4
+ADDRGP4 uis+8
+INDIRF4
+ADDRFP4 0
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+CVIF4 4
+SUBF4
+CNSTF4 1098907648
+SUBF4
+CVFI4 4
+ASGNI4
+line 502
+;502:		oldvalue    = s->curvalue;
+ADDRLP4 8
+ADDRFP4 0
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRF4
+CVFI4 4
+ASGNI4
+line 503
+;503:		s->curvalue = (x / (float)(SLIDER_RANGE * SMALLCHAR_WIDTH)) * (s->maxvalue - s->minvalue) + s->minvalue;
+ADDRLP4 20
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 20
+INDIRP4
+CNSTI4 72
+ADDP4
+ADDRLP4 4
+INDIRI4
+CVIF4 4
+CNSTF4 1011666125
+MULF4
+ADDRLP4 20
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRF4
+ADDRLP4 20
+INDIRP4
+CNSTI4 64
+ADDP4
+INDIRF4
+SUBF4
+MULF4
+ADDRLP4 20
+INDIRP4
+CNSTI4 64
+ADDP4
+INDIRF4
+ADDF4
+ASGNF4
+line 505
+;504:
+;505:		if (s->curvalue < s->minvalue)
+ADDRLP4 24
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 24
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRF4
+ADDRLP4 24
+INDIRP4
+CNSTI4 64
+ADDP4
+INDIRF4
+GEF4 $193
+line 506
+;506:			s->curvalue = s->minvalue;
+ADDRLP4 28
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 28
+INDIRP4
+CNSTI4 72
+ADDP4
+ADDRLP4 28
+INDIRP4
+CNSTI4 64
+ADDP4
+INDIRF4
+ASGNF4
+ADDRGP4 $194
+JUMPV
+LABELV $193
+line 507
+;507:		else if (s->curvalue > s->maxvalue)
+ADDRLP4 32
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 32
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRF4
+ADDRLP4 32
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRF4
+LEF4 $195
+line 508
+;508:			s->curvalue = s->maxvalue;
+ADDRLP4 36
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 36
+INDIRP4
+CNSTI4 72
+ADDP4
+ADDRLP4 36
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRF4
+ASGNF4
+LABELV $195
+LABELV $194
+line 509
+;509:		if (s->curvalue != oldvalue)
+ADDRFP4 0
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRF4
+ADDRLP4 8
+INDIRI4
+CVIF4 4
+EQF4 $197
+line 510
+;510:			sound = menu_move_sound;
+ADDRLP4 0
+ADDRGP4 menu_move_sound
+INDIRI4
+ASGNI4
+ADDRGP4 $190
+JUMPV
+LABELV $197
+line 512
+;511:		else
+;512:			sound = 0;
+ADDRLP4 0
+CNSTI4 0
+ASGNI4
+line 513
+;513:		break;
+ADDRGP4 $190
+JUMPV
+LABELV $199
+line 517
+;514:
+;515:	case K_KP_LEFTARROW:
+;516:	case K_LEFTARROW:
+;517:		if (s->curvalue > s->minvalue) {
+ADDRLP4 40
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 40
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRF4
+ADDRLP4 40
+INDIRP4
+CNSTI4 64
+ADDP4
+INDIRF4
+LEF4 $200
+line 518
+;518:			s->curvalue--;
+ADDRLP4 44
+ADDRFP4 0
+INDIRP4
+CNSTI4 72
+ADDP4
+ASGNP4
+ADDRLP4 44
+INDIRP4
+ADDRLP4 44
+INDIRP4
+INDIRF4
+CNSTF4 1065353216
+SUBF4
+ASGNF4
+line 519
+;519:			sound = menu_move_sound;
+ADDRLP4 0
+ADDRGP4 menu_move_sound
+INDIRI4
+ASGNI4
+line 520
+;520:		} else
+ADDRGP4 $190
+JUMPV
+LABELV $200
+line 521
+;521:			sound = menu_buzz_sound;
+ADDRLP4 0
+ADDRGP4 menu_buzz_sound
+INDIRI4
+ASGNI4
+line 522
+;522:		break;
+ADDRGP4 $190
+JUMPV
+LABELV $202
+line 526
+;523:
+;524:	case K_KP_RIGHTARROW:
+;525:	case K_RIGHTARROW:
+;526:		if (s->curvalue < s->maxvalue) {
+ADDRLP4 44
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 44
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRF4
+ADDRLP4 44
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRF4
+GEF4 $203
+line 527
+;527:			s->curvalue++;
+ADDRLP4 48
+ADDRFP4 0
+INDIRP4
+CNSTI4 72
+ADDP4
+ASGNP4
+ADDRLP4 48
+INDIRP4
+ADDRLP4 48
+INDIRP4
+INDIRF4
+CNSTF4 1065353216
+ADDF4
+ASGNF4
+line 528
+;528:			sound = menu_move_sound;
+ADDRLP4 0
+ADDRGP4 menu_move_sound
+INDIRI4
+ASGNI4
+line 529
+;529:		} else
+ADDRGP4 $190
+JUMPV
+LABELV $203
+line 530
+;530:			sound = menu_buzz_sound;
+ADDRLP4 0
+ADDRGP4 menu_buzz_sound
+INDIRI4
+ASGNI4
+line 531
+;531:		break;
+ADDRGP4 $190
+JUMPV
+LABELV $189
+line 535
+;532:
+;533:	default:
+;534:		// key not handled
+;535:		sound = 0;
+ADDRLP4 0
+CNSTI4 0
+ASGNI4
+line 536
+;536:		break;
+LABELV $190
+line 539
+;537:	}
+;538:
+;539:	if (sound && s->generic.callback)
+ADDRLP4 0
+INDIRI4
+CNSTI4 0
+EQI4 $207
+ADDRFP4 0
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $207
+line 540
+;540:		s->generic.callback(s, QM_ACTIVATED);
+ADDRLP4 20
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 20
+INDIRP4
+ARGP4
+CNSTI4 3
+ARGI4
+ADDRLP4 20
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CALLV
+pop
+LABELV $207
+line 542
+;541:
+;542:	return (sound);
+ADDRLP4 0
+INDIRI4
+RETI4
+LABELV $188
+endproc Slider_Key 52 8
+proc Slider_Draw 40 20
+line 551
+;543:}
+;544:
+;545:#if 1
+;546:/*
+;547:=================
+;548:Slider_Draw
+;549:=================
+;550:*/
+;551:static void Slider_Draw(menuslider_s* s) {
+line 559
+;552:	int      x;
+;553:	int      y;
+;554:	int      style;
+;555:	float*   color;
+;556:	int      button;
+;557:	qboolean focus;
+;558:
+;559:	x     = s->generic.x;
+ADDRLP4 0
+ADDRFP4 0
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+ASGNI4
+line 560
+;560:	y     = s->generic.y;
+ADDRLP4 4
+ADDRFP4 0
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRI4
+ASGNI4
+line 561
+;561:	focus = (s->generic.parent->cursor == s->generic.menuPosition);
+ADDRLP4 28
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 28
+INDIRP4
+CNSTI4 36
+ADDP4
+INDIRP4
+INDIRI4
+ADDRLP4 28
+INDIRP4
+CNSTI4 40
+ADDP4
+INDIRI4
+NEI4 $211
+ADDRLP4 24
+CNSTI4 1
+ASGNI4
+ADDRGP4 $212
+JUMPV
+LABELV $211
+ADDRLP4 24
+CNSTI4 0
+ASGNI4
+LABELV $212
+ADDRLP4 20
+ADDRLP4 24
+INDIRI4
+ASGNI4
+line 563
+;562:
+;563:	if (s->generic.flags & QMF_GRAYED) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 8192
+BANDU4
+CNSTU4 0
+EQU4 $213
+line 564
+;564:		color = text_color_disabled;
+ADDRLP4 12
+ADDRGP4 text_color_disabled
+ASGNP4
+line 565
+;565:		style = UI_SMALLFONT;
+ADDRLP4 8
+CNSTI4 16
+ASGNI4
+line 566
+;566:	} else if (focus) {
+ADDRGP4 $214
+JUMPV
+LABELV $213
+ADDRLP4 20
+INDIRI4
+CNSTI4 0
+EQI4 $215
+line 567
+;567:		color = text_color_highlight;
+ADDRLP4 12
+ADDRGP4 text_color_highlight
+ASGNP4
+line 568
+;568:		style = UI_SMALLFONT | UI_PULSE;
+ADDRLP4 8
+CNSTI4 16400
+ASGNI4
+line 569
+;569:	} else {
+ADDRGP4 $216
+JUMPV
+LABELV $215
+line 570
+;570:		color = text_color_normal;
+ADDRLP4 12
+ADDRGP4 text_color_normal
+ASGNP4
+line 571
+;571:		style = UI_SMALLFONT;
+ADDRLP4 8
+CNSTI4 16
+ASGNI4
+line 572
+;572:	}
+LABELV $216
+LABELV $214
+line 575
+;573:
+;574:	// draw label
+;575:	UI_DrawString(x - SMALLCHAR_WIDTH, y, s->generic.name, UI_RIGHT | style, color);
+ADDRLP4 0
+INDIRI4
+CNSTI4 8
+SUBI4
+ARGI4
+ADDRLP4 4
+INDIRI4
+ARGI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRP4
+ARGP4
+ADDRLP4 8
+INDIRI4
+CNSTI4 2
+BORI4
+ARGI4
+ADDRLP4 12
+INDIRP4
+ARGP4
+ADDRGP4 UI_DrawString
+CALLV
+pop
+line 578
+;576:
+;577:	// draw slider
+;578:	UI_SetColor(color);
+ADDRLP4 12
+INDIRP4
+ARGP4
+ADDRGP4 UI_SetColor
+CALLV
+pop
+line 579
+;579:	UI_DrawHandlePic(x + SMALLCHAR_WIDTH, y, 96, 16, sliderBar);
+ADDRLP4 0
+INDIRI4
+CNSTI4 8
+ADDI4
+CVIF4 4
+ARGF4
+ADDRLP4 4
+INDIRI4
+CVIF4 4
+ARGF4
+CNSTF4 1119879168
+ARGF4
+CNSTF4 1098907648
+ARGF4
+ADDRGP4 sliderBar
+INDIRI4
+ARGI4
+ADDRGP4 UI_DrawHandlePic
+CALLV
+pop
+line 580
+;580:	UI_SetColor(NULL);
+CNSTP4 0
+ARGP4
+ADDRGP4 UI_SetColor
+CALLV
+pop
+line 583
+;581:
+;582:	// clamp thumb
+;583:	if (s->maxvalue > s->minvalue) {
+ADDRLP4 32
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 32
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRF4
+ADDRLP4 32
+INDIRP4
+CNSTI4 64
+ADDP4
+INDIRF4
+LEF4 $217
+line 584
+;584:		s->range = (s->curvalue - s->minvalue) / (float)(s->maxvalue - s->minvalue);
+ADDRLP4 36
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 36
+INDIRP4
+CNSTI4 76
+ADDP4
+ADDRLP4 36
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRF4
+ADDRLP4 36
+INDIRP4
+CNSTI4 64
+ADDP4
+INDIRF4
+SUBF4
+ADDRLP4 36
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRF4
+ADDRLP4 36
+INDIRP4
+CNSTI4 64
+ADDP4
+INDIRF4
+SUBF4
+DIVF4
+ASGNF4
+line 585
+;585:		if (s->range < 0) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRF4
+CNSTF4 0
+GEF4 $219
+line 586
+;586:			s->range = 0;
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+CNSTF4 0
+ASGNF4
+line 587
+;587:		} else if (s->range > 1) {
+ADDRGP4 $218
+JUMPV
+LABELV $219
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRF4
+CNSTF4 1065353216
+LEF4 $218
+line 588
+;588:			s->range = 1;
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+CNSTF4 1065353216
+ASGNF4
+line 589
+;589:		}
+line 590
+;590:	} else {
+ADDRGP4 $218
+JUMPV
+LABELV $217
+line 591
+;591:		s->range = 0;
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+CNSTF4 0
+ASGNF4
+line 592
+;592:	}
+LABELV $218
+line 595
+;593:
+;594:	// draw thumb
+;595:	if (style & UI_PULSE) {
+ADDRLP4 8
+INDIRI4
+CNSTI4 16384
+BANDI4
+CNSTI4 0
+EQI4 $223
+line 596
+;596:		button = sliderButton_1;
+ADDRLP4 16
+ADDRGP4 sliderButton_1
+INDIRI4
+ASGNI4
+line 597
+;597:	} else {
+ADDRGP4 $224
+JUMPV
+LABELV $223
+line 598
+;598:		button = sliderButton_0;
+ADDRLP4 16
+ADDRGP4 sliderButton_0
+INDIRI4
+ASGNI4
+line 599
+;599:	}
+LABELV $224
+line 601
+;600:
+;601:	UI_DrawHandlePic((int)(x + 2 * SMALLCHAR_WIDTH + (SLIDER_RANGE - 1) * SMALLCHAR_WIDTH * s->range) - 2, y - 2, 12, 20, button);
+ADDRLP4 0
+INDIRI4
+CNSTI4 16
+ADDI4
+CVIF4 4
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRF4
+CNSTF4 1116733440
+MULF4
+ADDF4
+CVFI4 4
+CNSTI4 2
+SUBI4
+CVIF4 4
+ARGF4
+ADDRLP4 4
+INDIRI4
+CNSTI4 2
+SUBI4
+CVIF4 4
+ARGF4
+CNSTF4 1094713344
+ARGF4
+CNSTF4 1101004800
+ARGF4
+ADDRLP4 16
+INDIRI4
+ARGI4
+ADDRGP4 UI_DrawHandlePic
+CALLV
+pop
+line 602
+;602:}
+LABELV $209
+endproc Slider_Draw 40 20
+proc SpinControl_Init 44 4
+line 670
+;603:#else
+;604:/*
+;605:=================
+;606:Slider_Draw
+;607:=================
+;608:*/
+;609:static void Slider_Draw(menuslider_s* s) {
+;610:	float*   color;
+;611:	int      style;
+;612:	int      i;
+;613:	int      x;
+;614:	int      y;
+;615:	qboolean focus;
+;616:
+;617:	x     = s->generic.x;
+;618:	y     = s->generic.y;
+;619:	focus = (s->generic.parent->cursor == s->generic.menuPosition);
+;620:
+;621:	style = UI_SMALLFONT;
+;622:	if (s->generic.flags & QMF_GRAYED) {
+;623:		color = text_color_disabled;
+;624:	} else if (focus) {
+;625:		color = text_color_highlight;
+;626:		style |= UI_PULSE;
+;627:	} else {
+;628:		color = text_color_normal;
+;629:	}
+;630:
+;631:	if (focus) {
+;632:		// draw cursor
+;633:		UI_FillRect(s->generic.left, s->generic.top, s->generic.right - s->generic.left + 1, s->generic.bottom - s->generic.top + 1, listbar_color);
+;634:		UI_DrawChar(x, y, 13, UI_CENTER | UI_BLINK | UI_SMALLFONT, color);
+;635:	}
+;636:
+;637:	// draw label
+;638:	UI_DrawString(x - SMALLCHAR_WIDTH, y, s->generic.name, UI_RIGHT | style, color);
+;639:
+;640:	// draw slider
+;641:	UI_DrawChar(x + SMALLCHAR_WIDTH, y, 128, UI_LEFT | style, color);
+;642:	for (i = 0; i < SLIDER_RANGE; i++)
+;643:		UI_DrawChar(x + (i + 2) * SMALLCHAR_WIDTH, y, 129, UI_LEFT | style, color);
+;644:	UI_DrawChar(x + (i + 2) * SMALLCHAR_WIDTH, y, 130, UI_LEFT | style, color);
+;645:
+;646:	// clamp thumb
+;647:	if (s->maxvalue > s->minvalue) {
+;648:		s->range = (s->curvalue - s->minvalue) / (float)(s->maxvalue - s->minvalue);
+;649:		if (s->range < 0)
+;650:			s->range = 0;
+;651:		else if (s->range > 1)
+;652:			s->range = 1;
+;653:	} else
+;654:		s->range = 0;
+;655:
+;656:	// draw thumb
+;657:	if (style & UI_PULSE) {
+;658:		style &= ~UI_PULSE;
+;659:		style |= UI_BLINK;
+;660:	}
+;661:	UI_DrawChar((int)(x + 2 * SMALLCHAR_WIDTH + (SLIDER_RANGE - 1) * SMALLCHAR_WIDTH * s->range), y, 131, UI_LEFT | style, color);
+;662:}
+;663:#endif
+;664:
+;665:/*
+;666:=================
+;667:SpinControl_Init
+;668:=================
+;669:*/
+;670:static void SpinControl_Init(menulist_s* s) {
+line 675
+;671:	int         len;
+;672:	int         l;
+;673:	const char* str;
+;674:
+;675:	if (s->generic.name)
+ADDRFP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $226
+line 676
+;676:		len = strlen(s->generic.name) * SMALLCHAR_WIDTH;
+ADDRFP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRP4
+ARGP4
+ADDRLP4 12
+ADDRGP4 strlen
+CALLI4
+ASGNI4
+ADDRLP4 8
+ADDRLP4 12
+INDIRI4
+CNSTI4 3
+LSHI4
+ASGNI4
+ADDRGP4 $227
+JUMPV
+LABELV $226
+line 678
+;677:	else
+;678:		len = 0;
+ADDRLP4 8
+CNSTI4 0
+ASGNI4
+LABELV $227
+line 680
+;679:
+;680:	s->generic.left = s->generic.x - SMALLCHAR_WIDTH - len;
+ADDRLP4 16
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 16
+INDIRP4
+CNSTI4 20
+ADDP4
+ADDRLP4 16
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+CNSTI4 8
+SUBI4
+ADDRLP4 8
+INDIRI4
+SUBI4
+ASGNI4
+line 682
+;681:
+;682:	len = s->numitems = 0;
+ADDRLP4 20
+CNSTI4 0
+ASGNI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 72
+ADDP4
+ADDRLP4 20
+INDIRI4
+ASGNI4
+ADDRLP4 8
+ADDRLP4 20
+INDIRI4
+ASGNI4
+ADDRGP4 $229
+JUMPV
+LABELV $228
+line 683
+;683:	while ((str = s->itemnames[s->numitems]) != 0) {
+line 684
+;684:		l = strlen(str);
+ADDRLP4 4
+INDIRP4
+ARGP4
+ADDRLP4 24
+ADDRGP4 strlen
+CALLI4
+ASGNI4
+ADDRLP4 0
+ADDRLP4 24
+INDIRI4
+ASGNI4
+line 685
+;685:		if (l > len)
+ADDRLP4 0
+INDIRI4
+ADDRLP4 8
+INDIRI4
+LEI4 $231
+line 686
+;686:			len = l;
+ADDRLP4 8
+ADDRLP4 0
+INDIRI4
+ASGNI4
+LABELV $231
+line 688
+;687:
+;688:		s->numitems++;
+ADDRLP4 28
+ADDRFP4 0
+INDIRP4
+CNSTI4 72
+ADDP4
+ASGNP4
+ADDRLP4 28
+INDIRP4
+ADDRLP4 28
+INDIRP4
+INDIRI4
+CNSTI4 1
+ADDI4
+ASGNI4
+line 689
+;689:	}
+LABELV $229
+line 683
+ADDRLP4 24
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 28
+ADDRLP4 24
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRLP4 24
+INDIRP4
+CNSTI4 88
+ADDP4
+INDIRP4
+ADDP4
+INDIRP4
+ASGNP4
+ADDRLP4 4
+ADDRLP4 28
+INDIRP4
+ASGNP4
+ADDRLP4 28
+INDIRP4
+CVPU4 4
+CNSTU4 0
+NEU4 $228
+line 691
+;690:
+;691:	s->generic.top    = s->generic.y;
+ADDRLP4 32
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 32
+INDIRP4
+CNSTI4 24
+ADDP4
+ADDRLP4 32
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRI4
+ASGNI4
+line 692
+;692:	s->generic.right  = s->generic.x + (len + 1) * SMALLCHAR_WIDTH;
+ADDRLP4 36
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 36
+INDIRP4
+CNSTI4 28
+ADDP4
+ADDRLP4 36
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+ADDRLP4 8
+INDIRI4
+CNSTI4 3
+LSHI4
+CNSTI4 8
+ADDI4
+ADDI4
+ASGNI4
+line 693
+;693:	s->generic.bottom = s->generic.y + SMALLCHAR_HEIGHT;
+ADDRLP4 40
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 40
+INDIRP4
+CNSTI4 32
+ADDP4
+ADDRLP4 40
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRI4
+CNSTI4 16
+ADDI4
+ASGNI4
+line 694
+;694:}
+LABELV $225
+endproc SpinControl_Init 44 4
+proc SpinControl_Key 28 8
+line 701
+;695:
+;696:/*
+;697:=================
+;698:SpinControl_Key
+;699:=================
+;700:*/
+;701:static sfxHandle_t SpinControl_Key(menulist_s* s, int key) {
+line 704
+;702:	sfxHandle_t sound;
+;703:
+;704:	sound = 0;
+ADDRLP4 0
+CNSTI4 0
+ASGNI4
+line 705
+;705:	switch (key) {
+ADDRLP4 4
+ADDRFP4 4
+INDIRI4
+ASGNI4
+ADDRLP4 4
+INDIRI4
+CNSTI4 163
+EQI4 $239
+ADDRLP4 4
+INDIRI4
+CNSTI4 165
+EQI4 $242
+ADDRLP4 4
+INDIRI4
+CNSTI4 165
+GTI4 $246
+LABELV $245
+ADDRLP4 8
+ADDRFP4 4
+INDIRI4
+ASGNI4
+ADDRLP4 8
+INDIRI4
+CNSTI4 134
+EQI4 $239
+ADDRLP4 8
+INDIRI4
+CNSTI4 135
+EQI4 $242
+ADDRGP4 $234
+JUMPV
+LABELV $246
+ADDRFP4 4
+INDIRI4
+CNSTI4 178
+EQI4 $236
+ADDRGP4 $234
+JUMPV
+LABELV $236
+line 707
+;706:	case K_MOUSE1:
+;707:		s->curvalue++;
+ADDRLP4 12
+ADDRFP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+ASGNP4
+ADDRLP4 12
+INDIRP4
+ADDRLP4 12
+INDIRP4
+INDIRI4
+CNSTI4 1
+ADDI4
+ASGNI4
+line 708
+;708:		if (s->curvalue >= s->numitems)
+ADDRLP4 16
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 16
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ADDRLP4 16
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+LTI4 $237
+line 709
+;709:			s->curvalue = 0;
+ADDRFP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+CNSTI4 0
+ASGNI4
+LABELV $237
+line 710
+;710:		sound = menu_move_sound;
+ADDRLP4 0
+ADDRGP4 menu_move_sound
+INDIRI4
+ASGNI4
+line 711
+;711:		break;
+ADDRGP4 $235
+JUMPV
+LABELV $239
+line 715
+;712:
+;713:	case K_KP_LEFTARROW:
+;714:	case K_LEFTARROW:
+;715:		if (s->curvalue > 0) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+CNSTI4 0
+LEI4 $240
+line 716
+;716:			s->curvalue--;
+ADDRLP4 20
+ADDRFP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+ASGNP4
+ADDRLP4 20
+INDIRP4
+ADDRLP4 20
+INDIRP4
+INDIRI4
+CNSTI4 1
+SUBI4
+ASGNI4
+line 717
+;717:			sound = menu_move_sound;
+ADDRLP4 0
+ADDRGP4 menu_move_sound
+INDIRI4
+ASGNI4
+line 718
+;718:		} else
+ADDRGP4 $235
+JUMPV
+LABELV $240
+line 719
+;719:			sound = menu_buzz_sound;
+ADDRLP4 0
+ADDRGP4 menu_buzz_sound
+INDIRI4
+ASGNI4
+line 720
+;720:		break;
+ADDRGP4 $235
+JUMPV
+LABELV $242
+line 724
+;721:
+;722:	case K_KP_RIGHTARROW:
+;723:	case K_RIGHTARROW:
+;724:		if (s->curvalue < s->numitems - 1) {
+ADDRLP4 20
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 20
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ADDRLP4 20
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+CNSTI4 1
+SUBI4
+GEI4 $243
+line 725
+;725:			s->curvalue++;
+ADDRLP4 24
+ADDRFP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+ASGNP4
+ADDRLP4 24
+INDIRP4
+ADDRLP4 24
+INDIRP4
+INDIRI4
+CNSTI4 1
+ADDI4
+ASGNI4
+line 726
+;726:			sound = menu_move_sound;
+ADDRLP4 0
+ADDRGP4 menu_move_sound
+INDIRI4
+ASGNI4
+line 727
+;727:		} else
+ADDRGP4 $235
+JUMPV
+LABELV $243
+line 728
+;728:			sound = menu_buzz_sound;
+ADDRLP4 0
+ADDRGP4 menu_buzz_sound
+INDIRI4
+ASGNI4
+line 729
+;729:		break;
+LABELV $234
+LABELV $235
+line 732
+;730:	}
+;731:
+;732:	if (sound && s->generic.callback)
+ADDRLP4 0
+INDIRI4
+CNSTI4 0
+EQI4 $247
+ADDRFP4 0
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $247
+line 733
+;733:		s->generic.callback(s, QM_ACTIVATED);
+ADDRLP4 12
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 12
+INDIRP4
+ARGP4
+CNSTI4 3
+ARGI4
+ADDRLP4 12
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CALLV
+pop
+LABELV $247
+line 735
+;734:
+;735:	return (sound);
+ADDRLP4 0
+INDIRI4
+RETI4
+LABELV $233
+endproc SpinControl_Key 28 8
+proc SpinControl_Draw 32 20
+line 743
+;736:}
+;737:
+;738:/*
+;739:=================
+;740:SpinControl_Draw
+;741:=================
+;742:*/
+;743:static void SpinControl_Draw(menulist_s* s) {
+line 749
+;744:	float*   color;
+;745:	int      x, y;
+;746:	int      style;
+;747:	qboolean focus;
+;748:
+;749:	x = s->generic.x;
+ADDRLP4 4
+ADDRFP4 0
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+ASGNI4
+line 750
+;750:	y = s->generic.y;
+ADDRLP4 8
+ADDRFP4 0
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRI4
+ASGNI4
+line 752
+;751:
+;752:	style = UI_SMALLFONT;
+ADDRLP4 12
+CNSTI4 16
+ASGNI4
+line 753
+;753:	focus = (s->generic.parent->cursor == s->generic.menuPosition);
+ADDRLP4 24
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 24
+INDIRP4
+CNSTI4 36
+ADDP4
+INDIRP4
+INDIRI4
+ADDRLP4 24
+INDIRP4
+CNSTI4 40
+ADDP4
+INDIRI4
+NEI4 $251
+ADDRLP4 20
+CNSTI4 1
+ASGNI4
+ADDRGP4 $252
+JUMPV
+LABELV $251
+ADDRLP4 20
+CNSTI4 0
+ASGNI4
+LABELV $252
+ADDRLP4 16
+ADDRLP4 20
+INDIRI4
+ASGNI4
+line 755
+;754:
+;755:	if (s->generic.flags & QMF_GRAYED)
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 8192
+BANDU4
+CNSTU4 0
+EQU4 $253
+line 756
+;756:		color = text_color_disabled;
+ADDRLP4 0
+ADDRGP4 text_color_disabled
+ASGNP4
+ADDRGP4 $254
+JUMPV
+LABELV $253
+line 757
+;757:	else if (focus) {
+ADDRLP4 16
+INDIRI4
+CNSTI4 0
+EQI4 $255
+line 758
+;758:		color = text_color_highlight;
+ADDRLP4 0
+ADDRGP4 text_color_highlight
+ASGNP4
+line 759
+;759:		style |= UI_PULSE;
+ADDRLP4 12
+ADDRLP4 12
+INDIRI4
+CNSTI4 16384
+BORI4
+ASGNI4
+line 760
+;760:	} else if (s->generic.flags & QMF_BLINK) {
+ADDRGP4 $256
+JUMPV
+LABELV $255
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 1
+BANDU4
+CNSTU4 0
+EQU4 $257
+line 761
+;761:		color = text_color_highlight;
+ADDRLP4 0
+ADDRGP4 text_color_highlight
+ASGNP4
+line 762
+;762:		style |= UI_BLINK;
+ADDRLP4 12
+ADDRLP4 12
+INDIRI4
+CNSTI4 4096
+BORI4
+ASGNI4
+line 763
+;763:	} else
+ADDRGP4 $258
+JUMPV
+LABELV $257
+line 764
+;764:		color = text_color_normal;
+ADDRLP4 0
+ADDRGP4 text_color_normal
+ASGNP4
+LABELV $258
+LABELV $256
+LABELV $254
+line 766
+;765:
+;766:	if (focus) {
+ADDRLP4 16
+INDIRI4
+CNSTI4 0
+EQI4 $259
+line 768
+;767:		// draw cursor
+;768:		UI_FillRect(s->generic.left, s->generic.top, s->generic.right - s->generic.left + 1, s->generic.bottom - s->generic.top + 1, listbar_color);
+ADDRLP4 28
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 28
+INDIRP4
+CNSTI4 20
+ADDP4
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 28
+INDIRP4
+CNSTI4 24
+ADDP4
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 28
+INDIRP4
+CNSTI4 28
+ADDP4
+INDIRI4
+ADDRLP4 28
+INDIRP4
+CNSTI4 20
+ADDP4
+INDIRI4
+SUBI4
+CNSTI4 1
+ADDI4
+CVIF4 4
+ARGF4
+ADDRLP4 28
+INDIRP4
+CNSTI4 32
+ADDP4
+INDIRI4
+ADDRLP4 28
+INDIRP4
+CNSTI4 24
+ADDP4
+INDIRI4
+SUBI4
+CNSTI4 1
+ADDI4
+CVIF4 4
+ARGF4
+ADDRGP4 listbar_color
+ARGP4
+ADDRGP4 UI_FillRect
+CALLV
+pop
+line 769
+;769:		UI_DrawChar(x, y, 13, UI_CENTER | UI_BLINK | UI_SMALLFONT, color);
+ADDRLP4 4
+INDIRI4
+ARGI4
+ADDRLP4 8
+INDIRI4
+ARGI4
+CNSTI4 13
+ARGI4
+CNSTI4 4113
+ARGI4
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRGP4 UI_DrawChar
+CALLV
+pop
+line 770
+;770:	}
+LABELV $259
+line 772
+;771:
+;772:	UI_DrawString(x - SMALLCHAR_WIDTH, y, s->generic.name, style | UI_RIGHT, color);
+ADDRLP4 4
+INDIRI4
+CNSTI4 8
+SUBI4
+ARGI4
+ADDRLP4 8
+INDIRI4
+ARGI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRP4
+ARGP4
+ADDRLP4 12
+INDIRI4
+CNSTI4 2
+BORI4
+ARGI4
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRGP4 UI_DrawString
+CALLV
+pop
+line 773
+;773:	UI_DrawString(x + SMALLCHAR_WIDTH, y, s->itemnames[s->curvalue], style | UI_LEFT, color);
+ADDRLP4 4
+INDIRI4
+CNSTI4 8
+ADDI4
+ARGI4
+ADDRLP4 8
+INDIRI4
+ARGI4
+ADDRLP4 28
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 28
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRLP4 28
+INDIRP4
+CNSTI4 88
+ADDP4
+INDIRP4
+ADDP4
+INDIRP4
+ARGP4
+ADDRLP4 12
+INDIRI4
+ARGI4
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRGP4 UI_DrawString
+CALLV
+pop
+line 774
+;774:}
+LABELV $249
+endproc SpinControl_Draw 32 20
+proc ScrollList_Init 32 0
+line 781
+;775:
+;776:/*
+;777:=================
+;778:ScrollList_Init
+;779:=================
+;780:*/
+;781:static void ScrollList_Init(menulist_s* l) {
+line 784
+;782:	int w;
+;783:
+;784:	l->oldvalue = 0;
+ADDRFP4 0
+INDIRP4
+CNSTI4 64
+ADDP4
+CNSTI4 0
+ASGNI4
+line 785
+;785:	l->curvalue = 0;
+ADDRFP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+CNSTI4 0
+ASGNI4
+line 786
+;786:	l->top      = 0;
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+CNSTI4 0
+ASGNI4
+line 788
+;787:
+;788:	if (!l->columns) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 100
+ADDP4
+INDIRI4
+CNSTI4 0
+NEI4 $262
+line 789
+;789:		l->columns    = 1;
+ADDRFP4 0
+INDIRP4
+CNSTI4 100
+ADDP4
+CNSTI4 1
+ASGNI4
+line 790
+;790:		l->seperation = 0;
+ADDRFP4 0
+INDIRP4
+CNSTI4 104
+ADDP4
+CNSTI4 0
+ASGNI4
+line 791
+;791:	} else if (!l->seperation) {
+ADDRGP4 $263
+JUMPV
+LABELV $262
+ADDRFP4 0
+INDIRP4
+CNSTI4 104
+ADDP4
+INDIRI4
+CNSTI4 0
+NEI4 $264
+line 792
+;792:		l->seperation = 3;
+ADDRFP4 0
+INDIRP4
+CNSTI4 104
+ADDP4
+CNSTI4 3
+ASGNI4
+line 793
+;793:	}
+LABELV $264
+LABELV $263
+line 795
+;794:
+;795:	w = ((l->width + l->seperation) * l->columns - l->seperation) * SMALLCHAR_WIDTH;
+ADDRLP4 4
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 0
+ADDRLP4 4
+INDIRP4
+CNSTI4 92
+ADDP4
+INDIRI4
+ADDRLP4 4
+INDIRP4
+CNSTI4 104
+ADDP4
+INDIRI4
+ADDI4
+ADDRLP4 4
+INDIRP4
+CNSTI4 100
+ADDP4
+INDIRI4
+MULI4
+ADDRLP4 4
+INDIRP4
+CNSTI4 104
+ADDP4
+INDIRI4
+SUBI4
+CNSTI4 3
+LSHI4
+ASGNI4
+line 797
+;796:
+;797:	l->generic.left   = l->generic.x;
+ADDRLP4 8
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 8
+INDIRP4
+CNSTI4 20
+ADDP4
+ADDRLP4 8
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+ASGNI4
+line 798
+;798:	l->generic.top    = l->generic.y;
+ADDRLP4 12
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 12
+INDIRP4
+CNSTI4 24
+ADDP4
+ADDRLP4 12
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRI4
+ASGNI4
+line 799
+;799:	l->generic.right  = l->generic.x + w;
+ADDRLP4 16
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 16
+INDIRP4
+CNSTI4 28
+ADDP4
+ADDRLP4 16
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+ADDRLP4 0
+INDIRI4
+ADDI4
+ASGNI4
+line 800
+;800:	l->generic.bottom = l->generic.y + l->height * SMALLCHAR_HEIGHT;
+ADDRLP4 20
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 20
+INDIRP4
+CNSTI4 32
+ADDP4
+ADDRLP4 20
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRI4
+ADDRLP4 20
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+CNSTI4 4
+LSHI4
+ADDI4
+ASGNI4
+line 802
+;801:
+;802:	if (l->generic.flags & QMF_CENTER_JUSTIFY) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 8
+BANDU4
+CNSTU4 0
+EQU4 $266
+line 803
+;803:		l->generic.left -= w / 2;
+ADDRLP4 24
+ADDRFP4 0
+INDIRP4
+CNSTI4 20
+ADDP4
+ASGNP4
+ADDRLP4 24
+INDIRP4
+ADDRLP4 24
+INDIRP4
+INDIRI4
+ADDRLP4 0
+INDIRI4
+CNSTI4 2
+DIVI4
+SUBI4
+ASGNI4
+line 804
+;804:		l->generic.right -= w / 2;
+ADDRLP4 28
+ADDRFP4 0
+INDIRP4
+CNSTI4 28
+ADDP4
+ASGNP4
+ADDRLP4 28
+INDIRP4
+ADDRLP4 28
+INDIRP4
+INDIRI4
+ADDRLP4 0
+INDIRI4
+CNSTI4 2
+DIVI4
+SUBI4
+ASGNI4
+line 805
+;805:	}
+LABELV $266
+line 806
+;806:}
+LABELV $261
+endproc ScrollList_Init 32 0
+export ScrollList_Key
+proc ScrollList_Key 156 16
+line 813
+;807:
+;808:/*
+;809:=================
+;810:ScrollList_Key
+;811:=================
+;812:*/
+;813:sfxHandle_t ScrollList_Key(menulist_s* l, int key) {
+line 826
+;814:	int x;
+;815:	int y;
+;816:	int w;
+;817:	int i;
+;818:	int j;
+;819:	int c;
+;820:	int cursorx;
+;821:	int cursory;
+;822:	int column;
+;823:	int index;
+;824:	int time;
+;825:
+;826:	switch (key) {
+ADDRLP4 44
+ADDRFP4 4
+INDIRI4
+ASGNI4
+ADDRLP4 44
+INDIRI4
+CNSTI4 160
+LTI4 $388
+ADDRLP4 44
+INDIRI4
+CNSTI4 168
+GTI4 $389
+ADDRLP4 44
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRGP4 $390-640
+ADDP4
+INDIRP4
+JUMPV
+data
+align 4
+LABELV $390
+address $292
+address $352
+address $302
+address $370
+address $269
+address $379
+address $295
+address $361
+address $313
+code
+LABELV $388
+ADDRLP4 48
+ADDRFP4 4
+INDIRI4
+ASGNI4
+ADDRLP4 48
+INDIRI4
+CNSTI4 132
+LTI4 $269
+ADDRLP4 48
+INDIRI4
+CNSTI4 144
+GTI4 $269
+ADDRLP4 48
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRGP4 $392-528
+ADDP4
+INDIRP4
+JUMPV
+data
+align 4
+LABELV $392
+address $352
+address $361
+address $370
+address $379
+address $269
+address $269
+address $269
+address $269
+address $269
+address $313
+address $302
+address $292
+address $295
+code
+LABELV $389
+ADDRLP4 52
+ADDRFP4 4
+INDIRI4
+ASGNI4
+ADDRLP4 52
+INDIRI4
+CNSTI4 178
+EQI4 $271
+ADDRLP4 52
+INDIRI4
+CNSTI4 178
+LTI4 $269
+LABELV $394
+ADDRLP4 56
+ADDRFP4 4
+INDIRI4
+ASGNI4
+ADDRLP4 56
+INDIRI4
+CNSTI4 183
+EQI4 $337
+ADDRLP4 56
+INDIRI4
+CNSTI4 184
+EQI4 $324
+ADDRGP4 $269
+JUMPV
+LABELV $271
+line 828
+;827:	case K_MOUSE1:
+;828:		if (l->generic.flags & QMF_HASMOUSEFOCUS) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 512
+BANDU4
+CNSTU4 0
+EQU4 $270
+line 830
+;829:			// check scroll region
+;830:			x = l->generic.x;
+ADDRLP4 12
+ADDRFP4 0
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+ASGNI4
+line 831
+;831:			y = l->generic.y;
+ADDRLP4 16
+ADDRFP4 0
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRI4
+ASGNI4
+line 832
+;832:			w = ((l->width + l->seperation) * l->columns - l->seperation) * SMALLCHAR_WIDTH;
+ADDRLP4 60
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 20
+ADDRLP4 60
+INDIRP4
+CNSTI4 92
+ADDP4
+INDIRI4
+ADDRLP4 60
+INDIRP4
+CNSTI4 104
+ADDP4
+INDIRI4
+ADDI4
+ADDRLP4 60
+INDIRP4
+CNSTI4 100
+ADDP4
+INDIRI4
+MULI4
+ADDRLP4 60
+INDIRP4
+CNSTI4 104
+ADDP4
+INDIRI4
+SUBI4
+CNSTI4 3
+LSHI4
+ASGNI4
+line 833
+;833:			if (l->generic.flags & QMF_CENTER_JUSTIFY) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 8
+BANDU4
+CNSTU4 0
+EQU4 $274
+line 834
+;834:				x -= w / 2;
+ADDRLP4 12
+ADDRLP4 12
+INDIRI4
+ADDRLP4 20
+INDIRI4
+CNSTI4 2
+DIVI4
+SUBI4
+ASGNI4
+line 835
+;835:			}
+LABELV $274
+line 836
+;836:			if (UI_CursorInRect(x, y, w, l->height * SMALLCHAR_HEIGHT)) {
+ADDRLP4 12
+INDIRI4
+ARGI4
+ADDRLP4 16
+INDIRI4
+ARGI4
+ADDRLP4 20
+INDIRI4
+ARGI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+CNSTI4 4
+LSHI4
+ARGI4
+ADDRLP4 64
+ADDRGP4 UI_CursorInRect
+CALLI4
+ASGNI4
+ADDRLP4 64
+INDIRI4
+CNSTI4 0
+EQI4 $276
+line 837
+;837:				cursorx = (uis.cursorx - x) / SMALLCHAR_WIDTH;
+ADDRLP4 28
+ADDRGP4 uis+8
+INDIRF4
+ADDRLP4 12
+INDIRI4
+CVIF4 4
+SUBF4
+CNSTF4 1040187392
+MULF4
+CVFI4 4
+ASGNI4
+line 838
+;838:				column  = cursorx / (l->width + l->seperation);
+ADDRLP4 68
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 36
+ADDRLP4 28
+INDIRI4
+ADDRLP4 68
+INDIRP4
+CNSTI4 92
+ADDP4
+INDIRI4
+ADDRLP4 68
+INDIRP4
+CNSTI4 104
+ADDP4
+INDIRI4
+ADDI4
+DIVI4
+ASGNI4
+line 839
+;839:				cursory = (uis.cursory - y) / SMALLCHAR_HEIGHT;
+ADDRLP4 32
+ADDRGP4 uis+12
+INDIRF4
+ADDRLP4 16
+INDIRI4
+CVIF4 4
+SUBF4
+CNSTF4 1031798784
+MULF4
+CVFI4 4
+ASGNI4
+line 840
+;840:				index   = column * l->height + cursory;
+ADDRLP4 24
+ADDRLP4 36
+INDIRI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+MULI4
+ADDRLP4 32
+INDIRI4
+ADDI4
+ASGNI4
+line 841
+;841:				if (l->top + index < l->numitems) {
+ADDRLP4 72
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 72
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRI4
+ADDRLP4 24
+INDIRI4
+ADDI4
+ADDRLP4 72
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+GEI4 $280
+line 842
+;842:					l->oldvalue = l->curvalue;
+ADDRLP4 76
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 76
+INDIRP4
+CNSTI4 64
+ADDP4
+ADDRLP4 76
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ASGNI4
+line 843
+;843:					l->curvalue = l->top + index;
+ADDRLP4 80
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 80
+INDIRP4
+CNSTI4 68
+ADDP4
+ADDRLP4 80
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRI4
+ADDRLP4 24
+INDIRI4
+ADDI4
+ASGNI4
+line 846
+;844:
+;845:					// doubleclick
+;846:					if (l->generic.dblclick) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 60
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $282
+line 847
+;847:						if (l->oldvalue == l->curvalue) {
+ADDRLP4 84
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 84
+INDIRP4
+CNSTI4 64
+ADDP4
+INDIRI4
+ADDRLP4 84
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+NEI4 $284
+line 848
+;848:							if (l->mouse1time) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 84
+ADDP4
+INDIRI4
+CNSTI4 0
+EQI4 $286
+line 849
+;849:								time = trap_Milliseconds();
+ADDRLP4 88
+ADDRGP4 trap_Milliseconds
+CALLI4
+ASGNI4
+ADDRLP4 40
+ADDRLP4 88
+INDIRI4
+ASGNI4
+line 850
+;850:								if (time - l->mouse1time < 250) {
+ADDRLP4 40
+INDIRI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 84
+ADDP4
+INDIRI4
+SUBI4
+CNSTI4 250
+GEI4 $288
+line 852
+;851:									// Com_Printf("doubleclick\n");
+;852:									l->generic.dblclick(l);
+ADDRLP4 92
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 92
+INDIRP4
+ARGP4
+ADDRLP4 92
+INDIRP4
+CNSTI4 60
+ADDP4
+INDIRP4
+CALLV
+pop
+line 853
+;853:									l->mouse1time = 0;
+ADDRFP4 0
+INDIRP4
+CNSTI4 84
+ADDP4
+CNSTI4 0
+ASGNI4
+line 854
+;854:									return (menu_in_sound);
+ADDRGP4 menu_in_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $288
+line 856
+;855:								}
+;856:							}
+LABELV $286
+line 857
+;857:						}
+LABELV $284
+line 858
+;858:						l->mouse1time = trap_Milliseconds();
+ADDRLP4 88
+ADDRGP4 trap_Milliseconds
+CALLI4
+ASGNI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 84
+ADDP4
+ADDRLP4 88
+INDIRI4
+ASGNI4
+line 859
+;859:					}
+LABELV $282
+line 861
+;860:
+;861:					if (l->oldvalue != l->curvalue && l->generic.callback) {
+ADDRLP4 84
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 84
+INDIRP4
+CNSTI4 64
+ADDP4
+INDIRI4
+ADDRLP4 84
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+EQI4 $290
+ADDRLP4 84
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $290
+line 862
+;862:						l->generic.callback(l, QM_GOTFOCUS);
+ADDRLP4 88
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 88
+INDIRP4
+ARGP4
+CNSTI4 1
+ARGI4
+ADDRLP4 88
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CALLV
+pop
+line 863
+;863:						return (menu_move_sound);
+ADDRGP4 menu_move_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $290
+line 865
+;864:					}
+;865:				}
+LABELV $280
+line 866
+;866:			}
+LABELV $276
+line 869
+;867:
+;868:			// absorbed, silent sound effect
+;869:			return (menu_null_sound);
+ADDRGP4 menu_null_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+line 871
+;870:		}
+;871:		break;
+LABELV $292
+line 875
+;872:
+;873:	case K_KP_HOME:
+;874:	case K_HOME:
+;875:		l->oldvalue = l->curvalue;
+ADDRLP4 60
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 60
+INDIRP4
+CNSTI4 64
+ADDP4
+ADDRLP4 60
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ASGNI4
+line 876
+;876:		l->curvalue = 0;
+ADDRFP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+CNSTI4 0
+ASGNI4
+line 877
+;877:		l->top      = 0;
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+CNSTI4 0
+ASGNI4
+line 879
+;878:
+;879:		if (l->oldvalue != l->curvalue && l->generic.callback) {
+ADDRLP4 64
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 64
+INDIRP4
+CNSTI4 64
+ADDP4
+INDIRI4
+ADDRLP4 64
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+EQI4 $293
+ADDRLP4 64
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $293
+line 880
+;880:			l->generic.callback(l, QM_GOTFOCUS);
+ADDRLP4 68
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 68
+INDIRP4
+ARGP4
+CNSTI4 1
+ARGI4
+ADDRLP4 68
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CALLV
+pop
+line 881
+;881:			return (menu_move_sound);
+ADDRGP4 menu_move_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $293
+line 883
+;882:		}
+;883:		return (menu_buzz_sound);
+ADDRGP4 menu_buzz_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $295
+line 887
+;884:
+;885:	case K_KP_END:
+;886:	case K_END:
+;887:		l->oldvalue = l->curvalue;
+ADDRLP4 68
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 68
+INDIRP4
+CNSTI4 64
+ADDP4
+ADDRLP4 68
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ASGNI4
+line 888
+;888:		l->curvalue = l->numitems - 1;
+ADDRLP4 72
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 72
+INDIRP4
+CNSTI4 68
+ADDP4
+ADDRLP4 72
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+CNSTI4 1
+SUBI4
+ASGNI4
+line 889
+;889:		if (l->columns > 1) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 100
+ADDP4
+INDIRI4
+CNSTI4 1
+LEI4 $296
+line 890
+;890:			c      = (l->curvalue / l->height + 1) * l->height;
+ADDRLP4 76
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 4
+ADDRLP4 76
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ADDRLP4 76
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+DIVI4
+CNSTI4 1
+ADDI4
+ADDRLP4 76
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+MULI4
+ASGNI4
+line 891
+;891:			l->top = c - (l->columns * l->height);
+ADDRLP4 80
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 80
+INDIRP4
+CNSTI4 76
+ADDP4
+ADDRLP4 4
+INDIRI4
+ADDRLP4 80
+INDIRP4
+CNSTI4 100
+ADDP4
+INDIRI4
+ADDRLP4 80
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+MULI4
+SUBI4
+ASGNI4
+line 892
+;892:		} else {
+ADDRGP4 $297
+JUMPV
+LABELV $296
+line 893
+;893:			l->top = l->curvalue - (l->height - 1);
+ADDRLP4 76
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 76
+INDIRP4
+CNSTI4 76
+ADDP4
+ADDRLP4 76
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ADDRLP4 76
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+CNSTI4 1
+SUBI4
+SUBI4
+ASGNI4
+line 894
+;894:		}
+LABELV $297
+line 895
+;895:		if (l->top < 0)
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRI4
+CNSTI4 0
+GEI4 $298
+line 896
+;896:			l->top = 0;
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+CNSTI4 0
+ASGNI4
+LABELV $298
+line 898
+;897:
+;898:		if (l->oldvalue != l->curvalue && l->generic.callback) {
+ADDRLP4 76
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 76
+INDIRP4
+CNSTI4 64
+ADDP4
+INDIRI4
+ADDRLP4 76
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+EQI4 $300
+ADDRLP4 76
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $300
+line 899
+;899:			l->generic.callback(l, QM_GOTFOCUS);
+ADDRLP4 80
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 80
+INDIRP4
+ARGP4
+CNSTI4 1
+ARGI4
+ADDRLP4 80
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CALLV
+pop
+line 900
+;900:			return (menu_move_sound);
+ADDRGP4 menu_move_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $300
+line 902
+;901:		}
+;902:		return (menu_buzz_sound);
+ADDRGP4 menu_buzz_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $302
+line 906
+;903:
+;904:	case K_PGUP:
+;905:	case K_KP_PGUP:
+;906:		if (l->columns > 1) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 100
+ADDP4
+INDIRI4
+CNSTI4 1
+LEI4 $303
+line 907
+;907:			return menu_null_sound;
+ADDRGP4 menu_null_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $303
+line 910
+;908:		}
+;909:
+;910:		if (l->curvalue > 0) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+CNSTI4 0
+LEI4 $305
+line 911
+;911:			l->oldvalue = l->curvalue;
+ADDRLP4 80
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 80
+INDIRP4
+CNSTI4 64
+ADDP4
+ADDRLP4 80
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ASGNI4
+line 912
+;912:			l->curvalue -= l->height - 1;
+ADDRLP4 84
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 88
+ADDRLP4 84
+INDIRP4
+CNSTI4 68
+ADDP4
+ASGNP4
+ADDRLP4 88
+INDIRP4
+ADDRLP4 88
+INDIRP4
+INDIRI4
+ADDRLP4 84
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+CNSTI4 1
+SUBI4
+SUBI4
+ASGNI4
+line 913
+;913:			if (l->curvalue < 0)
+ADDRFP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+CNSTI4 0
+GEI4 $307
+line 914
+;914:				l->curvalue = 0;
+ADDRFP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+CNSTI4 0
+ASGNI4
+LABELV $307
+line 915
+;915:			l->top = l->curvalue;
+ADDRLP4 92
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 92
+INDIRP4
+CNSTI4 76
+ADDP4
+ADDRLP4 92
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ASGNI4
+line 916
+;916:			if (l->top < 0)
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRI4
+CNSTI4 0
+GEI4 $309
+line 917
+;917:				l->top = 0;
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+CNSTI4 0
+ASGNI4
+LABELV $309
+line 919
+;918:
+;919:			if (l->generic.callback)
+ADDRFP4 0
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $311
+line 920
+;920:				l->generic.callback(l, QM_GOTFOCUS);
+ADDRLP4 96
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 96
+INDIRP4
+ARGP4
+CNSTI4 1
+ARGI4
+ADDRLP4 96
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CALLV
+pop
+LABELV $311
+line 922
+;921:
+;922:			return (menu_move_sound);
+ADDRGP4 menu_move_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $305
+line 924
+;923:		}
+;924:		return (menu_buzz_sound);
+ADDRGP4 menu_buzz_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $313
+line 928
+;925:
+;926:	case K_PGDN:
+;927:	case K_KP_PGDN:
+;928:		if (l->columns > 1) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 100
+ADDP4
+INDIRI4
+CNSTI4 1
+LEI4 $314
+line 929
+;929:			return menu_null_sound;
+ADDRGP4 menu_null_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $314
+line 932
+;930:		}
+;931:
+;932:		if (l->curvalue < l->numitems - 1) {
+ADDRLP4 80
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 80
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ADDRLP4 80
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+CNSTI4 1
+SUBI4
+GEI4 $316
+line 933
+;933:			l->oldvalue = l->curvalue;
+ADDRLP4 84
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 84
+INDIRP4
+CNSTI4 64
+ADDP4
+ADDRLP4 84
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ASGNI4
+line 934
+;934:			l->curvalue += l->height - 1;
+ADDRLP4 88
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 92
+ADDRLP4 88
+INDIRP4
+CNSTI4 68
+ADDP4
+ASGNP4
+ADDRLP4 92
+INDIRP4
+ADDRLP4 92
+INDIRP4
+INDIRI4
+ADDRLP4 88
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+CNSTI4 1
+SUBI4
+ADDI4
+ASGNI4
+line 935
+;935:			if (l->curvalue > l->numitems - 1)
+ADDRLP4 96
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 96
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ADDRLP4 96
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+CNSTI4 1
+SUBI4
+LEI4 $318
+line 936
+;936:				l->curvalue = l->numitems - 1;
+ADDRLP4 100
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 100
+INDIRP4
+CNSTI4 68
+ADDP4
+ADDRLP4 100
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+CNSTI4 1
+SUBI4
+ASGNI4
+LABELV $318
+line 937
+;937:			l->top = l->curvalue - (l->height - 1);
+ADDRLP4 104
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 104
+INDIRP4
+CNSTI4 76
+ADDP4
+ADDRLP4 104
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ADDRLP4 104
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+CNSTI4 1
+SUBI4
+SUBI4
+ASGNI4
+line 938
+;938:			if (l->top < 0)
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRI4
+CNSTI4 0
+GEI4 $320
+line 939
+;939:				l->top = 0;
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+CNSTI4 0
+ASGNI4
+LABELV $320
+line 941
+;940:
+;941:			if (l->generic.callback)
+ADDRFP4 0
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $322
+line 942
+;942:				l->generic.callback(l, QM_GOTFOCUS);
+ADDRLP4 108
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 108
+INDIRP4
+ARGP4
+CNSTI4 1
+ARGI4
+ADDRLP4 108
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CALLV
+pop
+LABELV $322
+line 944
+;943:
+;944:			return (menu_move_sound);
+ADDRGP4 menu_move_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $316
+line 946
+;945:		}
+;946:		return (menu_buzz_sound);
+ADDRGP4 menu_buzz_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $324
+line 949
+;947:
+;948:	case K_MWHEELUP:
+;949:		if (!l->scroll)
+ADDRFP4 0
+INDIRP4
+CNSTI4 80
+ADDP4
+INDIRI4
+CNSTI4 0
+NEI4 $325
+line 950
+;950:			return (menu_null_sound);
+ADDRGP4 menu_null_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $325
+line 952
+;951:
+;952:		if (l->curvalue > 0) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+CNSTI4 0
+LEI4 $327
+line 953
+;953:			l->oldvalue = l->curvalue;
+ADDRLP4 84
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 84
+INDIRP4
+CNSTI4 64
+ADDP4
+ADDRLP4 84
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ASGNI4
+line 954
+;954:			l->curvalue -= l->scroll;
+ADDRLP4 88
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 92
+ADDRLP4 88
+INDIRP4
+CNSTI4 68
+ADDP4
+ASGNP4
+ADDRLP4 92
+INDIRP4
+ADDRLP4 92
+INDIRP4
+INDIRI4
+ADDRLP4 88
+INDIRP4
+CNSTI4 80
+ADDP4
+INDIRI4
+SUBI4
+ASGNI4
+line 955
+;955:			if (l->curvalue < 0) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+CNSTI4 0
+GEI4 $329
+line 956
+;956:				l->curvalue = 0;
+ADDRFP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+CNSTI4 0
+ASGNI4
+line 957
+;957:				l->top      = 0;
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+CNSTI4 0
+ASGNI4
+line 958
+;958:			}
+LABELV $329
+line 959
+;959:			if (l->curvalue < l->top)
+ADDRLP4 96
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 96
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ADDRLP4 96
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRI4
+GEI4 $331
+line 960
+;960:				l->top -= l->height;
+ADDRLP4 100
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 104
+ADDRLP4 100
+INDIRP4
+CNSTI4 76
+ADDP4
+ASGNP4
+ADDRLP4 104
+INDIRP4
+ADDRLP4 104
+INDIRP4
+INDIRI4
+ADDRLP4 100
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+SUBI4
+ASGNI4
+LABELV $331
+line 962
+;961:
+;962:			if (l->top < 0)
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRI4
+CNSTI4 0
+GEI4 $333
+line 963
+;963:				l->top = 0;
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+CNSTI4 0
+ASGNI4
+LABELV $333
+line 965
+;964:
+;965:			if (l->generic.callback)
+ADDRFP4 0
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $335
+line 966
+;966:				l->generic.callback(l, QM_GOTFOCUS);
+ADDRLP4 108
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 108
+INDIRP4
+ARGP4
+CNSTI4 1
+ARGI4
+ADDRLP4 108
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CALLV
+pop
+LABELV $335
+line 968
+;967:
+;968:			return (menu_move_sound);
+ADDRGP4 menu_move_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $327
+line 970
+;969:		}
+;970:		return (menu_buzz_sound);
+ADDRGP4 menu_buzz_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $337
+line 973
+;971:
+;972:	case K_MWHEELDOWN:
+;973:		if (!l->scroll)
+ADDRFP4 0
+INDIRP4
+CNSTI4 80
+ADDP4
+INDIRI4
+CNSTI4 0
+NEI4 $338
+line 974
+;974:			return (menu_null_sound);
+ADDRGP4 menu_null_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $338
+line 976
+;975:
+;976:		if (l->curvalue < l->numitems - 1) {
+ADDRLP4 84
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 84
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ADDRLP4 84
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+CNSTI4 1
+SUBI4
+GEI4 $340
+line 977
+;977:			l->oldvalue = l->curvalue;
+ADDRLP4 88
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 88
+INDIRP4
+CNSTI4 64
+ADDP4
+ADDRLP4 88
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ASGNI4
+line 978
+;978:			l->curvalue += l->scroll;
+ADDRLP4 92
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 96
+ADDRLP4 92
+INDIRP4
+CNSTI4 68
+ADDP4
+ASGNP4
+ADDRLP4 96
+INDIRP4
+ADDRLP4 96
+INDIRP4
+INDIRI4
+ADDRLP4 92
+INDIRP4
+CNSTI4 80
+ADDP4
+INDIRI4
+ADDI4
+ASGNI4
+line 980
+;979:
+;980:			if (l->curvalue > l->numitems - 1)
+ADDRLP4 100
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 100
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ADDRLP4 100
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+CNSTI4 1
+SUBI4
+LEI4 $342
+line 981
+;981:				l->curvalue = l->numitems - 1;
+ADDRLP4 104
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 104
+INDIRP4
+CNSTI4 68
+ADDP4
+ADDRLP4 104
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+CNSTI4 1
+SUBI4
+ASGNI4
+LABELV $342
+line 983
+;982:
+;983:			if (l->curvalue - l->top > l->height - 1) {
+ADDRLP4 108
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 108
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ADDRLP4 108
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRI4
+SUBI4
+ADDRLP4 108
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+CNSTI4 1
+SUBI4
+LEI4 $344
+line 984
+;984:				l->top = l->top + l->height;
+ADDRLP4 112
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 112
+INDIRP4
+CNSTI4 76
+ADDP4
+ADDRLP4 112
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRI4
+ADDRLP4 112
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+ADDI4
+ASGNI4
+line 985
+;985:				if (l->numitems - l->top < l->height * l->columns) {
+ADDRLP4 116
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 116
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+ADDRLP4 116
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRI4
+SUBI4
+ADDRLP4 116
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+ADDRLP4 116
+INDIRP4
+CNSTI4 100
+ADDP4
+INDIRI4
+MULI4
+GEI4 $346
+line 986
+;986:					l->top = l->numitems - l->height * l->columns;
+ADDRLP4 120
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 120
+INDIRP4
+CNSTI4 76
+ADDP4
+ADDRLP4 120
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+ADDRLP4 120
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+ADDRLP4 120
+INDIRP4
+CNSTI4 100
+ADDP4
+INDIRI4
+MULI4
+SUBI4
+ASGNI4
+line 987
+;987:				}
+LABELV $346
+line 988
+;988:			}
+LABELV $344
+line 990
+;989:
+;990:			if (l->top < 0)
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRI4
+CNSTI4 0
+GEI4 $348
+line 991
+;991:				l->top = 0;
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+CNSTI4 0
+ASGNI4
+LABELV $348
+line 993
+;992:
+;993:			if (l->generic.callback)
+ADDRFP4 0
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $350
+line 994
+;994:				l->generic.callback(l, QM_GOTFOCUS);
+ADDRLP4 112
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 112
+INDIRP4
+ARGP4
+CNSTI4 1
+ARGI4
+ADDRLP4 112
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CALLV
+pop
+LABELV $350
+line 996
+;995:
+;996:			return (menu_move_sound);
+ADDRGP4 menu_move_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $340
+line 998
+;997:		}
+;998:		return (menu_buzz_sound);
+ADDRGP4 menu_buzz_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $352
+line 1002
+;999:
+;1000:	case K_KP_UPARROW:
+;1001:	case K_UPARROW:
+;1002:		if (l->curvalue == 0) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+CNSTI4 0
+NEI4 $353
+line 1003
+;1003:			return menu_buzz_sound;
+ADDRGP4 menu_buzz_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $353
+line 1006
+;1004:		}
+;1005:
+;1006:		l->oldvalue = l->curvalue;
+ADDRLP4 88
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 88
+INDIRP4
+CNSTI4 64
+ADDP4
+ADDRLP4 88
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ASGNI4
+line 1007
+;1007:		l->curvalue--;
+ADDRLP4 92
+ADDRFP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+ASGNP4
+ADDRLP4 92
+INDIRP4
+ADDRLP4 92
+INDIRP4
+INDIRI4
+CNSTI4 1
+SUBI4
+ASGNI4
+line 1009
+;1008:
+;1009:		if (l->curvalue < l->top) {
+ADDRLP4 96
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 96
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ADDRLP4 96
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRI4
+GEI4 $355
+line 1010
+;1010:			if (l->columns == 1) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 100
+ADDP4
+INDIRI4
+CNSTI4 1
+NEI4 $357
+line 1011
+;1011:				l->top--;
+ADDRLP4 100
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+ASGNP4
+ADDRLP4 100
+INDIRP4
+ADDRLP4 100
+INDIRP4
+INDIRI4
+CNSTI4 1
+SUBI4
+ASGNI4
+line 1012
+;1012:			} else {
+ADDRGP4 $358
+JUMPV
+LABELV $357
+line 1013
+;1013:				l->top -= l->height;
+ADDRLP4 100
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 104
+ADDRLP4 100
+INDIRP4
+CNSTI4 76
+ADDP4
+ASGNP4
+ADDRLP4 104
+INDIRP4
+ADDRLP4 104
+INDIRP4
+INDIRI4
+ADDRLP4 100
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+SUBI4
+ASGNI4
+line 1014
+;1014:			}
+LABELV $358
+line 1015
+;1015:		}
+LABELV $355
+line 1017
+;1016:
+;1017:		if (l->generic.callback) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $359
+line 1018
+;1018:			l->generic.callback(l, QM_GOTFOCUS);
+ADDRLP4 100
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 100
+INDIRP4
+ARGP4
+CNSTI4 1
+ARGI4
+ADDRLP4 100
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CALLV
+pop
+line 1019
+;1019:		}
+LABELV $359
+line 1021
+;1020:
+;1021:		return (menu_move_sound);
+ADDRGP4 menu_move_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $361
+line 1025
+;1022:
+;1023:	case K_KP_DOWNARROW:
+;1024:	case K_DOWNARROW:
+;1025:		if (l->curvalue == l->numitems - 1) {
+ADDRLP4 100
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 100
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ADDRLP4 100
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+CNSTI4 1
+SUBI4
+NEI4 $362
+line 1026
+;1026:			return menu_buzz_sound;
+ADDRGP4 menu_buzz_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $362
+line 1029
+;1027:		}
+;1028:
+;1029:		l->oldvalue = l->curvalue;
+ADDRLP4 104
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 104
+INDIRP4
+CNSTI4 64
+ADDP4
+ADDRLP4 104
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ASGNI4
+line 1030
+;1030:		l->curvalue++;
+ADDRLP4 108
+ADDRFP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+ASGNP4
+ADDRLP4 108
+INDIRP4
+ADDRLP4 108
+INDIRP4
+INDIRI4
+CNSTI4 1
+ADDI4
+ASGNI4
+line 1032
+;1031:
+;1032:		if (l->curvalue >= l->top + l->columns * l->height) {
+ADDRLP4 112
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 112
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ADDRLP4 112
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRI4
+ADDRLP4 112
+INDIRP4
+CNSTI4 100
+ADDP4
+INDIRI4
+ADDRLP4 112
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+MULI4
+ADDI4
+LTI4 $364
+line 1033
+;1033:			if (l->columns == 1) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 100
+ADDP4
+INDIRI4
+CNSTI4 1
+NEI4 $366
+line 1034
+;1034:				l->top++;
+ADDRLP4 116
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+ASGNP4
+ADDRLP4 116
+INDIRP4
+ADDRLP4 116
+INDIRP4
+INDIRI4
+CNSTI4 1
+ADDI4
+ASGNI4
+line 1035
+;1035:			} else {
+ADDRGP4 $367
+JUMPV
+LABELV $366
+line 1036
+;1036:				l->top += l->height;
+ADDRLP4 116
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 120
+ADDRLP4 116
+INDIRP4
+CNSTI4 76
+ADDP4
+ASGNP4
+ADDRLP4 120
+INDIRP4
+ADDRLP4 120
+INDIRP4
+INDIRI4
+ADDRLP4 116
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+ADDI4
+ASGNI4
+line 1037
+;1037:			}
+LABELV $367
+line 1038
+;1038:		}
+LABELV $364
+line 1040
+;1039:
+;1040:		if (l->generic.callback) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $368
+line 1041
+;1041:			l->generic.callback(l, QM_GOTFOCUS);
+ADDRLP4 116
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 116
+INDIRP4
+ARGP4
+CNSTI4 1
+ARGI4
+ADDRLP4 116
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CALLV
+pop
+line 1042
+;1042:		}
+LABELV $368
+line 1044
+;1043:
+;1044:		return menu_move_sound;
+ADDRGP4 menu_move_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $370
+line 1048
+;1045:
+;1046:	case K_KP_LEFTARROW:
+;1047:	case K_LEFTARROW:
+;1048:		if (l->columns == 1) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 100
+ADDP4
+INDIRI4
+CNSTI4 1
+NEI4 $371
+line 1049
+;1049:			return menu_null_sound;
+ADDRGP4 menu_null_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $371
+line 1052
+;1050:		}
+;1051:
+;1052:		if (l->curvalue < l->height) {
+ADDRLP4 116
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 116
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ADDRLP4 116
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+GEI4 $373
+line 1053
+;1053:			return menu_buzz_sound;
+ADDRGP4 menu_buzz_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $373
+line 1056
+;1054:		}
+;1055:
+;1056:		l->oldvalue = l->curvalue;
+ADDRLP4 120
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 120
+INDIRP4
+CNSTI4 64
+ADDP4
+ADDRLP4 120
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ASGNI4
+line 1057
+;1057:		l->curvalue -= l->height;
+ADDRLP4 124
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 128
+ADDRLP4 124
+INDIRP4
+CNSTI4 68
+ADDP4
+ASGNP4
+ADDRLP4 128
+INDIRP4
+ADDRLP4 128
+INDIRP4
+INDIRI4
+ADDRLP4 124
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+SUBI4
+ASGNI4
+line 1059
+;1058:
+;1059:		if (l->curvalue < l->top) {
+ADDRLP4 132
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 132
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ADDRLP4 132
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRI4
+GEI4 $375
+line 1060
+;1060:			l->top -= l->height;
+ADDRLP4 136
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 140
+ADDRLP4 136
+INDIRP4
+CNSTI4 76
+ADDP4
+ASGNP4
+ADDRLP4 140
+INDIRP4
+ADDRLP4 140
+INDIRP4
+INDIRI4
+ADDRLP4 136
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+SUBI4
+ASGNI4
+line 1061
+;1061:		}
+LABELV $375
+line 1063
+;1062:
+;1063:		if (l->generic.callback) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $377
+line 1064
+;1064:			l->generic.callback(l, QM_GOTFOCUS);
+ADDRLP4 136
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 136
+INDIRP4
+ARGP4
+CNSTI4 1
+ARGI4
+ADDRLP4 136
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CALLV
+pop
+line 1065
+;1065:		}
+LABELV $377
+line 1067
+;1066:
+;1067:		return menu_move_sound;
+ADDRGP4 menu_move_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $379
+line 1071
+;1068:
+;1069:	case K_KP_RIGHTARROW:
+;1070:	case K_RIGHTARROW:
+;1071:		if (l->columns == 1) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 100
+ADDP4
+INDIRI4
+CNSTI4 1
+NEI4 $380
+line 1072
+;1072:			return menu_null_sound;
+ADDRGP4 menu_null_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $380
+line 1075
+;1073:		}
+;1074:
+;1075:		c = l->curvalue + l->height;
+ADDRLP4 136
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 4
+ADDRLP4 136
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ADDRLP4 136
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+ADDI4
+ASGNI4
+line 1077
+;1076:
+;1077:		if (c >= l->numitems) {
+ADDRLP4 4
+INDIRI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+LTI4 $382
+line 1078
+;1078:			return menu_buzz_sound;
+ADDRGP4 menu_buzz_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $382
+line 1081
+;1079:		}
+;1080:
+;1081:		l->oldvalue = l->curvalue;
+ADDRLP4 140
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 140
+INDIRP4
+CNSTI4 64
+ADDP4
+ADDRLP4 140
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ASGNI4
+line 1082
+;1082:		l->curvalue = c;
+ADDRFP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+ADDRLP4 4
+INDIRI4
+ASGNI4
+line 1084
+;1083:
+;1084:		if (l->curvalue > l->top + l->columns * l->height - 1) {
+ADDRLP4 144
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 144
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ADDRLP4 144
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRI4
+ADDRLP4 144
+INDIRP4
+CNSTI4 100
+ADDP4
+INDIRI4
+ADDRLP4 144
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+MULI4
+ADDI4
+CNSTI4 1
+SUBI4
+LEI4 $384
+line 1085
+;1085:			l->top += l->height;
+ADDRLP4 148
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 152
+ADDRLP4 148
+INDIRP4
+CNSTI4 76
+ADDP4
+ASGNP4
+ADDRLP4 152
+INDIRP4
+ADDRLP4 152
+INDIRP4
+INDIRI4
+ADDRLP4 148
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+ADDI4
+ASGNI4
+line 1086
+;1086:		}
+LABELV $384
+line 1088
+;1087:
+;1088:		if (l->generic.callback) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $386
+line 1089
+;1089:			l->generic.callback(l, QM_GOTFOCUS);
+ADDRLP4 148
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 148
+INDIRP4
+ARGP4
+CNSTI4 1
+ARGI4
+ADDRLP4 148
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CALLV
+pop
+line 1090
+;1090:		}
+LABELV $386
+line 1092
+;1091:
+;1092:		return menu_move_sound;
+ADDRGP4 menu_move_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $269
+LABELV $270
+line 1096
+;1093:	}
+;1094:
+;1095:	// cycle look for ascii key inside list items
+;1096:	if (!Q_isprint(key))
+ADDRFP4 4
+INDIRI4
+ARGI4
+ADDRLP4 60
+ADDRGP4 Q_isprint
+CALLI4
+ASGNI4
+ADDRLP4 60
+INDIRI4
+CNSTI4 0
+NEI4 $395
+line 1097
+;1097:		return (0);
+CNSTI4 0
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $395
+line 1100
+;1098:
+;1099:	// force to lower for case insensitive compare
+;1100:	if (Q_isupper(key)) {
+ADDRFP4 4
+INDIRI4
+ARGI4
+ADDRLP4 64
+ADDRGP4 Q_isupper
+CALLI4
+ASGNI4
+ADDRLP4 64
+INDIRI4
+CNSTI4 0
+EQI4 $397
+line 1101
+;1101:		key -= 'A' - 'a';
+ADDRFP4 4
+ADDRFP4 4
+INDIRI4
+CNSTI4 -32
+SUBI4
+ASGNI4
+line 1102
+;1102:	}
+LABELV $397
+line 1105
+;1103:
+;1104:	// iterate list items
+;1105:	for (i = 1; i <= l->numitems; i++) {
+ADDRLP4 8
+CNSTI4 1
+ASGNI4
+ADDRGP4 $402
+JUMPV
+LABELV $399
+line 1106
+;1106:		j = (l->curvalue + i) % l->numitems;
+ADDRLP4 68
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 0
+ADDRLP4 68
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ADDRLP4 8
+INDIRI4
+ADDI4
+ADDRLP4 68
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+MODI4
+ASGNI4
+line 1107
+;1107:		c = l->itemnames[j][0];
+ADDRLP4 4
+ADDRLP4 0
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 88
+ADDP4
+INDIRP4
+ADDP4
+INDIRP4
+INDIRI1
+CVII4 1
+ASGNI4
+line 1108
+;1108:		if (Q_isupper(c)) {
+ADDRLP4 4
+INDIRI4
+ARGI4
+ADDRLP4 72
+ADDRGP4 Q_isupper
+CALLI4
+ASGNI4
+ADDRLP4 72
+INDIRI4
+CNSTI4 0
+EQI4 $403
+line 1109
+;1109:			c -= 'A' - 'a';
+ADDRLP4 4
+ADDRLP4 4
+INDIRI4
+CNSTI4 -32
+SUBI4
+ASGNI4
+line 1110
+;1110:		}
+LABELV $403
+line 1112
+;1111:
+;1112:		if (c == key) {
+ADDRLP4 4
+INDIRI4
+ADDRFP4 4
+INDIRI4
+NEI4 $405
+line 1114
+;1113:			// set current item, mimic windows listbox scroll behavior
+;1114:			if (j < l->top) {
+ADDRLP4 0
+INDIRI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRI4
+GEI4 $407
+line 1116
+;1115:				// behind top most item, set this as new top
+;1116:				l->top = j;
+ADDRFP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+ADDRLP4 0
+INDIRI4
+ASGNI4
+line 1117
+;1117:			} else if (j > l->top + l->height - 1) {
+ADDRGP4 $408
+JUMPV
+LABELV $407
+ADDRLP4 76
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 0
+INDIRI4
+ADDRLP4 76
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRI4
+ADDRLP4 76
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+ADDI4
+CNSTI4 1
+SUBI4
+LEI4 $409
+line 1119
+;1118:				// past end of list box, do page down
+;1119:				l->top = (j + 1) - l->height;
+ADDRLP4 80
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 80
+INDIRP4
+CNSTI4 76
+ADDP4
+ADDRLP4 0
+INDIRI4
+CNSTI4 1
+ADDI4
+ADDRLP4 80
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+SUBI4
+ASGNI4
+line 1120
+;1120:			}
+LABELV $409
+LABELV $408
+line 1122
+;1121:
+;1122:			if (l->curvalue != j) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ADDRLP4 0
+INDIRI4
+EQI4 $411
+line 1123
+;1123:				l->oldvalue = l->curvalue;
+ADDRLP4 80
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 80
+INDIRP4
+CNSTI4 64
+ADDP4
+ADDRLP4 80
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ASGNI4
+line 1124
+;1124:				l->curvalue = j;
+ADDRFP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+ADDRLP4 0
+INDIRI4
+ASGNI4
+line 1125
+;1125:				if (l->generic.callback)
+ADDRFP4 0
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $413
+line 1126
+;1126:					l->generic.callback(l, QM_GOTFOCUS);
+ADDRLP4 84
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 84
+INDIRP4
+ARGP4
+CNSTI4 1
+ARGI4
+ADDRLP4 84
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CALLV
+pop
+LABELV $413
+line 1127
+;1127:				return (menu_move_sound);
+ADDRGP4 menu_move_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $411
+line 1130
+;1128:			}
+;1129:
+;1130:			return (menu_buzz_sound);
+ADDRGP4 menu_buzz_sound
+INDIRI4
+RETI4
+ADDRGP4 $268
+JUMPV
+LABELV $405
+line 1132
+;1131:		}
+;1132:	}
+LABELV $400
+line 1105
+ADDRLP4 8
+ADDRLP4 8
+INDIRI4
+CNSTI4 1
+ADDI4
+ASGNI4
+LABELV $402
+ADDRLP4 8
+INDIRI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+LEI4 $399
+line 1134
+;1133:
+;1134:	return (menu_buzz_sound);
+ADDRGP4 menu_buzz_sound
+INDIRI4
+RETI4
+LABELV $268
+endproc ScrollList_Key 156 16
+export ScrollList_Draw
+proc ScrollList_Draw 52 20
+line 1142
+;1135:}
+;1136:
+;1137:/*
+;1138:=================
+;1139:ScrollList_Draw
+;1140:=================
+;1141:*/
+;1142:void ScrollList_Draw(menulist_s* l) {
+line 1153
+;1143:	int      x;
+;1144:	int      u;
+;1145:	int      y;
+;1146:	int      i;
+;1147:	int      base;
+;1148:	int      column;
+;1149:	float*   color;
+;1150:	qboolean hasfocus;
+;1151:	int      style;
+;1152:
+;1153:	hasfocus = (l->generic.parent->cursor == l->generic.menuPosition);
+ADDRLP4 40
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 40
+INDIRP4
+CNSTI4 36
+ADDP4
+INDIRP4
+INDIRI4
+ADDRLP4 40
+INDIRP4
+CNSTI4 40
+ADDP4
+INDIRI4
+NEI4 $417
+ADDRLP4 36
+CNSTI4 1
+ASGNI4
+ADDRGP4 $418
+JUMPV
+LABELV $417
+ADDRLP4 36
+CNSTI4 0
+ASGNI4
+LABELV $418
+ADDRLP4 28
+ADDRLP4 36
+INDIRI4
+ASGNI4
+line 1155
+;1154:
+;1155:	x = l->generic.x;
+ADDRLP4 16
+ADDRFP4 0
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+ASGNI4
+line 1156
+;1156:	for (column = 0; column < l->columns; column++) {
+ADDRLP4 32
+CNSTI4 0
+ASGNI4
+ADDRGP4 $422
+JUMPV
+LABELV $419
+line 1157
+;1157:		y    = l->generic.y;
+ADDRLP4 4
+ADDRFP4 0
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRI4
+ASGNI4
+line 1158
+;1158:		base = l->top + column * l->height;
+ADDRLP4 44
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 24
+ADDRLP4 44
+INDIRP4
+CNSTI4 76
+ADDP4
+INDIRI4
+ADDRLP4 32
+INDIRI4
+ADDRLP4 44
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+MULI4
+ADDI4
+ASGNI4
+line 1159
+;1159:		for (i = base; i < base + l->height; i++) {
+ADDRLP4 0
+ADDRLP4 24
+INDIRI4
+ASGNI4
+ADDRGP4 $426
+JUMPV
+LABELV $423
+line 1160
+;1160:			if (i >= l->numitems)
+ADDRLP4 0
+INDIRI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+LTI4 $427
+line 1161
+;1161:				break;
+ADDRGP4 $425
+JUMPV
+LABELV $427
+line 1163
+;1162:
+;1163:			if (i == l->curvalue) {
+ADDRLP4 0
+INDIRI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+NEI4 $429
+line 1164
+;1164:				u = x - 2;
+ADDRLP4 20
+ADDRLP4 16
+INDIRI4
+CNSTI4 2
+SUBI4
+ASGNI4
+line 1165
+;1165:				if (l->generic.flags & QMF_CENTER_JUSTIFY) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 8
+BANDU4
+CNSTU4 0
+EQU4 $431
+line 1166
+;1166:					u -= (l->width * SMALLCHAR_WIDTH) / 2 + 1;
+ADDRLP4 20
+ADDRLP4 20
+INDIRI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 92
+ADDP4
+INDIRI4
+CNSTI4 3
+LSHI4
+CNSTI4 2
+DIVI4
+CNSTI4 1
+ADDI4
+SUBI4
+ASGNI4
+line 1167
+;1167:				}
+LABELV $431
+line 1169
+;1168:
+;1169:				UI_FillRect(u, y, l->width * SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT + 2, listbar_color);
+ADDRLP4 20
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 4
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRFP4 0
+INDIRP4
+CNSTI4 92
+ADDP4
+INDIRI4
+CNSTI4 3
+LSHI4
+CVIF4 4
+ARGF4
+CNSTF4 1099956224
+ARGF4
+ADDRGP4 listbar_color
+ARGP4
+ADDRGP4 UI_FillRect
+CALLV
+pop
+line 1170
+;1170:				color = text_color_highlight;
+ADDRLP4 12
+ADDRGP4 text_color_highlight
+ASGNP4
+line 1172
+;1171:
+;1172:				if (hasfocus)
+ADDRLP4 28
+INDIRI4
+CNSTI4 0
+EQI4 $433
+line 1173
+;1173:					style = UI_PULSE | UI_LEFT | UI_SMALLFONT;
+ADDRLP4 8
+CNSTI4 16400
+ASGNI4
+ADDRGP4 $430
+JUMPV
+LABELV $433
+line 1175
+;1174:				else
+;1175:					style = UI_LEFT | UI_SMALLFONT;
+ADDRLP4 8
+CNSTI4 16
+ASGNI4
+line 1176
+;1176:			} else {
+ADDRGP4 $430
+JUMPV
+LABELV $429
+line 1177
+;1177:				color = text_color_normal;
+ADDRLP4 12
+ADDRGP4 text_color_normal
+ASGNP4
+line 1178
+;1178:				style = UI_LEFT | UI_SMALLFONT;
+ADDRLP4 8
+CNSTI4 16
+ASGNI4
+line 1179
+;1179:			}
+LABELV $430
+line 1180
+;1180:			if (l->generic.flags & QMF_CENTER_JUSTIFY) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 8
+BANDU4
+CNSTU4 0
+EQU4 $435
+line 1181
+;1181:				style |= UI_CENTER;
+ADDRLP4 8
+ADDRLP4 8
+INDIRI4
+CNSTI4 1
+BORI4
+ASGNI4
+line 1182
+;1182:			}
+LABELV $435
+line 1184
+;1183:
+;1184:			UI_DrawString(x, y, l->itemnames[i], style, color);
+ADDRLP4 16
+INDIRI4
+ARGI4
+ADDRLP4 4
+INDIRI4
+ARGI4
+ADDRLP4 0
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 88
+ADDP4
+INDIRP4
+ADDP4
+INDIRP4
+ARGP4
+ADDRLP4 8
+INDIRI4
+ARGI4
+ADDRLP4 12
+INDIRP4
+ARGP4
+ADDRGP4 UI_DrawString
+CALLV
+pop
+line 1186
+;1185:
+;1186:			y += SMALLCHAR_HEIGHT;
+ADDRLP4 4
+ADDRLP4 4
+INDIRI4
+CNSTI4 16
+ADDI4
+ASGNI4
+line 1187
+;1187:		}
+LABELV $424
+line 1159
+ADDRLP4 0
+ADDRLP4 0
+INDIRI4
+CNSTI4 1
+ADDI4
+ASGNI4
+LABELV $426
+ADDRLP4 0
+INDIRI4
+ADDRLP4 24
+INDIRI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+ADDI4
+LTI4 $423
+LABELV $425
+line 1188
+;1188:		x += (l->width + l->seperation) * SMALLCHAR_WIDTH;
+ADDRLP4 48
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 16
+ADDRLP4 16
+INDIRI4
+ADDRLP4 48
+INDIRP4
+CNSTI4 92
+ADDP4
+INDIRI4
+ADDRLP4 48
+INDIRP4
+CNSTI4 104
+ADDP4
+INDIRI4
+ADDI4
+CNSTI4 3
+LSHI4
+ADDI4
+ASGNI4
+line 1189
+;1189:	}
+LABELV $420
+line 1156
+ADDRLP4 32
+ADDRLP4 32
+INDIRI4
+CNSTI4 1
+ADDI4
+ASGNI4
+LABELV $422
+ADDRLP4 32
+INDIRI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 100
+ADDP4
+INDIRI4
+LTI4 $419
+line 1190
+;1190:}
+LABELV $415
+endproc ScrollList_Draw 52 20
+export Menu_AddItem
+proc Menu_AddItem 36 8
+line 1197
+;1191:
+;1192:/*
+;1193:=================
+;1194:Menu_AddItem
+;1195:=================
+;1196:*/
+;1197:void Menu_AddItem(menuframework_s* menu, void* item) {
+line 1200
+;1198:	menucommon_s* itemptr;
+;1199:
+;1200:	if (menu->nitems >= MAX_MENUITEMS)
+ADDRFP4 0
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRI4
+CNSTI4 64
+LTI4 $438
+line 1201
+;1201:		trap_Error("Menu_AddItem: excessive items");
+ADDRGP4 $440
+ARGP4
+ADDRGP4 trap_Error
+CALLV
+pop
+LABELV $438
+line 1203
+;1202:
+;1203:	menu->items[menu->nitems]                                = item;
+ADDRLP4 4
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 4
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRLP4 4
+INDIRP4
+CNSTI4 12
+ADDP4
+ADDP4
+ADDRFP4 4
+INDIRP4
+ASGNP4
+line 1204
+;1204:	((menucommon_s*)menu->items[menu->nitems])->parent       = menu;
+ADDRLP4 8
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 8
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRLP4 8
+INDIRP4
+CNSTI4 12
+ADDP4
+ADDP4
+INDIRP4
+CNSTI4 36
+ADDP4
+ADDRLP4 8
+INDIRP4
+ASGNP4
+line 1205
+;1205:	((menucommon_s*)menu->items[menu->nitems])->menuPosition = menu->nitems;
+ADDRLP4 12
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 12
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRLP4 12
+INDIRP4
+CNSTI4 12
+ADDP4
+ADDP4
+INDIRP4
+CNSTI4 40
+ADDP4
+ADDRLP4 12
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRI4
+ASGNI4
+line 1206
+;1206:	((menucommon_s*)menu->items[menu->nitems])->flags &= ~QMF_HASMOUSEFOCUS;
+ADDRLP4 16
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 20
+ADDRLP4 16
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRLP4 16
+INDIRP4
+CNSTI4 12
+ADDP4
+ADDP4
+INDIRP4
+CNSTI4 44
+ADDP4
+ASGNP4
+ADDRLP4 20
+INDIRP4
+ADDRLP4 20
+INDIRP4
+INDIRU4
+CNSTI4 -513
+CVIU4 4
+BANDU4
+ASGNU4
+line 1209
+;1207:
+;1208:	// perform any item specific initializations
+;1209:	itemptr = (menucommon_s*)item;
+ADDRLP4 0
+ADDRFP4 4
+INDIRP4
+ASGNP4
+line 1210
+;1210:	if (!(itemptr->flags & QMF_NODEFAULTINIT)) {
+ADDRLP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 32768
+BANDU4
+CNSTU4 0
+NEU4 $441
+line 1211
+;1211:		switch (itemptr->type) {
+ADDRLP4 24
+ADDRLP4 0
+INDIRP4
+INDIRI4
+ASGNI4
+ADDRLP4 24
+INDIRI4
+CNSTI4 1
+LTI4 $443
+ADDRLP4 24
+INDIRI4
+CNSTI4 10
+GTI4 $443
+ADDRLP4 24
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRGP4 $457-4
+ADDP4
+INDIRP4
+JUMPV
+data
+align 4
+LABELV $457
+address $450
+address $446
+address $448
+address $447
+address $449
+address $451
+address $452
+address $453
+address $454
+address $455
+code
+LABELV $446
+line 1213
+;1212:		case MTYPE_ACTION:
+;1213:			Action_Init((menuaction_s*)item);
+ADDRFP4 4
+INDIRP4
+ARGP4
+ADDRGP4 Action_Init
+CALLV
+pop
+line 1214
+;1214:			break;
+ADDRGP4 $444
+JUMPV
+LABELV $447
+line 1217
+;1215:
+;1216:		case MTYPE_FIELD:
+;1217:			MenuField_Init((menufield_s*)item);
+ADDRFP4 4
+INDIRP4
+ARGP4
+ADDRGP4 MenuField_Init
+CALLV
+pop
+line 1218
+;1218:			break;
+ADDRGP4 $444
+JUMPV
+LABELV $448
+line 1221
+;1219:
+;1220:		case MTYPE_SPINCONTROL:
+;1221:			SpinControl_Init((menulist_s*)item);
+ADDRFP4 4
+INDIRP4
+ARGP4
+ADDRGP4 SpinControl_Init
+CALLV
+pop
+line 1222
+;1222:			break;
+ADDRGP4 $444
+JUMPV
+LABELV $449
+line 1225
+;1223:
+;1224:		case MTYPE_RADIOBUTTON:
+;1225:			RadioButton_Init((menuradiobutton_s*)item);
+ADDRFP4 4
+INDIRP4
+ARGP4
+ADDRGP4 RadioButton_Init
+CALLV
+pop
+line 1226
+;1226:			break;
+ADDRGP4 $444
+JUMPV
+LABELV $450
+line 1229
+;1227:
+;1228:		case MTYPE_SLIDER:
+;1229:			Slider_Init((menuslider_s*)item);
+ADDRFP4 4
+INDIRP4
+ARGP4
+ADDRGP4 Slider_Init
+CALLV
+pop
+line 1230
+;1230:			break;
+ADDRGP4 $444
+JUMPV
+LABELV $451
+line 1233
+;1231:
+;1232:		case MTYPE_BITMAP:
+;1233:			Bitmap_Init((menubitmap_s*)item);
+ADDRFP4 4
+INDIRP4
+ARGP4
+ADDRGP4 Bitmap_Init
+CALLV
+pop
+line 1234
+;1234:			break;
+ADDRGP4 $444
+JUMPV
+LABELV $452
+line 1237
+;1235:
+;1236:		case MTYPE_TEXT:
+;1237:			Text_Init((menutext_s*)item);
+ADDRFP4 4
+INDIRP4
+ARGP4
+ADDRGP4 Text_Init
+CALLV
+pop
+line 1238
+;1238:			break;
+ADDRGP4 $444
+JUMPV
+LABELV $453
+line 1241
+;1239:
+;1240:		case MTYPE_SCROLLLIST:
+;1241:			ScrollList_Init((menulist_s*)item);
+ADDRFP4 4
+INDIRP4
+ARGP4
+ADDRGP4 ScrollList_Init
+CALLV
+pop
+line 1242
+;1242:			break;
+ADDRGP4 $444
+JUMPV
+LABELV $454
+line 1245
+;1243:
+;1244:		case MTYPE_PTEXT:
+;1245:			PText_Init((menutext_s*)item);
+ADDRFP4 4
+INDIRP4
+ARGP4
+ADDRGP4 PText_Init
+CALLV
+pop
+line 1246
+;1246:			break;
+ADDRGP4 $444
+JUMPV
+LABELV $455
+line 1249
+;1247:
+;1248:		case MTYPE_BTEXT:
+;1249:			BText_Init((menutext_s*)item);
+ADDRFP4 4
+INDIRP4
+ARGP4
+ADDRGP4 BText_Init
+CALLV
+pop
+line 1250
+;1250:			break;
+ADDRGP4 $444
+JUMPV
+LABELV $443
+line 1253
+;1251:
+;1252:		default:
+;1253:			trap_Error(va("Menu_Init: unknown type %d", itemptr->type));
+ADDRGP4 $456
+ARGP4
+ADDRLP4 0
+INDIRP4
+INDIRI4
+ARGI4
+ADDRLP4 32
+ADDRGP4 va
+CALLP4
+ASGNP4
+ADDRLP4 32
+INDIRP4
+ARGP4
+ADDRGP4 trap_Error
+CALLV
+pop
+line 1254
+;1254:		}
+LABELV $444
+line 1255
+;1255:	}
+LABELV $441
+line 1257
+;1256:
+;1257:	menu->nitems++;
+ADDRLP4 24
+ADDRFP4 0
+INDIRP4
+CNSTI4 8
+ADDP4
+ASGNP4
+ADDRLP4 24
+INDIRP4
+ADDRLP4 24
+INDIRP4
+INDIRI4
+CNSTI4 1
+ADDI4
+ASGNI4
+line 1258
+;1258:}
+LABELV $437
+endproc Menu_AddItem 36 8
+export Menu_CursorMoved
+proc Menu_CursorMoved 28 8
+line 1265
+;1259:
+;1260:/*
+;1261:=================
+;1262:Menu_CursorMoved
+;1263:=================
+;1264:*/
+;1265:void Menu_CursorMoved(menuframework_s* m) {
+line 1268
+;1266:	void (*callback)(void* self, int notification);
+;1267:
+;1268:	if (m->cursor_prev == m->cursor)
+ADDRLP4 4
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 4
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRI4
+ADDRLP4 4
+INDIRP4
+INDIRI4
+NEI4 $460
+line 1269
+;1269:		return;
+ADDRGP4 $459
+JUMPV
+LABELV $460
+line 1271
+;1270:
+;1271:	if (m->cursor_prev >= 0 && m->cursor_prev < m->nitems) {
+ADDRLP4 8
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 8
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRI4
+CNSTI4 0
+LTI4 $462
+ADDRLP4 8
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRI4
+ADDRLP4 8
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRI4
+GEI4 $462
+line 1272
+;1272:		callback = ((menucommon_s*)(m->items[m->cursor_prev]))->callback;
+ADDRLP4 12
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 0
+ADDRLP4 12
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRLP4 12
+INDIRP4
+CNSTI4 12
+ADDP4
+ADDP4
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+ASGNP4
+line 1273
+;1273:		if (callback)
+ADDRLP4 0
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $464
+line 1274
+;1274:			callback(m->items[m->cursor_prev], QM_LOSTFOCUS);
+ADDRLP4 16
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 16
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRLP4 16
+INDIRP4
+CNSTI4 12
+ADDP4
+ADDP4
+INDIRP4
+ARGP4
+CNSTI4 2
+ARGI4
+ADDRLP4 0
+INDIRP4
+CALLV
+pop
+LABELV $464
+line 1275
+;1275:	}
+LABELV $462
+line 1277
+;1276:
+;1277:	if (m->cursor >= 0 && m->cursor < m->nitems) {
+ADDRLP4 12
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 16
+ADDRLP4 12
+INDIRP4
+INDIRI4
+ASGNI4
+ADDRLP4 16
+INDIRI4
+CNSTI4 0
+LTI4 $466
+ADDRLP4 16
+INDIRI4
+ADDRLP4 12
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRI4
+GEI4 $466
+line 1278
+;1278:		callback = ((menucommon_s*)(m->items[m->cursor]))->callback;
+ADDRLP4 20
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 0
+ADDRLP4 20
+INDIRP4
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRLP4 20
+INDIRP4
+CNSTI4 12
+ADDP4
+ADDP4
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+ASGNP4
+line 1279
+;1279:		if (callback)
+ADDRLP4 0
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $468
+line 1280
+;1280:			callback(m->items[m->cursor], QM_GOTFOCUS);
+ADDRLP4 24
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 24
+INDIRP4
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRLP4 24
+INDIRP4
+CNSTI4 12
+ADDP4
+ADDP4
+INDIRP4
+ARGP4
+CNSTI4 1
+ARGI4
+ADDRLP4 0
+INDIRP4
+CALLV
+pop
+LABELV $468
+line 1281
+;1281:	}
+LABELV $466
+line 1282
+;1282:}
+LABELV $459
+endproc Menu_CursorMoved 28 8
+export Menu_SetCursor
+proc Menu_SetCursor 4 4
+line 1289
+;1283:
+;1284:/*
+;1285:=================
+;1286:Menu_SetCursor
+;1287:=================
+;1288:*/
+;1289:void Menu_SetCursor(menuframework_s* m, int cursor) {
+line 1290
+;1290:	if (((menucommon_s*)(m->items[cursor]))->flags & (QMF_GRAYED | QMF_INACTIVE)) {
+ADDRFP4 4
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 12
+ADDP4
+ADDP4
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 24576
+BANDU4
+CNSTU4 0
+EQU4 $471
+line 1292
+;1291:		// cursor can't go there
+;1292:		return;
+ADDRGP4 $470
+JUMPV
+LABELV $471
+line 1295
+;1293:	}
+;1294:
+;1295:	m->cursor_prev = m->cursor;
+ADDRLP4 0
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+ADDRLP4 0
+INDIRP4
+INDIRI4
+ASGNI4
+line 1296
+;1296:	m->cursor      = cursor;
+ADDRFP4 0
+INDIRP4
+ADDRFP4 4
+INDIRI4
+ASGNI4
+line 1298
+;1297:
+;1298:	Menu_CursorMoved(m);
+ADDRFP4 0
+INDIRP4
+ARGP4
+ADDRGP4 Menu_CursorMoved
+CALLV
+pop
+line 1299
+;1299:}
+LABELV $470
+endproc Menu_SetCursor 4 4
+export Menu_SetCursorToItem
+proc Menu_SetCursorToItem 4 8
+line 1306
+;1300:
+;1301:/*
+;1302:=================
+;1303:Menu_SetCursorToItem
+;1304:=================
+;1305:*/
+;1306:void Menu_SetCursorToItem(menuframework_s* m, void* ptr) {
+line 1309
+;1307:	int i;
+;1308:
+;1309:	for (i = 0; i < m->nitems; i++) {
+ADDRLP4 0
+CNSTI4 0
+ASGNI4
+ADDRGP4 $477
+JUMPV
+LABELV $474
+line 1310
+;1310:		if (m->items[i] == ptr) {
+ADDRLP4 0
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 12
+ADDP4
+ADDP4
+INDIRP4
+CVPU4 4
+ADDRFP4 4
+INDIRP4
+CVPU4 4
+NEU4 $478
+line 1311
+;1311:			Menu_SetCursor(m, i);
+ADDRFP4 0
+INDIRP4
+ARGP4
+ADDRLP4 0
+INDIRI4
+ARGI4
+ADDRGP4 Menu_SetCursor
+CALLV
+pop
+line 1312
+;1312:			return;
+ADDRGP4 $473
+JUMPV
+LABELV $478
+line 1314
+;1313:		}
+;1314:	}
+LABELV $475
+line 1309
+ADDRLP4 0
+ADDRLP4 0
+INDIRI4
+CNSTI4 1
+ADDI4
+ASGNI4
+LABELV $477
+ADDRLP4 0
+INDIRI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRI4
+LTI4 $474
+line 1315
+;1315:}
+LABELV $473
+endproc Menu_SetCursorToItem 4 8
+export Menu_AdjustCursor
+proc Menu_AdjustCursor 24 0
+line 1324
+;1316:
+;1317:/*
+;1318:** Menu_AdjustCursor
+;1319:**
+;1320:** This function takes the given menu, the direction, and attempts
+;1321:** to adjust the menu's cursor so that it's at the next available
+;1322:** slot.
+;1323:*/
+;1324:void Menu_AdjustCursor(menuframework_s* m, int dir) {
+line 1325
+;1325:	menucommon_s* item    = NULL;
+ADDRLP4 0
+CNSTP4 0
+ASGNP4
+line 1326
+;1326:	qboolean      wrapped = qfalse;
+ADDRLP4 4
+CNSTI4 0
+ASGNI4
+ADDRGP4 $483
+JUMPV
+LABELV $482
+line 1329
+;1327:
+;1328:wrap:
+;1329:	while (m->cursor >= 0 && m->cursor < m->nitems) {
+line 1330
+;1330:		item = (menucommon_s*)m->items[m->cursor];
+ADDRLP4 8
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 0
+ADDRLP4 8
+INDIRP4
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRLP4 8
+INDIRP4
+CNSTI4 12
+ADDP4
+ADDP4
+INDIRP4
+ASGNP4
+line 1331
+;1331:		if ((item->flags & (QMF_GRAYED | QMF_MOUSEONLY | QMF_INACTIVE))) {
+ADDRLP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 26624
+BANDU4
+CNSTU4 0
+EQU4 $484
+line 1332
+;1332:			m->cursor += dir;
+ADDRLP4 12
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 12
+INDIRP4
+ADDRLP4 12
+INDIRP4
+INDIRI4
+ADDRFP4 4
+INDIRI4
+ADDI4
+ASGNI4
+line 1333
+;1333:		} else {
+line 1334
+;1334:			break;
+LABELV $486
+line 1336
+;1335:		}
+;1336:	}
+LABELV $483
+line 1329
+ADDRLP4 8
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 12
+ADDRLP4 8
+INDIRP4
+INDIRI4
+ASGNI4
+ADDRLP4 12
+INDIRI4
+CNSTI4 0
+LTI4 $487
+ADDRLP4 12
+INDIRI4
+ADDRLP4 8
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRI4
+LTI4 $482
+LABELV $487
+LABELV $484
+line 1338
+;1337:
+;1338:	if (dir == 1) {
+ADDRFP4 4
+INDIRI4
+CNSTI4 1
+NEI4 $488
+line 1339
+;1339:		if (m->cursor >= m->nitems) {
+ADDRLP4 16
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 16
+INDIRP4
+INDIRI4
+ADDRLP4 16
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRI4
+LTI4 $489
+line 1340
+;1340:			if (m->wrapAround) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 276
+ADDP4
+INDIRI4
+CNSTI4 0
+EQI4 $492
+line 1341
+;1341:				if (wrapped) {
+ADDRLP4 4
+INDIRI4
+CNSTI4 0
+EQI4 $494
+line 1342
+;1342:					m->cursor = m->cursor_prev;
+ADDRLP4 20
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 20
+INDIRP4
+ADDRLP4 20
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRI4
+ASGNI4
+line 1343
+;1343:					return;
+ADDRGP4 $480
+JUMPV
+LABELV $494
+line 1345
+;1344:				}
+;1345:				m->cursor = 0;
+ADDRFP4 0
+INDIRP4
+CNSTI4 0
+ASGNI4
+line 1346
+;1346:				wrapped   = qtrue;
+ADDRLP4 4
+CNSTI4 1
+ASGNI4
+line 1347
+;1347:				goto wrap;
+ADDRGP4 $483
+JUMPV
+LABELV $492
+line 1349
+;1348:			}
+;1349:			m->cursor = m->cursor_prev;
+ADDRLP4 20
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 20
+INDIRP4
+ADDRLP4 20
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRI4
+ASGNI4
+line 1350
+;1350:		}
+line 1351
+;1351:	} else {
+ADDRGP4 $489
+JUMPV
+LABELV $488
+line 1352
+;1352:		if (m->cursor < 0) {
+ADDRFP4 0
+INDIRP4
+INDIRI4
+CNSTI4 0
+GEI4 $496
+line 1353
+;1353:			if (m->wrapAround) {
+ADDRFP4 0
+INDIRP4
+CNSTI4 276
+ADDP4
+INDIRI4
+CNSTI4 0
+EQI4 $498
+line 1354
+;1354:				if (wrapped) {
+ADDRLP4 4
+INDIRI4
+CNSTI4 0
+EQI4 $500
+line 1355
+;1355:					m->cursor = m->cursor_prev;
+ADDRLP4 16
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 16
+INDIRP4
+ADDRLP4 16
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRI4
+ASGNI4
+line 1356
+;1356:					return;
+ADDRGP4 $480
+JUMPV
+LABELV $500
+line 1358
+;1357:				}
+;1358:				m->cursor = m->nitems - 1;
+ADDRLP4 16
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 16
+INDIRP4
+ADDRLP4 16
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRI4
+CNSTI4 1
+SUBI4
+ASGNI4
+line 1359
+;1359:				wrapped   = qtrue;
+ADDRLP4 4
+CNSTI4 1
+ASGNI4
+line 1360
+;1360:				goto wrap;
+ADDRGP4 $483
+JUMPV
+LABELV $498
+line 1362
+;1361:			}
+;1362:			m->cursor = m->cursor_prev;
+ADDRLP4 16
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 16
+INDIRP4
+ADDRLP4 16
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRI4
+ASGNI4
+line 1363
+;1363:		}
+LABELV $496
+line 1364
+;1364:	}
+LABELV $489
+line 1365
+;1365:}
+LABELV $480
+endproc Menu_AdjustCursor 24 0
+export Menu_Draw
+proc Menu_Draw 32 20
+line 1372
+;1366:
+;1367:/*
+;1368:=================
+;1369:Menu_Draw
+;1370:=================
+;1371:*/
+;1372:void Menu_Draw(menuframework_s* menu) {
+line 1377
+;1373:	int           i;
+;1374:	menucommon_s* itemptr;
+;1375:
+;1376:	// draw menu
+;1377:	for (i = 0; i < menu->nitems; i++) {
+ADDRLP4 4
+CNSTI4 0
+ASGNI4
+ADDRGP4 $506
+JUMPV
+LABELV $503
+line 1378
+;1378:		itemptr = (menucommon_s*)menu->items[i];
+ADDRLP4 0
+ADDRLP4 4
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 12
+ADDP4
+ADDP4
+INDIRP4
+ASGNP4
+line 1380
+;1379:
+;1380:		if (itemptr->flags & QMF_HIDDEN)
+ADDRLP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 4096
+BANDU4
+CNSTU4 0
+EQU4 $507
+line 1381
+;1381:			continue;
+ADDRGP4 $504
+JUMPV
+LABELV $507
+line 1383
+;1382:
+;1383:		if (itemptr->ownerdraw) {
+ADDRLP4 0
+INDIRP4
+CNSTI4 56
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $509
+line 1385
+;1384:			// total subclassing, owner draws everything
+;1385:			itemptr->ownerdraw(itemptr);
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRLP4 0
+INDIRP4
+CNSTI4 56
+ADDP4
+INDIRP4
+CALLV
+pop
+line 1386
+;1386:		} else {
+ADDRGP4 $510
+JUMPV
+LABELV $509
+line 1387
+;1387:			switch (itemptr->type) {
+ADDRLP4 8
+ADDRLP4 0
+INDIRP4
+INDIRI4
+ASGNI4
+ADDRLP4 8
+INDIRI4
+CNSTI4 1
+LTI4 $511
+ADDRLP4 8
+INDIRI4
+CNSTI4 10
+GTI4 $511
+ADDRLP4 8
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRGP4 $525-4
+ADDP4
+INDIRP4
+JUMPV
+data
+align 4
+LABELV $525
+address $516
+address $518
+address $517
+address $515
+address $514
+address $519
+address $520
+address $521
+address $522
+address $523
+code
+LABELV $514
+line 1389
+;1388:			case MTYPE_RADIOBUTTON:
+;1389:				RadioButton_Draw((menuradiobutton_s*)itemptr);
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRGP4 RadioButton_Draw
+CALLV
+pop
+line 1390
+;1390:				break;
+ADDRGP4 $512
+JUMPV
+LABELV $515
+line 1393
+;1391:
+;1392:			case MTYPE_FIELD:
+;1393:				MenuField_Draw((menufield_s*)itemptr);
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRGP4 MenuField_Draw
+CALLV
+pop
+line 1394
+;1394:				break;
+ADDRGP4 $512
+JUMPV
+LABELV $516
+line 1397
+;1395:
+;1396:			case MTYPE_SLIDER:
+;1397:				Slider_Draw((menuslider_s*)itemptr);
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRGP4 Slider_Draw
+CALLV
+pop
+line 1398
+;1398:				break;
+ADDRGP4 $512
+JUMPV
+LABELV $517
+line 1401
+;1399:
+;1400:			case MTYPE_SPINCONTROL:
+;1401:				SpinControl_Draw((menulist_s*)itemptr);
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRGP4 SpinControl_Draw
+CALLV
+pop
+line 1402
+;1402:				break;
+ADDRGP4 $512
+JUMPV
+LABELV $518
+line 1405
+;1403:
+;1404:			case MTYPE_ACTION:
+;1405:				Action_Draw((menuaction_s*)itemptr);
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRGP4 Action_Draw
+CALLV
+pop
+line 1406
+;1406:				break;
+ADDRGP4 $512
+JUMPV
+LABELV $519
+line 1409
+;1407:
+;1408:			case MTYPE_BITMAP:
+;1409:				Bitmap_Draw((menubitmap_s*)itemptr);
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRGP4 Bitmap_Draw
+CALLV
+pop
+line 1410
+;1410:				break;
+ADDRGP4 $512
+JUMPV
+LABELV $520
+line 1413
+;1411:
+;1412:			case MTYPE_TEXT:
+;1413:				Text_Draw((menutext_s*)itemptr);
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRGP4 Text_Draw
+CALLV
+pop
+line 1414
+;1414:				break;
+ADDRGP4 $512
+JUMPV
+LABELV $521
+line 1417
+;1415:
+;1416:			case MTYPE_SCROLLLIST:
+;1417:				ScrollList_Draw((menulist_s*)itemptr);
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRGP4 ScrollList_Draw
+CALLV
+pop
+line 1418
+;1418:				break;
+ADDRGP4 $512
+JUMPV
+LABELV $522
+line 1421
+;1419:
+;1420:			case MTYPE_PTEXT:
+;1421:				PText_Draw((menutext_s*)itemptr);
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRGP4 PText_Draw
+CALLV
+pop
+line 1422
+;1422:				break;
+ADDRGP4 $512
+JUMPV
+LABELV $523
+line 1425
+;1423:
+;1424:			case MTYPE_BTEXT:
+;1425:				BText_Draw((menutext_s*)itemptr);
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRGP4 BText_Draw
+CALLV
+pop
+line 1426
+;1426:				break;
+ADDRGP4 $512
+JUMPV
+LABELV $511
+line 1429
+;1427:
+;1428:			default:
+;1429:				trap_Error(va("Menu_Draw: unknown type %d", itemptr->type));
+ADDRGP4 $524
+ARGP4
+ADDRLP4 0
+INDIRP4
+INDIRI4
+ARGI4
+ADDRLP4 16
+ADDRGP4 va
+CALLP4
+ASGNP4
+ADDRLP4 16
+INDIRP4
+ARGP4
+ADDRGP4 trap_Error
+CALLV
+pop
+line 1430
+;1430:			}
+LABELV $512
+line 1431
+;1431:		}
+LABELV $510
+line 1433
+;1432:#ifndef NDEBUG
+;1433:		if (uis.debug) {
+ADDRGP4 uis+11388
+INDIRI4
+CNSTI4 0
+EQI4 $527
+line 1439
+;1434:			int x;
+;1435:			int y;
+;1436:			int w;
+;1437:			int h;
+;1438:
+;1439:			if (!(itemptr->flags & QMF_INACTIVE)) {
+ADDRLP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 16384
+BANDU4
+CNSTU4 0
+NEU4 $530
+line 1440
+;1440:				x = itemptr->left;
+ADDRLP4 8
+ADDRLP4 0
+INDIRP4
+CNSTI4 20
+ADDP4
+INDIRI4
+ASGNI4
+line 1441
+;1441:				y = itemptr->top;
+ADDRLP4 12
+ADDRLP4 0
+INDIRP4
+CNSTI4 24
+ADDP4
+INDIRI4
+ASGNI4
+line 1442
+;1442:				w = itemptr->right - itemptr->left + 1;
+ADDRLP4 16
+ADDRLP4 0
+INDIRP4
+CNSTI4 28
+ADDP4
+INDIRI4
+ADDRLP4 0
+INDIRP4
+CNSTI4 20
+ADDP4
+INDIRI4
+SUBI4
+CNSTI4 1
+ADDI4
+ASGNI4
+line 1443
+;1443:				h = itemptr->bottom - itemptr->top + 1;
+ADDRLP4 20
+ADDRLP4 0
+INDIRP4
+CNSTI4 32
+ADDP4
+INDIRI4
+ADDRLP4 0
+INDIRP4
+CNSTI4 24
+ADDP4
+INDIRI4
+SUBI4
+CNSTI4 1
+ADDI4
+ASGNI4
+line 1445
+;1444:
+;1445:				if (itemptr->flags & QMF_HASMOUSEFOCUS) {
+ADDRLP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 512
+BANDU4
+CNSTU4 0
+EQU4 $532
+line 1446
+;1446:					UI_DrawRect(x, y, w, h, colorYellow);
+ADDRLP4 8
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 12
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 16
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 20
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRGP4 colorYellow
+ARGP4
+ADDRGP4 UI_DrawRect
+CALLV
+pop
+line 1447
+;1447:				} else {
+ADDRGP4 $533
+JUMPV
+LABELV $532
+line 1448
+;1448:					UI_DrawRect(x, y, w, h, colorWhite);
+ADDRLP4 8
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 12
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 16
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 20
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRGP4 colorWhite
+ARGP4
+ADDRGP4 UI_DrawRect
+CALLV
+pop
+line 1449
+;1449:				}
+LABELV $533
+line 1450
+;1450:			}
+LABELV $530
+line 1451
+;1451:		}
+LABELV $527
+line 1453
+;1452:#endif
+;1453:	}
+LABELV $504
+line 1377
+ADDRLP4 4
+ADDRLP4 4
+INDIRI4
+CNSTI4 1
+ADDI4
+ASGNI4
+LABELV $506
+ADDRLP4 4
+INDIRI4
+ADDRFP4 0
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRI4
+LTI4 $503
+line 1455
+;1454:
+;1455:	itemptr = Menu_ItemAtCursor(menu);
+ADDRFP4 0
+INDIRP4
+ARGP4
+ADDRLP4 8
+ADDRGP4 Menu_ItemAtCursor
+CALLP4
+ASGNP4
+ADDRLP4 0
+ADDRLP4 8
+INDIRP4
+ASGNP4
+line 1456
+;1456:	if (itemptr && itemptr->statusbar)
+ADDRLP4 0
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $534
+ADDRLP4 0
+INDIRP4
+CNSTI4 52
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $534
+line 1457
+;1457:		itemptr->statusbar((void*)itemptr);
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRLP4 0
+INDIRP4
+CNSTI4 52
+ADDP4
+INDIRP4
+CALLV
+pop
+LABELV $534
+line 1458
+;1458:}
+LABELV $502
+endproc Menu_Draw 32 20
+export Menu_ItemAtCursor
+proc Menu_ItemAtCursor 12 0
+line 1465
+;1459:
+;1460:/*
+;1461:=================
+;1462:Menu_ItemAtCursor
+;1463:=================
+;1464:*/
+;1465:void* Menu_ItemAtCursor(menuframework_s* m) {
+line 1466
+;1466:	if (m->cursor < 0 || m->cursor >= m->nitems)
+ADDRLP4 0
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 4
+ADDRLP4 0
+INDIRP4
+INDIRI4
+ASGNI4
+ADDRLP4 4
+INDIRI4
+CNSTI4 0
+LTI4 $539
+ADDRLP4 4
+INDIRI4
+ADDRLP4 0
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRI4
+LTI4 $537
+LABELV $539
+line 1467
+;1467:		return NULL;
+CNSTP4 0
+RETP4
+ADDRGP4 $536
+JUMPV
+LABELV $537
+line 1469
+;1468:
+;1469:	return m->items[m->cursor];
+ADDRLP4 8
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 8
+INDIRP4
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRLP4 8
+INDIRP4
+CNSTI4 12
+ADDP4
+ADDP4
+INDIRP4
+RETP4
+LABELV $536
+endproc Menu_ItemAtCursor 12 0
+export Menu_ActivateItem
+proc Menu_ActivateItem 4 8
+line 1477
+;1470:}
+;1471:
+;1472:/*
+;1473:=================
+;1474:Menu_ActivateItem
+;1475:=================
+;1476:*/
+;1477:sfxHandle_t Menu_ActivateItem(menuframework_s* s, menucommon_s* item) {
+line 1478
+;1478:	if (item->callback) {
+ADDRFP4 4
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $541
+line 1479
+;1479:		item->callback(item, QM_ACTIVATED);
+ADDRLP4 0
+ADDRFP4 4
+INDIRP4
+ASGNP4
+ADDRLP4 0
+INDIRP4
+ARGP4
+CNSTI4 3
+ARGI4
+ADDRLP4 0
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRP4
+CALLV
+pop
+line 1480
+;1480:		if (!(item->flags & QMF_SILENT)) {
+ADDRFP4 4
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 1048576
+BANDU4
+CNSTU4 0
+NEU4 $543
+line 1481
+;1481:			return menu_move_sound;
+ADDRGP4 menu_move_sound
+INDIRI4
+RETI4
+ADDRGP4 $540
+JUMPV
+LABELV $543
+line 1483
+;1482:		}
+;1483:	}
+LABELV $541
+line 1485
+;1484:
+;1485:	return 0;
+CNSTI4 0
+RETI4
+LABELV $540
+endproc Menu_ActivateItem 4 8
+export Menu_DefaultKey
+proc Menu_DefaultKey 84 8
+line 1493
+;1486:}
+;1487:
+;1488:/*
+;1489:=================
+;1490:Menu_DefaultKey
+;1491:=================
+;1492:*/
+;1493:sfxHandle_t Menu_DefaultKey(menuframework_s* m, int key) {
+line 1494
+;1494:	sfxHandle_t   sound = 0;
+ADDRLP4 4
+CNSTI4 0
+ASGNI4
+line 1499
+;1495:	menucommon_s* item;
+;1496:	int           cursor_prev;
+;1497:
+;1498:	// menu system keys
+;1499:	switch (key) {
+ADDRLP4 12
+ADDRFP4 4
+INDIRI4
+ASGNI4
+ADDRLP4 12
+INDIRI4
+CNSTI4 27
+EQI4 $548
+ADDRLP4 12
+INDIRI4
+CNSTI4 27
+LTI4 $546
+LABELV $549
+ADDRFP4 4
+INDIRI4
+CNSTI4 179
+EQI4 $548
+ADDRGP4 $546
+JUMPV
+LABELV $548
+line 1502
+;1500:	case K_MOUSE2:
+;1501:	case K_ESCAPE:
+;1502:		UI_PopMenu();
+ADDRGP4 UI_PopMenu
+CALLV
+pop
+line 1503
+;1503:		return menu_out_sound;
+ADDRGP4 menu_out_sound
+INDIRI4
+RETI4
+ADDRGP4 $545
+JUMPV
+LABELV $546
+line 1506
+;1504:	}
+;1505:
+;1506:	if (!m || !m->nitems)
+ADDRLP4 16
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 16
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $552
+ADDRLP4 16
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRI4
+CNSTI4 0
+NEI4 $550
+LABELV $552
+line 1507
+;1507:		return 0;
+CNSTI4 0
+RETI4
+ADDRGP4 $545
+JUMPV
+LABELV $550
+line 1510
+;1508:
+;1509:	// route key stimulus to widget
+;1510:	item = Menu_ItemAtCursor(m);
+ADDRFP4 0
+INDIRP4
+ARGP4
+ADDRLP4 20
+ADDRGP4 Menu_ItemAtCursor
+CALLP4
+ASGNP4
+ADDRLP4 0
+ADDRLP4 20
+INDIRP4
+ASGNP4
+line 1511
+;1511:	if (item && !(item->flags & (QMF_GRAYED | QMF_INACTIVE))) {
+ADDRLP4 0
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $553
+ADDRLP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 24576
+BANDU4
+CNSTU4 0
+NEU4 $553
+line 1512
+;1512:		switch (item->type) {
+ADDRLP4 28
+ADDRLP4 0
+INDIRP4
+INDIRI4
+ASGNI4
+ADDRLP4 28
+INDIRI4
+CNSTI4 1
+LTI4 $555
+ADDRLP4 28
+INDIRI4
+CNSTI4 8
+GTI4 $555
+ADDRLP4 28
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRGP4 $563-4
+ADDP4
+INDIRP4
+JUMPV
+data
+align 4
+LABELV $563
+address $560
+address $555
+address $558
+address $562
+address $559
+address $555
+address $555
+address $561
+code
+LABELV $558
+line 1514
+;1513:		case MTYPE_SPINCONTROL:
+;1514:			sound = SpinControl_Key((menulist_s*)item, key);
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRFP4 4
+INDIRI4
+ARGI4
+ADDRLP4 36
+ADDRGP4 SpinControl_Key
+CALLI4
+ASGNI4
+ADDRLP4 4
+ADDRLP4 36
+INDIRI4
+ASGNI4
+line 1515
+;1515:			break;
+ADDRGP4 $556
+JUMPV
+LABELV $559
+line 1518
+;1516:
+;1517:		case MTYPE_RADIOBUTTON:
+;1518:			sound = RadioButton_Key((menuradiobutton_s*)item, key);
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRFP4 4
+INDIRI4
+ARGI4
+ADDRLP4 40
+ADDRGP4 RadioButton_Key
+CALLI4
+ASGNI4
+ADDRLP4 4
+ADDRLP4 40
+INDIRI4
+ASGNI4
+line 1519
+;1519:			break;
+ADDRGP4 $556
+JUMPV
+LABELV $560
+line 1522
+;1520:
+;1521:		case MTYPE_SLIDER:
+;1522:			sound = Slider_Key((menuslider_s*)item, key);
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRFP4 4
+INDIRI4
+ARGI4
+ADDRLP4 44
+ADDRGP4 Slider_Key
+CALLI4
+ASGNI4
+ADDRLP4 4
+ADDRLP4 44
+INDIRI4
+ASGNI4
+line 1523
+;1523:			break;
+ADDRGP4 $556
+JUMPV
+LABELV $561
+line 1526
+;1524:
+;1525:		case MTYPE_SCROLLLIST:
+;1526:			sound = ScrollList_Key((menulist_s*)item, key);
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRFP4 4
+INDIRI4
+ARGI4
+ADDRLP4 48
+ADDRGP4 ScrollList_Key
+CALLI4
+ASGNI4
+ADDRLP4 4
+ADDRLP4 48
+INDIRI4
+ASGNI4
+line 1527
+;1527:			break;
+ADDRGP4 $556
+JUMPV
+LABELV $562
+line 1530
+;1528:
+;1529:		case MTYPE_FIELD:
+;1530:			sound = MenuField_Key((menufield_s*)item, &key);
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRFP4 4
+ARGP4
+ADDRLP4 52
+ADDRGP4 MenuField_Key
+CALLI4
+ASGNI4
+ADDRLP4 4
+ADDRLP4 52
+INDIRI4
+ASGNI4
+line 1531
+;1531:			break;
+LABELV $555
+LABELV $556
+line 1534
+;1532:		}
+;1533:
+;1534:		if (sound) {
+ADDRLP4 4
+INDIRI4
+CNSTI4 0
+EQI4 $565
+line 1536
+;1535:			// key was handled
+;1536:			return sound;
+ADDRLP4 4
+INDIRI4
+RETI4
+ADDRGP4 $545
+JUMPV
+LABELV $565
+line 1538
+;1537:		}
+;1538:	}
+LABELV $553
+line 1541
+;1539:
+;1540:	// default handling
+;1541:	switch (key) {
+ADDRLP4 28
+ADDRFP4 4
+INDIRI4
+ASGNI4
+ADDRLP4 28
+INDIRI4
+CNSTI4 155
+EQI4 $569
+ADDRLP4 28
+INDIRI4
+CNSTI4 156
+EQI4 $571
+ADDRLP4 28
+INDIRI4
+CNSTI4 156
+GTI4 $590
+LABELV $589
+ADDRLP4 32
+ADDRFP4 4
+INDIRI4
+ASGNI4
+ADDRLP4 32
+INDIRI4
+CNSTI4 13
+EQI4 $584
+ADDRLP4 32
+INDIRI4
+CNSTI4 13
+GTI4 $592
+LABELV $591
+ADDRFP4 4
+INDIRI4
+CNSTI4 9
+EQI4 $576
+ADDRGP4 $567
+JUMPV
+LABELV $592
+ADDRLP4 36
+ADDRFP4 4
+INDIRI4
+ASGNI4
+ADDRLP4 36
+INDIRI4
+CNSTI4 132
+EQI4 $573
+ADDRLP4 36
+INDIRI4
+CNSTI4 133
+EQI4 $576
+ADDRGP4 $567
+JUMPV
+LABELV $590
+ADDRLP4 40
+ADDRFP4 4
+INDIRI4
+ASGNI4
+ADDRLP4 40
+INDIRI4
+CNSTI4 167
+EQI4 $576
+ADDRLP4 40
+INDIRI4
+CNSTI4 169
+EQI4 $584
+ADDRLP4 40
+INDIRI4
+CNSTI4 169
+GTI4 $594
+LABELV $593
+ADDRFP4 4
+INDIRI4
+CNSTI4 161
+EQI4 $573
+ADDRGP4 $567
+JUMPV
+LABELV $594
+ADDRLP4 44
+ADDRFP4 4
+INDIRI4
+ASGNI4
+ADDRLP4 44
+INDIRI4
+CNSTI4 178
+LTI4 $567
+ADDRLP4 44
+INDIRI4
+CNSTI4 188
+GTI4 $595
+ADDRLP4 44
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRGP4 $596-712
+ADDP4
+INDIRP4
+JUMPV
+data
+align 4
+LABELV $596
+address $579
+address $567
+address $579
+address $567
+address $567
+address $567
+address $567
+address $584
+address $584
+address $584
+address $584
+code
+LABELV $595
+ADDRLP4 48
+ADDRFP4 4
+INDIRI4
+ASGNI4
+ADDRLP4 48
+INDIRI4
+CNSTI4 217
+LTI4 $567
+ADDRLP4 48
+INDIRI4
+CNSTI4 232
+GTI4 $567
+ADDRLP4 48
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRGP4 $598-868
+ADDP4
+INDIRP4
+JUMPV
+data
+align 4
+LABELV $598
+address $584
+address $584
+address $584
+address $584
+address $584
+address $584
+address $584
+address $584
+address $584
+address $584
+address $584
+address $584
+address $584
+address $584
+address $584
+address $584
+code
+LABELV $569
+line 1544
+;1542:#ifndef NDEBUG
+;1543:	case K_F11:
+;1544:		trap_Cmd_ExecuteText(EXEC_APPEND, "screenshot\n");
+CNSTI4 2
+ARGI4
+ADDRGP4 $570
+ARGP4
+ADDRGP4 trap_Cmd_ExecuteText
+CALLV
+pop
+line 1545
+;1545:		break;
+ADDRGP4 $568
+JUMPV
+LABELV $571
+line 1548
+;1546:
+;1547:	case K_F12:
+;1548:		uis.debug ^= 1;
+ADDRLP4 52
+ADDRGP4 uis+11388
+ASGNP4
+ADDRLP4 52
+INDIRP4
+ADDRLP4 52
+INDIRP4
+INDIRI4
+CNSTI4 1
+BXORI4
+ASGNI4
+line 1549
+;1549:		break;
+ADDRGP4 $568
+JUMPV
+LABELV $573
+line 1553
+;1550:#endif
+;1551:	case K_KP_UPARROW:
+;1552:	case K_UPARROW:
+;1553:		cursor_prev    = m->cursor;
+ADDRLP4 8
+ADDRFP4 0
+INDIRP4
+INDIRI4
+ASGNI4
+line 1554
+;1554:		m->cursor_prev = m->cursor;
+ADDRLP4 56
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 56
+INDIRP4
+CNSTI4 4
+ADDP4
+ADDRLP4 56
+INDIRP4
+INDIRI4
+ASGNI4
+line 1555
+;1555:		m->cursor--;
+ADDRLP4 60
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 60
+INDIRP4
+ADDRLP4 60
+INDIRP4
+INDIRI4
+CNSTI4 1
+SUBI4
+ASGNI4
+line 1556
+;1556:		Menu_AdjustCursor(m, -1);
+ADDRFP4 0
+INDIRP4
+ARGP4
+CNSTI4 -1
+ARGI4
+ADDRGP4 Menu_AdjustCursor
+CALLV
+pop
+line 1557
+;1557:		if (cursor_prev != m->cursor) {
+ADDRLP4 8
+INDIRI4
+ADDRFP4 0
+INDIRP4
+INDIRI4
+EQI4 $568
+line 1558
+;1558:			Menu_CursorMoved(m);
+ADDRFP4 0
+INDIRP4
+ARGP4
+ADDRGP4 Menu_CursorMoved
+CALLV
+pop
+line 1559
+;1559:			sound = menu_move_sound;
+ADDRLP4 4
+ADDRGP4 menu_move_sound
+INDIRI4
+ASGNI4
+line 1560
+;1560:		}
+line 1561
+;1561:		break;
+ADDRGP4 $568
+JUMPV
+LABELV $576
+line 1566
+;1562:
+;1563:	case K_TAB:
+;1564:	case K_KP_DOWNARROW:
+;1565:	case K_DOWNARROW:
+;1566:		cursor_prev    = m->cursor;
+ADDRLP4 8
+ADDRFP4 0
+INDIRP4
+INDIRI4
+ASGNI4
+line 1567
+;1567:		m->cursor_prev = m->cursor;
+ADDRLP4 64
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 64
+INDIRP4
+CNSTI4 4
+ADDP4
+ADDRLP4 64
+INDIRP4
+INDIRI4
+ASGNI4
+line 1568
+;1568:		m->cursor++;
+ADDRLP4 68
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 68
+INDIRP4
+ADDRLP4 68
+INDIRP4
+INDIRI4
+CNSTI4 1
+ADDI4
+ASGNI4
+line 1569
+;1569:		Menu_AdjustCursor(m, 1);
+ADDRFP4 0
+INDIRP4
+ARGP4
+CNSTI4 1
+ARGI4
+ADDRGP4 Menu_AdjustCursor
+CALLV
+pop
+line 1570
+;1570:		if (cursor_prev != m->cursor) {
+ADDRLP4 8
+INDIRI4
+ADDRFP4 0
+INDIRP4
+INDIRI4
+EQI4 $568
+line 1571
+;1571:			Menu_CursorMoved(m);
+ADDRFP4 0
+INDIRP4
+ARGP4
+ADDRGP4 Menu_CursorMoved
+CALLV
+pop
+line 1572
+;1572:			sound = menu_move_sound;
+ADDRLP4 4
+ADDRGP4 menu_move_sound
+INDIRI4
+ASGNI4
+line 1573
+;1573:		}
+line 1574
+;1574:		break;
+ADDRGP4 $568
+JUMPV
+LABELV $579
+line 1578
+;1575:
+;1576:	case K_MOUSE1:
+;1577:	case K_MOUSE3:
+;1578:		if (item)
+ADDRLP4 0
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $568
+line 1579
+;1579:			if ((item->flags & QMF_HASMOUSEFOCUS) && !(item->flags & (QMF_GRAYED | QMF_INACTIVE)))
+ADDRLP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 512
+BANDU4
+CNSTU4 0
+EQU4 $568
+ADDRLP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 24576
+BANDU4
+CNSTU4 0
+NEU4 $568
+line 1580
+;1580:				return (Menu_ActivateItem(m, item));
+ADDRFP4 0
+INDIRP4
+ARGP4
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRLP4 76
+ADDRGP4 Menu_ActivateItem
+CALLI4
+ASGNI4
+ADDRLP4 76
+INDIRI4
+RETI4
+ADDRGP4 $545
+JUMPV
+line 1581
+;1581:		break;
+LABELV $584
+line 1605
+;1582:
+;1583:	case K_JOY1:
+;1584:	case K_JOY2:
+;1585:	case K_JOY3:
+;1586:	case K_JOY4:
+;1587:	case K_AUX1:
+;1588:	case K_AUX2:
+;1589:	case K_AUX3:
+;1590:	case K_AUX4:
+;1591:	case K_AUX5:
+;1592:	case K_AUX6:
+;1593:	case K_AUX7:
+;1594:	case K_AUX8:
+;1595:	case K_AUX9:
+;1596:	case K_AUX10:
+;1597:	case K_AUX11:
+;1598:	case K_AUX12:
+;1599:	case K_AUX13:
+;1600:	case K_AUX14:
+;1601:	case K_AUX15:
+;1602:	case K_AUX16:
+;1603:	case K_KP_ENTER:
+;1604:	case K_ENTER:
+;1605:		if (item)
+ADDRLP4 0
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $568
+line 1606
+;1606:			if (!(item->flags & (QMF_MOUSEONLY | QMF_GRAYED | QMF_INACTIVE)))
+ADDRLP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRU4
+CNSTU4 26624
+BANDU4
+CNSTU4 0
+NEU4 $568
+line 1607
+;1607:				return (Menu_ActivateItem(m, item));
+ADDRFP4 0
+INDIRP4
+ARGP4
+ADDRLP4 0
+INDIRP4
+ARGP4
+ADDRLP4 80
+ADDRGP4 Menu_ActivateItem
+CALLI4
+ASGNI4
+ADDRLP4 80
+INDIRI4
+RETI4
+ADDRGP4 $545
+JUMPV
+line 1608
+;1608:		break;
+LABELV $567
+LABELV $568
+line 1611
+;1609:	}
+;1610:
+;1611:	return sound;
+ADDRLP4 4
+INDIRI4
+RETI4
+LABELV $545
+endproc Menu_DefaultKey 84 8
+export Menu_Cache
+proc Menu_Cache 68 8
+line 1619
+;1612:}
+;1613:
+;1614:/*
+;1615:=================
+;1616:Menu_Cache
+;1617:=================
+;1618:*/
+;1619:void Menu_Cache(void) {
+line 1620
+;1620:	uis.charset         = trap_R_RegisterShaderNoMip("gfx/2d/bigchars");
+ADDRGP4 $602
+ARGP4
+ADDRLP4 0
+ADDRGP4 trap_R_RegisterShaderNoMip
+CALLI4
+ASGNI4
+ADDRGP4 uis+11404
+ADDRLP4 0
+INDIRI4
+ASGNI4
+line 1621
+;1621:	uis.charsetProp     = trap_R_RegisterShaderNoMip("menu/art/font1_prop.tga");
+ADDRGP4 $604
+ARGP4
+ADDRLP4 4
+ADDRGP4 trap_R_RegisterShaderNoMip
+CALLI4
+ASGNI4
+ADDRGP4 uis+11408
+ADDRLP4 4
+INDIRI4
+ASGNI4
+line 1622
+;1622:	uis.charsetPropGlow = trap_R_RegisterShaderNoMip("menu/art/font1_prop_glo.tga");
+ADDRGP4 $606
+ARGP4
+ADDRLP4 8
+ADDRGP4 trap_R_RegisterShaderNoMip
+CALLI4
+ASGNI4
+ADDRGP4 uis+11412
+ADDRLP4 8
+INDIRI4
+ASGNI4
+line 1623
+;1623:	uis.charsetPropB    = trap_R_RegisterShaderNoMip("menu/art/font2_prop.tga");
+ADDRGP4 $608
+ARGP4
+ADDRLP4 12
+ADDRGP4 trap_R_RegisterShaderNoMip
+CALLI4
+ASGNI4
+ADDRGP4 uis+11416
+ADDRLP4 12
+INDIRI4
+ASGNI4
+line 1624
+;1624:	uis.cursor          = trap_R_RegisterShaderNoMip("menu/art/3_cursor2");
+ADDRGP4 $610
+ARGP4
+ADDRLP4 16
+ADDRGP4 trap_R_RegisterShaderNoMip
+CALLI4
+ASGNI4
+ADDRGP4 uis+11420
+ADDRLP4 16
+INDIRI4
+ASGNI4
+line 1625
+;1625:	uis.rb_on           = trap_R_RegisterShaderNoMip("menu/art/switch_on");
+ADDRGP4 $612
+ARGP4
+ADDRLP4 20
+ADDRGP4 trap_R_RegisterShaderNoMip
+CALLI4
+ASGNI4
+ADDRGP4 uis+11424
+ADDRLP4 20
+INDIRI4
+ASGNI4
+line 1626
+;1626:	uis.rb_off          = trap_R_RegisterShaderNoMip("menu/art/switch_off");
+ADDRGP4 $614
+ARGP4
+ADDRLP4 24
+ADDRGP4 trap_R_RegisterShaderNoMip
+CALLI4
+ASGNI4
+ADDRGP4 uis+11428
+ADDRLP4 24
+INDIRI4
+ASGNI4
+line 1628
+;1627:
+;1628:	uis.whiteShader = trap_R_RegisterShaderNoMip("white");
+ADDRGP4 $616
+ARGP4
+ADDRLP4 28
+ADDRGP4 trap_R_RegisterShaderNoMip
+CALLI4
+ASGNI4
+ADDRGP4 uis+11392
+ADDRLP4 28
+INDIRI4
+ASGNI4
+line 1629
+;1629:	if (uis.glconfig.hardwareType == GLHW_RAGEPRO) {
+ADDRGP4 uis+56+11288
+INDIRI4
+CNSTI4 3
+NEI4 $617
+line 1631
+;1630:		// the blend effect turns to shit with the normal
+;1631:		uis.menuBackShader = trap_R_RegisterShaderNoMip("menubackRagePro");
+ADDRGP4 $622
+ARGP4
+ADDRLP4 32
+ADDRGP4 trap_R_RegisterShaderNoMip
+CALLI4
+ASGNI4
+ADDRGP4 uis+11396
+ADDRLP4 32
+INDIRI4
+ASGNI4
+line 1632
+;1632:	} else {
+ADDRGP4 $618
+JUMPV
+LABELV $617
+line 1634
+;1633:		// uis.menuBackShader = trap_R_RegisterShaderNoMip("menuback");
+;1634:		uis.menuBackShader = trap_R_RegisterShaderNoMip("ui/bg.jpg");
+ADDRGP4 $624
+ARGP4
+ADDRLP4 32
+ADDRGP4 trap_R_RegisterShaderNoMip
+CALLI4
+ASGNI4
+ADDRGP4 uis+11396
+ADDRLP4 32
+INDIRI4
+ASGNI4
+line 1635
+;1635:	}
+LABELV $618
+line 1636
+;1636:	uis.menuBackNoLogoShader = trap_R_RegisterShaderNoMip("menubacknologo");
+ADDRGP4 $626
+ARGP4
+ADDRLP4 32
+ADDRGP4 trap_R_RegisterShaderNoMip
+CALLI4
+ASGNI4
+ADDRGP4 uis+11400
+ADDRLP4 32
+INDIRI4
+ASGNI4
+line 1639
+;1637:	// uis.logo_q3              = trap_R_RegisterShaderNoMip("ui/logoQ3.jpg");
+;1638:
+;1639:	menu_in_sound     = trap_S_RegisterSound("sound/misc/menu1.wav", qfalse);
+ADDRGP4 $627
+ARGP4
+CNSTI4 0
+ARGI4
+ADDRLP4 36
+ADDRGP4 trap_S_RegisterSound
+CALLI4
+ASGNI4
+ADDRGP4 menu_in_sound
+ADDRLP4 36
+INDIRI4
+ASGNI4
+line 1640
+;1640:	menu_move_sound   = trap_S_RegisterSound("sound/misc/menu2.wav", qfalse);
+ADDRGP4 $628
+ARGP4
+CNSTI4 0
+ARGI4
+ADDRLP4 40
+ADDRGP4 trap_S_RegisterSound
+CALLI4
+ASGNI4
+ADDRGP4 menu_move_sound
+ADDRLP4 40
+INDIRI4
+ASGNI4
+line 1641
+;1641:	menu_out_sound    = trap_S_RegisterSound("sound/misc/menu3.wav", qfalse);
+ADDRGP4 $629
+ARGP4
+CNSTI4 0
+ARGI4
+ADDRLP4 44
+ADDRGP4 trap_S_RegisterSound
+CALLI4
+ASGNI4
+ADDRGP4 menu_out_sound
+ADDRLP4 44
+INDIRI4
+ASGNI4
+line 1642
+;1642:	menu_buzz_sound   = trap_S_RegisterSound("sound/misc/menu4.wav", qfalse);
+ADDRGP4 $630
+ARGP4
+CNSTI4 0
+ARGI4
+ADDRLP4 48
+ADDRGP4 trap_S_RegisterSound
+CALLI4
+ASGNI4
+ADDRGP4 menu_buzz_sound
+ADDRLP4 48
+INDIRI4
+ASGNI4
+line 1643
+;1643:	weaponChangeSound = trap_S_RegisterSound("sound/weapons/change.wav", qfalse);
+ADDRGP4 $631
+ARGP4
+CNSTI4 0
+ARGI4
+ADDRLP4 52
+ADDRGP4 trap_S_RegisterSound
+CALLI4
+ASGNI4
+ADDRGP4 weaponChangeSound
+ADDRLP4 52
+INDIRI4
+ASGNI4
+line 1646
+;1644:
+;1645:	// need a nonzero sound, make an empty sound for this
+;1646:	menu_null_sound = -1;
+ADDRGP4 menu_null_sound
+CNSTI4 -1
+ASGNI4
+line 1648
+;1647:
+;1648:	sliderBar      = trap_R_RegisterShaderNoMip("menu/art/slider2");
+ADDRGP4 $632
+ARGP4
+ADDRLP4 56
+ADDRGP4 trap_R_RegisterShaderNoMip
+CALLI4
+ASGNI4
+ADDRGP4 sliderBar
+ADDRLP4 56
+INDIRI4
+ASGNI4
+line 1649
+;1649:	sliderButton_0 = trap_R_RegisterShaderNoMip("menu/art/sliderbutt_0");
+ADDRGP4 $633
+ARGP4
+ADDRLP4 60
+ADDRGP4 trap_R_RegisterShaderNoMip
+CALLI4
+ASGNI4
+ADDRGP4 sliderButton_0
+ADDRLP4 60
+INDIRI4
+ASGNI4
+line 1650
+;1650:	sliderButton_1 = trap_R_RegisterShaderNoMip("menu/art/sliderbutt_1");
+ADDRGP4 $634
+ARGP4
+ADDRLP4 64
+ADDRGP4 trap_R_RegisterShaderNoMip
+CALLI4
+ASGNI4
+ADDRGP4 sliderButton_1
+ADDRLP4 64
+INDIRI4
+ASGNI4
+line 1651
+;1651:}
+LABELV $600
+endproc Menu_Cache 68 8
+bss
+align 4
+LABELV sliderButton_1
+skip 4
+align 4
+LABELV sliderButton_0
+skip 4
+align 4
+LABELV sliderBar
+skip 4
+export logo_q3
+align 4
+LABELV logo_q3
+skip 4
+import UI_RankStatusMenu
+import RankStatus_Cache
+import UI_SignupMenu
+import Signup_Cache
+import UI_LoginMenu
+import Login_Cache
+import UI_RankingsMenu
+import Rankings_Cache
+import Rankings_DrawPassword
+import Rankings_DrawName
+import Rankings_DrawText
+import UI_InitGameinfo
+import UI_SPUnlockMedals_f
+import UI_SPUnlock_f
+import UI_GetAwardLevel
+import UI_LogAwardData
+import UI_NewGame
+import UI_GetCurrentGame
+import UI_CanShowTierVideo
+import UI_ShowTierVideo
+import UI_TierCompleted
+import UI_SetBestScore
+import UI_GetBestScore
+import UI_GetNumBots
+import UI_GetBotInfoByName
+import UI_GetBotInfoByNumber
+import UI_GetNumSPTiers
+import UI_GetNumSPArenas
+import UI_GetNumArenas
+import UI_GetSpecialArenaInfo
+import UI_GetArenaInfoByMap
+import UI_GetArenaInfoByNumber
+import UI_NetworkOptionsMenu
+import UI_NetworkOptionsMenu_Cache
+import UI_SoundOptionsMenu
+import UI_SoundOptionsMenu_Cache
+import UI_DisplayOptionsMenu
+import UI_DisplayOptionsMenu_Cache
+import UI_SaveConfigMenu
+import UI_SaveConfigMenu_Cache
+import UI_LoadConfigMenu
+import UI_LoadConfig_Cache
+import UI_TeamOrdersMenu_Cache
+import UI_TeamOrdersMenu_f
+import UI_TeamOrdersMenu
+import UI_RemoveBotsMenu
+import UI_RemoveBots_Cache
+import UI_AddBotsMenu
+import UI_AddBots_Cache
+import trap_SetPbClStatus
+import trap_VerifyCDKey
+import trap_SetCDKey
+import trap_GetCDKey
+import trap_MemoryRemaining
+import trap_LAN_GetPingInfo
+import trap_LAN_GetPing
+import trap_LAN_ClearPing
+import trap_LAN_ServerStatus
+import trap_LAN_LoadCachedServers
+import trap_LAN_SaveCachedServers
+import trap_LAN_GetPingQueueCount
+import trap_LAN_GetServerInfo
+import trap_LAN_GetServerAddressString
+import trap_LAN_GetServerCount
+import trap_GetConfigString
+import trap_GetGlconfig
+import trap_GetClientState
+import trap_GetClipboardData
+import trap_Key_SetCatcher
+import trap_Key_GetCatcher
+import trap_Key_ClearStates
+import trap_Key_SetOverstrikeMode
+import trap_Key_GetOverstrikeMode
+import trap_Key_IsDown
+import trap_Key_SetBinding
+import trap_Key_GetBindingBuf
+import trap_Key_KeynumToStringBuf
+import trap_S_RegisterSound
+import trap_S_StartLocalSound
+import trap_CM_LerpTag
+import trap_UpdateScreen
+import trap_R_DrawStretchPic
+import trap_R_SetColor
+import trap_R_RenderScene
+import trap_R_AddLightToScene
+import trap_R_AddPolyToScene
+import trap_R_AddRefEntityToScene
+import trap_R_ClearScene
+import trap_R_RegisterShaderNoMip
+import trap_R_RegisterSkin
+import trap_R_RegisterModel
+import trap_FS_Seek
+import trap_FS_GetFileList
+import trap_FS_FCloseFile
+import trap_FS_Write
+import trap_FS_Read
+import trap_FS_FOpenFile
+import trap_Cmd_ExecuteText
+import trap_Argv
+import trap_Argc
+import trap_Cvar_InfoStringBuffer
+import trap_Cvar_Create
+import trap_Cvar_Reset
+import trap_Cvar_SetValue
+import trap_Cvar_VariableStringBuffer
+import trap_Cvar_VariableValue
+import trap_Cvar_Set
+import trap_Cvar_Update
+import trap_Cvar_Register
+import trap_Milliseconds
+import trap_Error
+import trap_Print
+import UI_SPSkillMenu_Cache
+import UI_SPSkillMenu
+import UI_SPPostgameMenu_f
+import UI_SPPostgameMenu_Cache
+import UI_SPArena_Start
+import UI_SPLevelMenu_ReInit
+import UI_SPLevelMenu_f
+import UI_SPLevelMenu
+import UI_SPLevelMenu_Cache
+import uis
+import m_entersound
+import UI_StartDemoLoop
+import UI_Cvar_VariableString
+import UI_Argv
+import UI_ForceMenuOff
+import UI_PopMenu
+import UI_PushMenu
+import UI_SetActiveMenu
+import UI_IsFullscreen
+import UI_DrawTextBox
+import UI_AdjustFrom640
+import UI_CursorInRect
+import UI_DrawChar
+import UI_DrawString
+import UI_ProportionalStringWidth
+import UI_DrawProportionalString_AutoWrapped
+import UI_DrawProportionalString
+import UI_ProportionalSizeScale
+import UI_DrawBannerString
+import UI_LerpColor
+import UI_SetColor
+import UI_UpdateScreen
+import UI_DrawRect
+import UI_FillRect
+import UI_DrawHandlePic
+import UI_DrawNamedPic
+import UI_ClampCvar
+import UI_ConsoleCommand
+import UI_Refresh
+import UI_MouseEvent
+import UI_KeyEvent
+import UI_Shutdown
+import UI_Init
+import UI_RegisterClientModelname
+import UI_PlayerInfo_SetInfo
+import UI_PlayerInfo_SetModel
+import UI_DrawPlayer
+import DriverInfo_Cache
+import GraphicsOptions_Cache
+import UI_GraphicsOptionsMenu
+import ServerInfo_Cache
+import UI_ServerInfoMenu
+import UI_BotSelectMenu_Cache
+import UI_BotSelectMenu
+import ServerOptions_Cache
+import StartServer_Cache
+import UI_StartServerMenu
+import ArenaServers_Cache
+import UI_ArenaServersMenu
+import SpecifyServer_Cache
+import UI_SpecifyServerMenu
+import SpecifyLeague_Cache
+import UI_SpecifyLeagueMenu
+import Preferences_Cache
+import UI_PreferencesMenu
+import PlayerSettings_Cache
+import UI_PlayerSettingsMenu
+import PlayerModel_Cache
+import UI_PlayerModelMenu
+import UI_CDKeyMenu_f
+import UI_CDKeyMenu_Cache
+import UI_CDKeyMenu
+import UI_ModsMenu_Cache
+import UI_ModsMenu
+import UI_CinematicsMenu_Cache
+import UI_CinematicsMenu_f
+import UI_CinematicsMenu
+import Demos_Cache
+import UI_DemosMenu
+import Controls_Cache
+import UI_ControlsMenu
+import UI_DrawConnectScreen
+import TeamMain_Cache
+import UI_TeamMainMenu
+import UI_SetupMenu
+import UI_SetupMenu_Cache
+import UI_Message
+import UI_ConfirmMenu_Style
+import UI_ConfirmMenu
+import ConfirmMenu_Cache
+import UI_InGameMenu
+import InGame_Cache
+import UI_CreditMenu
+import UI_UpdateCvars
+import UI_RegisterCvars
+import UI_MainMenu
+import MainMenu_Cache
+import MenuField_Key
+import MenuField_Draw
+import MenuField_Init
+import MField_Draw
+import MField_CharEvent
+import MField_KeyDownEvent
+import MField_Clear
+import UI_VideoCheck
+import ui_medalSounds
+import ui_medalPicNames
+import ui_medalNames
+import list_color
+import name_color
+import menu_black_color
+import menu_red_color
+import menu_highlight_color
+import menu_dark_color
+import menu_grayed_color
+export weaponChangeSound
+align 4
+LABELV weaponChangeSound
+skip 4
+export menu_null_sound
+align 4
+LABELV menu_null_sound
+skip 4
+export menu_buzz_sound
+align 4
+LABELV menu_buzz_sound
+skip 4
+export menu_out_sound
+align 4
+LABELV menu_out_sound
+skip 4
+export menu_move_sound
+align 4
+LABELV menu_move_sound
+skip 4
+export menu_in_sound
+align 4
+LABELV menu_in_sound
+skip 4
+import Menu_Focus
+import ui_cdkeychecked
+import ui_cdkey
+import ui_server16
+import ui_server15
+import ui_server14
+import ui_server13
+import ui_server12
+import ui_server11
+import ui_server10
+import ui_server9
+import ui_server8
+import ui_server7
+import ui_server6
+import ui_server5
+import ui_server4
+import ui_server3
+import ui_server2
+import ui_server1
+import ui_marks
+import ui_drawCrosshairNames
+import ui_drawCrosshair
+import ui_brassTime
+import ui_browserShowEmpty
+import ui_browserShowFull
+import ui_browserSortKey
+import ui_browserGameType
+import ui_browserMaster
+import ui_spSelection
+import ui_spSkill
+import ui_spVideos
+import ui_spAwards
+import ui_spScores5
+import ui_spScores4
+import ui_spScores3
+import ui_spScores2
+import ui_spScores1
+import ui_botsFile
+import ui_arenasFile
+import ui_ctf_friendly
+import ui_ctf_timelimit
+import ui_ctf_capturelimit
+import ui_team_friendly
+import ui_team_timelimit
+import ui_team_fraglimit
+import ui_tourney_timelimit
+import ui_tourney_fraglimit
+import ui_ffa_timelimit
+import ui_ffa_fraglimit
+import BigEndian
+import replace1
+import Q_stradd
+import Q_strcpy
+import BG_StripColor
+import BG_CleanName
+import DecodedString
+import EncodedString
+import strtok
+import Q_stristr
+import BG_sprintf
+import BG_PlayerTouchesItem
+import BG_PlayerStateToEntityStateExtraPolate
+import BG_PlayerStateToEntityState
+import BG_TouchJumpPad
+import BG_AddPredictableEventToPlayerstate
+import BG_EvaluateTrajectoryDelta
+import BG_EvaluateTrajectory
+import BG_CanItemBeGrabbed
+import BG_FindItemForHoldable
+import BG_FindItemForPowerup
+import BG_FindItemForWeapon
+import BG_FindItem
+import bg_numItems
+import bg_itemlist
+import Pmove
+import PM_UpdateViewAngles
+import Com_Printf
+import Com_Error
+import Info_NextPair
+import Info_ValidateKeyValue
+import Info_Validate
+import Info_SetValueForKey_Big
+import Info_SetValueForKey
+import Info_ValueForKey
+import va
+import Q_CleanStr
+import Q_PrintStrlen
+import Q_strcat
+import Q_strncpyz
+import Q_strrchr
+import Q_strupr
+import Q_strlwr
+import Q_stricmpn
+import Q_strncmp
+import Q_stricmp
+import Q_isalpha
+import Q_isupper
+import Q_islower
+import Q_isprint
+import locase
+import Com_sprintf
+import Parse3DMatrix
+import Parse2DMatrix
+import Parse1DMatrix
+import SkipRestOfLine
+import SkipBracedSection
+import COM_MatchToken
+import Com_Split
+import COM_ParseSep
+import Com_InitSeparators
+import SkipTillSeparators
+import COM_ParseWarning
+import COM_ParseError
+import COM_Compress
+import COM_ParseExt
+import COM_Parse
+import COM_GetCurrentParseLine
+import COM_BeginParseSession
+import COM_DefaultExtension
+import COM_StripExtension
+import COM_SkipPath
+import Com_Clamp
+import PerpendicularVector
+import AngleVectors
+import MatrixMultiply
+import MakeNormalVectors
+import RotateAroundDirection
+import RotatePointAroundVector
+import ProjectPointOnPlane
+import PlaneFromPoints
+import AngleDelta
+import AngleNormalize180
+import AngleNormalize360
+import AnglesSubtract
+import AngleSubtract
+import LerpAngle
+import AngleMod
+import BoxOnPlaneSide
+import SetPlaneSignbits
+import AxisCopy
+import AxisClear
+import AnglesToAxis
+import vectoangles
+import Q_crandom
+import Q_random
+import Q_rand
+import Q_acos
+import Q_log2
+import VectorRotate
+import Vector4Scale
+import VectorNormalize2
+import VectorNormalize
+import CrossProduct
+import VectorInverse
+import VectorNormalizeFast
+import DistanceSquared
+import Distance
+import VectorLengthSquared
+import VectorLength
+import VectorCompare
+import AddPointToBounds
+import ClearBounds
+import RadiusFromBounds
+import NormalizeColor
+import ColorBytes4
+import ColorBytes3
+import VectorMAM
+import _VectorMA
+import _VectorScale
+import _VectorCopy
+import _VectorAdd
+import _VectorSubtract
+import _DotProduct
+import ByteToDir
+import DirToByte
+import ClampShort
+import ClampChar
+import Q_rsqrt
+import Q_fabs
+import axisDefault
+import vec3_origin
+import g_color_table
+import colorDkGrey
+import colorMdGrey
+import colorLtGrey
+import colorWhite
+import colorCyan
+import colorMagenta
+import colorYellow
+import colorBlue
+import colorGreen
+import colorRed
+import colorBlack
+import bytedirs
+import Hunk_Alloc
+import acos
+import fabs
+import abs
+import tan
+import atan2
+import cos
+import sin
+import sqrt
+import floor
+import ceil
+import memcpy
+import memset
+import memmove
+import Q_sscanf
+import ED_vsprintf
+import atoi
+import atof
+import toupper
+import tolower
+import strncpy
+import strstr
+import strchr
+import strcmp
+import strcpy
+import strcat
+import strlen
+import rand
+import srand
+import qsort
+lit
+align 1
+LABELV $634
+byte 1 109
+byte 1 101
+byte 1 110
+byte 1 117
+byte 1 47
+byte 1 97
+byte 1 114
+byte 1 116
+byte 1 47
+byte 1 115
+byte 1 108
+byte 1 105
+byte 1 100
+byte 1 101
+byte 1 114
+byte 1 98
+byte 1 117
+byte 1 116
+byte 1 116
+byte 1 95
+byte 1 49
+byte 1 0
+align 1
+LABELV $633
+byte 1 109
+byte 1 101
+byte 1 110
+byte 1 117
+byte 1 47
+byte 1 97
+byte 1 114
+byte 1 116
+byte 1 47
+byte 1 115
+byte 1 108
+byte 1 105
+byte 1 100
+byte 1 101
+byte 1 114
+byte 1 98
+byte 1 117
+byte 1 116
+byte 1 116
+byte 1 95
+byte 1 48
+byte 1 0
+align 1
+LABELV $632
+byte 1 109
+byte 1 101
+byte 1 110
+byte 1 117
+byte 1 47
+byte 1 97
+byte 1 114
+byte 1 116
+byte 1 47
+byte 1 115
+byte 1 108
+byte 1 105
+byte 1 100
+byte 1 101
+byte 1 114
+byte 1 50
+byte 1 0
+align 1
+LABELV $631
+byte 1 115
+byte 1 111
+byte 1 117
+byte 1 110
+byte 1 100
+byte 1 47
+byte 1 119
+byte 1 101
+byte 1 97
+byte 1 112
+byte 1 111
+byte 1 110
+byte 1 115
+byte 1 47
+byte 1 99
+byte 1 104
+byte 1 97
+byte 1 110
+byte 1 103
+byte 1 101
+byte 1 46
+byte 1 119
+byte 1 97
+byte 1 118
+byte 1 0
+align 1
+LABELV $630
+byte 1 115
+byte 1 111
+byte 1 117
+byte 1 110
+byte 1 100
+byte 1 47
+byte 1 109
+byte 1 105
+byte 1 115
+byte 1 99
+byte 1 47
+byte 1 109
+byte 1 101
+byte 1 110
+byte 1 117
+byte 1 52
+byte 1 46
+byte 1 119
+byte 1 97
+byte 1 118
+byte 1 0
+align 1
+LABELV $629
+byte 1 115
+byte 1 111
+byte 1 117
+byte 1 110
+byte 1 100
+byte 1 47
+byte 1 109
+byte 1 105
+byte 1 115
+byte 1 99
+byte 1 47
+byte 1 109
+byte 1 101
+byte 1 110
+byte 1 117
+byte 1 51
+byte 1 46
+byte 1 119
+byte 1 97
+byte 1 118
+byte 1 0
+align 1
+LABELV $628
+byte 1 115
+byte 1 111
+byte 1 117
+byte 1 110
+byte 1 100
+byte 1 47
+byte 1 109
+byte 1 105
+byte 1 115
+byte 1 99
+byte 1 47
+byte 1 109
+byte 1 101
+byte 1 110
+byte 1 117
+byte 1 50
+byte 1 46
+byte 1 119
+byte 1 97
+byte 1 118
+byte 1 0
+align 1
+LABELV $627
+byte 1 115
+byte 1 111
+byte 1 117
+byte 1 110
+byte 1 100
+byte 1 47
+byte 1 109
+byte 1 105
+byte 1 115
+byte 1 99
+byte 1 47
+byte 1 109
+byte 1 101
+byte 1 110
+byte 1 117
+byte 1 49
+byte 1 46
+byte 1 119
+byte 1 97
+byte 1 118
+byte 1 0
+align 1
+LABELV $626
+byte 1 109
+byte 1 101
+byte 1 110
+byte 1 117
+byte 1 98
+byte 1 97
+byte 1 99
+byte 1 107
+byte 1 110
+byte 1 111
+byte 1 108
+byte 1 111
+byte 1 103
+byte 1 111
+byte 1 0
+align 1
+LABELV $624
+byte 1 117
+byte 1 105
+byte 1 47
+byte 1 98
+byte 1 103
+byte 1 46
+byte 1 106
+byte 1 112
+byte 1 103
+byte 1 0
+align 1
+LABELV $622
+byte 1 109
+byte 1 101
+byte 1 110
+byte 1 117
+byte 1 98
+byte 1 97
+byte 1 99
+byte 1 107
+byte 1 82
+byte 1 97
+byte 1 103
+byte 1 101
+byte 1 80
+byte 1 114
+byte 1 111
+byte 1 0
+align 1
+LABELV $616
+byte 1 119
+byte 1 104
+byte 1 105
+byte 1 116
+byte 1 101
+byte 1 0
+align 1
+LABELV $614
+byte 1 109
+byte 1 101
+byte 1 110
+byte 1 117
+byte 1 47
+byte 1 97
+byte 1 114
+byte 1 116
+byte 1 47
+byte 1 115
+byte 1 119
+byte 1 105
+byte 1 116
+byte 1 99
+byte 1 104
+byte 1 95
+byte 1 111
+byte 1 102
+byte 1 102
+byte 1 0
+align 1
+LABELV $612
+byte 1 109
+byte 1 101
+byte 1 110
+byte 1 117
+byte 1 47
+byte 1 97
+byte 1 114
+byte 1 116
+byte 1 47
+byte 1 115
+byte 1 119
+byte 1 105
+byte 1 116
+byte 1 99
+byte 1 104
+byte 1 95
+byte 1 111
+byte 1 110
+byte 1 0
+align 1
+LABELV $610
+byte 1 109
+byte 1 101
+byte 1 110
+byte 1 117
+byte 1 47
+byte 1 97
+byte 1 114
+byte 1 116
+byte 1 47
+byte 1 51
+byte 1 95
+byte 1 99
+byte 1 117
+byte 1 114
+byte 1 115
+byte 1 111
+byte 1 114
+byte 1 50
+byte 1 0
+align 1
+LABELV $608
+byte 1 109
+byte 1 101
+byte 1 110
+byte 1 117
+byte 1 47
+byte 1 97
+byte 1 114
+byte 1 116
+byte 1 47
+byte 1 102
+byte 1 111
+byte 1 110
+byte 1 116
+byte 1 50
+byte 1 95
+byte 1 112
+byte 1 114
+byte 1 111
+byte 1 112
+byte 1 46
+byte 1 116
+byte 1 103
+byte 1 97
+byte 1 0
+align 1
+LABELV $606
+byte 1 109
+byte 1 101
+byte 1 110
+byte 1 117
+byte 1 47
+byte 1 97
+byte 1 114
+byte 1 116
+byte 1 47
+byte 1 102
+byte 1 111
+byte 1 110
+byte 1 116
+byte 1 49
+byte 1 95
+byte 1 112
+byte 1 114
+byte 1 111
+byte 1 112
+byte 1 95
+byte 1 103
+byte 1 108
+byte 1 111
+byte 1 46
+byte 1 116
+byte 1 103
+byte 1 97
+byte 1 0
+align 1
+LABELV $604
+byte 1 109
+byte 1 101
+byte 1 110
+byte 1 117
+byte 1 47
+byte 1 97
+byte 1 114
+byte 1 116
+byte 1 47
+byte 1 102
+byte 1 111
+byte 1 110
+byte 1 116
+byte 1 49
+byte 1 95
+byte 1 112
+byte 1 114
+byte 1 111
+byte 1 112
+byte 1 46
+byte 1 116
+byte 1 103
+byte 1 97
+byte 1 0
+align 1
+LABELV $602
+byte 1 103
+byte 1 102
+byte 1 120
+byte 1 47
+byte 1 50
+byte 1 100
+byte 1 47
+byte 1 98
+byte 1 105
+byte 1 103
+byte 1 99
+byte 1 104
+byte 1 97
+byte 1 114
+byte 1 115
+byte 1 0
+align 1
+LABELV $570
+byte 1 115
+byte 1 99
+byte 1 114
+byte 1 101
+byte 1 101
+byte 1 110
+byte 1 115
+byte 1 104
+byte 1 111
+byte 1 116
+byte 1 10
+byte 1 0
+align 1
+LABELV $524
+byte 1 77
+byte 1 101
+byte 1 110
+byte 1 117
+byte 1 95
+byte 1 68
+byte 1 114
+byte 1 97
+byte 1 119
+byte 1 58
+byte 1 32
+byte 1 117
+byte 1 110
+byte 1 107
+byte 1 110
+byte 1 111
+byte 1 119
+byte 1 110
+byte 1 32
+byte 1 116
+byte 1 121
+byte 1 112
+byte 1 101
+byte 1 32
+byte 1 37
+byte 1 100
+byte 1 0
+align 1
+LABELV $456
+byte 1 77
+byte 1 101
+byte 1 110
+byte 1 117
+byte 1 95
+byte 1 73
+byte 1 110
+byte 1 105
+byte 1 116
+byte 1 58
+byte 1 32
+byte 1 117
+byte 1 110
+byte 1 107
+byte 1 110
+byte 1 111
+byte 1 119
+byte 1 110
+byte 1 32
+byte 1 116
+byte 1 121
+byte 1 112
+byte 1 101
+byte 1 32
+byte 1 37
+byte 1 100
+byte 1 0
+align 1
+LABELV $440
+byte 1 77
+byte 1 101
+byte 1 110
+byte 1 117
+byte 1 95
+byte 1 65
+byte 1 100
+byte 1 100
+byte 1 73
+byte 1 116
+byte 1 101
+byte 1 109
+byte 1 58
+byte 1 32
+byte 1 101
+byte 1 120
+byte 1 99
+byte 1 101
+byte 1 115
+byte 1 115
+byte 1 105
+byte 1 118
+byte 1 101
+byte 1 32
+byte 1 105
+byte 1 116
+byte 1 101
+byte 1 109
+byte 1 115
+byte 1 0
+align 1
+LABELV $184
+byte 1 111
+byte 1 110
+byte 1 0
+align 1
+LABELV $182
+byte 1 111
+byte 1 102
+byte 1 102
+byte 1 0

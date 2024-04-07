@@ -2483,11 +2483,20 @@ static void CG_DrawProxWarning(void) {
 
 	//:::::::::::::::::::::::::::::::::::::::::
 	static void CG_DrawTimerActive(float x, float y, float alpha) {
+		int timer;
+		int msec;
+		int sec;
+		int min;
+		int ten;
+
+		char* s;
+		int   w;
+
 		x = x * SCREEN_WIDTH;
 		y = y * SCREEN_HEIGHT;
 
 		// Timers set to -1 are considered disabled. On player_die(), ClientSpawn(), etc
-		int timer;
+		
 		if (cg.timer_stop >= 0) {  // If there is a timer_stop active, draw it and ignore active timer
 			timer = cg.timer_stop;
 		} else if (cg.timer_start >= 0) {  // Draw active timer instead
@@ -2496,19 +2505,30 @@ static void CG_DrawProxWarning(void) {
 			timer = 0;
 		}
 
-		int msec = timer % 1000;
-		int sec  = timer / 1000;
-		int min  = sec / 60;
+		msec = timer % 1000;
+		sec  = timer / 1000;
+		min  = sec / 60;
 		sec -= min * 60;
-		int ten = sec / 10;
+		ten = sec / 10;
 		sec -= ten * 10;
 
-		char* s = (min > 0) ? va("%i:%i%i:%03i", min, ten, sec, msec) : va("%i%i:%03i", ten, sec, msec);
-		int   w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH * 0.5;
+		s = (min > 0) ? va("%i:%i%i:%03i", min, ten, sec, msec) : va("%i%i:%03i", ten, sec, msec);
+		w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH * 0.5;
 		CG_DrawString(x+w, y, s, colorWhite, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0, DS_SHADOW | DS_RIGHT | DS_PROPORTIONAL);
 	}
 	//..............................................
 	static void CG_DrawTimerBest(float x, float y, float alpha) {
+
+		int timer;
+
+		int msec;
+		int sec;
+		int min;
+		int ten;
+
+		char* s;
+		int   w;
+		
 		// Don't draw the best timer when its 0 or negative
 		if (cg.timer_best <= 0) {
 			return;
@@ -2517,26 +2537,30 @@ static void CG_DrawProxWarning(void) {
 		x = x * SCREEN_WIDTH;
 		y = y * SCREEN_HEIGHT;
 
-		int timer = cg.timer_best;
+		timer = cg.timer_best;
 
-		int msec = timer % 1000;
-		int sec  = timer / 1000;
-		int min  = sec / 60;
+		msec = timer % 1000;
+		sec  = timer / 1000;
+		min  = sec / 60;
 		sec -= min * 60;
-		int ten = sec / 10;
+		ten = sec / 10;
 		sec -= ten * 10;
 
-		char* s = (min > 0) ? va("%i:%i%i:%03i", min, ten, sec, msec) : va("%i%i:%03i", ten, sec, msec);
-		int   w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH * 0.5;
+		s = (min > 0) ? va("%i:%i%i:%03i", min, ten, sec, msec) : va("%i%i:%03i", ten, sec, msec);
+		w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH * 0.5;
 		CG_DrawString(x+w, y, s, colorWhite, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0, DS_SHADOW | DS_RIGHT | DS_PROPORTIONAL);
 	}
 	//..............................................
 	static void CG_DrawSmallIntCentered(int num, float x, float y, float alpha) {
+
+		char* time;
+		int   w;
+
 		// Convert [0-1] input range to ui expected range
 		x          = x * SCREEN_WIDTH;
 		y          = y * SCREEN_HEIGHT;
-		char* time = va("%i", num);
-		int   w    = CG_DrawStrlen(time) * SMALLCHAR_WIDTH * 0.5;
+		time = va("%i", num);
+		w    = CG_DrawStrlen(time) * SMALLCHAR_WIDTH * 0.5;
 		CG_DrawString(x+w, y, time, colorWhite, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0, DS_SHADOW | DS_RIGHT | DS_PROPORTIONAL);
 	}
 	//..............................................

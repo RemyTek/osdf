@@ -590,8 +590,10 @@ static void G_InitGame(int levelTime, int randomSeed, int restart) {
 	{
 		gentity_t* ent;
 		qboolean   isTriggerOnce;
+		int			id;
+		
 		// Loop through all gentities
-		for (int id = 0; id < MAX_GENTITIES; id++) {
+		for (id = 0; id < MAX_GENTITIES; id++) {
 			ent           = &g_entities[id];
 			isTriggerOnce = (!Q_stricmp(ent->classname, "trigger_multiple") && ent->wait < 0) ? qtrue : qfalse;
 			if (isTriggerOnce) {
