@@ -1411,7 +1411,7 @@ PM_WaterEvents
 Generate sound events for entering and leaving water
 ==============
 */
-/* void PM_WaterEvents(void) {  // FIXME?
+void PM_WaterEvents(void) {  // FIXME?
 	//
 	// if just entered a water volume, play a sound
 	//
@@ -1439,7 +1439,7 @@ Generate sound events for entering and leaving water
 	if (pml.previous_waterlevel == 3 && pm->waterlevel != 3) {
 		PM_AddEvent(EV_WATER_CLEAR);
 	}
-} */
+}
 
 /*
 ===============
@@ -1986,7 +1986,7 @@ void PmoveSingle(pmove_t* pmove) {
 	PM_Footsteps();
 
 	// entering / leaving water splashes
-	//PM_WaterEvents();
+	PM_WaterEvents();
 
 	if (pm->ps->powerups[PW_FLIGHT] && !pml.groundPlane) {
 		// don't snap velocity in free-fly or we will be not able to stop via flight friction
@@ -3184,7 +3184,7 @@ void q3a_move(pmove_t* pmove) {
 	// footstep events / legs animations
 	PM_Footsteps();
 	// entering / leaving water splashes
-	//PM_WaterEvents();
+	PM_WaterEvents();
 	// Snapzones: Snap some parts of playerstate to save network bandwidth
 	trap_SnapVector(pm->ps->velocity);
 }
