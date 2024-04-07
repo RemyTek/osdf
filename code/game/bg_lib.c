@@ -41,80 +41,89 @@
  */
 
 // bk001127 - needed for DLL's
-#if !defined(Q3_VM)
-typedef int cmp_t(const void*, const void*);
+#if !defined( Q3_VM )
+typedef int		 cmp_t(const void *, const void *);
 #endif
 
-static char* med3(char*, char*, char*, cmp_t*);
-static void  swapfunc(char*, char*, int, int);
+static char* med3(char *, char *, char *, cmp_t *);
+static void	 swapfunc(char *, char *, int, int);
 
 #ifndef min
-#define min(a, b) ((a) < (b) ? a : b)
+#define min(a, b)	((a) < (b) ? a : b)
 #endif
 
 /*
  * Qsort routine from Bentley & McIlroy's "Engineering a Sort Function".
  */
-#define swapcode(TYPE, parmi, parmj, n)                                                                                                                        \
-	{                                                                                                                                                          \
-		long           i  = (n) / sizeof(TYPE);                                                                                                                \
-		register TYPE* pi = (TYPE*)(parmi);                                                                                                                    \
-		register TYPE* pj = (TYPE*)(parmj);                                                                                                                    \
-		do {                                                                                                                                                   \
-			register TYPE t = *pi;                                                                                                                             \
-			*pi++           = *pj;                                                                                                                             \
-			*pj++           = t;                                                                                                                               \
-		} while (--i > 0);                                                                                                                                     \
-	}
-
-#define SWAPINIT(a, es) swaptype = ((char*)a - (char*)0) % sizeof(long) || es % sizeof(long) ? 2 : es == sizeof(long) ? 0 : 1;
-
-static void swapfunc(a, b, n, swaptype) char *a, *b;
-int         n, swaptype;
-{
-	if (swaptype <= 1)
-		swapcode(long, a, b, n) else swapcode(char, a, b, n)
+#define swapcode(TYPE, parmi, parmj, n) { 		\
+	long i = (n) / sizeof (TYPE); 			\
+	register TYPE *pi = (TYPE *) (parmi); 		\
+	register TYPE *pj = (TYPE *) (parmj); 		\
+	do { 						\
+		register TYPE	t = *pi;		\
+		*pi++ = *pj;				\
+		*pj++ = t;				\
+        } while (--i > 0);				\
 }
 
-#define swap(a, b)                                                                                                                                             \
-	if (swaptype == 0) {                                                                                                                                       \
-		long t      = *(long*)(a);                                                                                                                             \
-		*(long*)(a) = *(long*)(b);                                                                                                                             \
-		*(long*)(b) = t;                                                                                                                                       \
-	} else                                                                                                                                                     \
+#define SWAPINIT(a, es) swaptype = ((char *)a - (char *)0) % sizeof(long) || \
+	es % sizeof(long) ? 2 : es == sizeof(long)? 0 : 1;
+
+static void
+swapfunc(a, b, n, swaptype)
+	char *a, *b;
+	int n, swaptype;
+{
+	if(swaptype <= 1)
+		swapcode(long, a, b, n)
+	else
+		swapcode(char, a, b, n)
+}
+
+#define swap(a, b)					\
+	if (swaptype == 0) {				\
+		long t = *(long *)(a);			\
+		*(long *)(a) = *(long *)(b);		\
+		*(long *)(b) = t;			\
+	} else						\
 		swapfunc(a, b, es, swaptype)
 
-#define vecswap(a, b, n)                                                                                                                                       \
-	if ((n) > 0)                                                                                                                                               \
-	swapfunc(a, b, n, swaptype)
+#define vecswap(a, b, n) 	if ((n) > 0) swapfunc(a, b, n, swaptype)
 
-static char* med3(a, b, c, cmp)
-char *       a, *b, *c;
-cmp_t*       cmp;
-{ return cmp(a, b) < 0 ? (cmp(b, c) < 0 ? b : (cmp(a, c) < 0 ? c : a)) : (cmp(b, c) > 0 ? b : (cmp(a, c) < 0 ? a : c)); }
+static char *
+med3(a, b, c, cmp)
+	char *a, *b, *c;
+	cmp_t *cmp;
+{
+	return cmp(a, b) < 0 ?
+	       (cmp(b, c) < 0 ? b : (cmp(a, c) < 0 ? c : a ))
+              :(cmp(b, c) > 0 ? b : (cmp(a, c) < 0 ? a : c ));
+}
 
-void   qsort(a, n, es, cmp) void* a;
-size_t n, es;
-cmp_t* cmp;
+void
+qsort(a, n, es, cmp)
+	void *a;
+	size_t n, es;
+	cmp_t *cmp;
 {
 	char *pa, *pb, *pc, *pd, *pl, *pm, *pn;
-	int   d, r, swaptype, swap_cnt;
+	int d, r, swaptype, swap_cnt;
 
-loop:
-	SWAPINIT(a, es);
+loop:	SWAPINIT(a, es);
 	swap_cnt = 0;
 	if (n < 7) {
-		for (pm = (char*)a + es; pm < (char*)a + n * es; pm += es)
-			for (pl = pm; pl > (char*)a && cmp(pl - es, pl) > 0; pl -= es)
+		for (pm = (char *)a + es; pm < (char *)a + n * es; pm += es)
+			for (pl = pm; pl > (char *)a && cmp(pl - es, pl) > 0;
+			     pl -= es)
 				swap(pl, pl - es);
 		return;
 	}
-	pm = (char*)a + (n / 2) * es;
+	pm = (char *)a + (n / 2) * es;
 	if (n > 7) {
 		pl = a;
-		pn = (char*)a + (n - 1) * es;
+		pn = (char *)a + (n - 1) * es;
 		if (n > 40) {
-			d  = (n / 8) * es;
+			d = (n / 8) * es;
 			pl = med3(pl, pl + d, pl + 2 * d, cmp);
 			pm = med3(pm - d, pm, pm + d, cmp);
 			pn = med3(pn - 2 * d, pn - d, pn, cmp);
@@ -122,9 +131,9 @@ loop:
 		pm = med3(pl, pm, pn, cmp);
 	}
 	swap(a, pm);
-	pa = pb = (char*)a + es;
+	pa = pb = (char *)a + es;
 
-	pc = pd = (char*)a + (n - 1) * es;
+	pc = pd = (char *)a + (n - 1) * es;
 	for (;;) {
 		while (pb <= pc && (r = cmp(pb, a)) <= 0) {
 			if (r == 0) {
@@ -149,15 +158,16 @@ loop:
 		pb += es;
 		pc -= es;
 	}
-	if (swap_cnt == 0) { /* Switch to insertion sort */
-		for (pm = (char*)a + es; pm < (char*)a + n * es; pm += es)
-			for (pl = pm; pl > (char*)a && cmp(pl - es, pl) > 0; pl -= es)
+	if (swap_cnt == 0) {  /* Switch to insertion sort */
+		for (pm = (char *)a + es; pm < (char *)a + n * es; pm += es)
+			for (pl = pm; pl > (char *)a && cmp(pl - es, pl) > 0;
+			     pl -= es)
 				swap(pl, pl - es);
 		return;
 	}
 
-	pn = (char*)a + n * es;
-	r  = min(pa - (char*)a, pb - pa);
+	pn = (char *)a + n * es;
+	r = min(pa - (char *)a, pb - pa);
 	vecswap(a, pb - r, r);
 	r = min(pd - pc, pn - pd - es);
 	vecswap(pb, pn - r, r);
@@ -169,116 +179,119 @@ loop:
 		n = r / es;
 		goto loop;
 	}
-	/*		qsort(pn - r, r / es, es, cmp);*/
+/*		qsort(pn - r, r / es, es, cmp);*/
 }
 
 //==================================================================================
 
+
 // this file is excluded from release builds because of intrinsics
 
-#if defined(Q3_VM)
+#if defined ( Q3_VM )
 
-size_t strlen(const char* string) {
-	const char* s;
+size_t strlen( const char *string ) {
+	const char	*s;
 
 	s = string;
-	while (*s) {
+	while ( *s ) {
 		s++;
 	}
 	return s - string;
 }
 
-char* strcat(char* strDestination, const char* strSource) {
-	char* s;
+
+char *strcat( char *strDestination, const char *strSource ) {
+	char	*s;
 
 	s = strDestination;
-	while (*s) {
+	while ( *s ) {
 		s++;
 	}
-	while (*strSource) {
+	while ( *strSource ) {
 		*s = *strSource;
-		s++;
-		strSource++;
+		s++; strSource++;
 	}
 	*s = 0;
 	return strDestination;
 }
 
-char* strcpy(char* strDestination, const char* strSource) {
-	char* s;
+char *strcpy( char *strDestination, const char *strSource ) {
+	char *s;
 
 	s = strDestination;
-	while (*strSource) {
+	while ( *strSource ) {
 		*s = *strSource;
-		s++;
-		strSource++;
+		s++; strSource++;
 	}
 	*s = 0;
 	return strDestination;
 }
 
-int strcmp(const char* string1, const char* string2) {
-	while (*string1 == *string2 && *string1 && *string2) {
+
+int strcmp( const char *string1, const char *string2 ) {
+	while ( *string1 == *string2 && *string1 && *string2 ) {
 		string1++;
 		string2++;
 	}
 	return *string1 - *string2;
 }
 
-char* strchr(const char* string, int c) {
-	while (*string) {
-		if (*string == c) {
-			return (char*)string;
+
+char *strchr( const char *string, int c ) {
+	while ( *string ) {
+		if ( *string == c ) {
+			return ( char * )string;
 		}
 		string++;
 	}
-	if (c)
+	if(c)
 		return NULL;
 	else
-		return (char*)string;
+		return (char *) string;
 }
 
-char* strstr(const char* string, const char* strCharSet) {
-	while (*string) {
-		int i;
 
-		for (i = 0; strCharSet[i]; i++) {
-			if (string[i] != strCharSet[i]) {
+char *strstr( const char *string, const char *strCharSet ) {
+	while ( *string ) {
+		int		i;
+
+		for ( i = 0 ; strCharSet[i] ; i++ ) {
+			if ( string[i] != strCharSet[i] ) {
 				break;
 			}
 		}
-		if (!strCharSet[i]) {
-			return (char*)string;
+		if ( !strCharSet[i] ) {
+			return (char *)string;
 		}
 		string++;
 	}
-	return (char*)0;
+	return (char *)0;
 }
 
-int tolower(int c) {
-	if (c >= 'A' && c <= 'Z') {
+int tolower( int c ) {
+	if ( c >= 'A' && c <= 'Z' ) {
 		c += 'a' - 'A';
 	}
 	return c;
 }
 
-int toupper(int c) {
-	if (c >= 'a' && c <= 'z') {
+int toupper( int c ) {
+	if ( c >= 'a' && c <= 'z' ) {
 		c += 'A' - 'a';
 	}
 	return c;
 }
 
-void* memmove(void* dest, const void* src, size_t count) {
-	int i;
+void *memmove( void *dest, const void *src, size_t count ) {
+	int		i;
 
-	if (dest > src) {
-		for (i = count - 1; i >= 0; i--) {
-			((char*)dest)[i] = ((char*)src)[i];
+	if ( dest > src ) {
+		for ( i = count-1 ; i >= 0 ; i-- ) {
+			((char *)dest)[i] = ((char *)src)[i];
 		}
 	} else {
-		for (i = 0; i < count; i++) {
-			((char*)dest)[i] = ((char*)src)[i];
+		for ( i = 0 ; i < count ; i++ ) {
+			((char *)dest)[i] = ((char *)src)[i];
 		}
 	}
 	return dest;
@@ -538,42 +551,45 @@ double atan2( double y, double x ) {
 	return base + dir * i * ( M_PI/2048); 
 }
 
+
 #endif
 
 #ifdef Q3_VM
-// bk001127 - guarded this tan replacement
+// bk001127 - guarded this tan replacement 
 // ld: undefined versioned symbol name tan@@GLIBC_2.0
-double tan(double x) {
+double tan( double x ) {
 	return sin(x) / cos(x);
 }
 #endif
 
+
 static int randSeed = 0;
 
-void       srand(unsigned seed) {
-		  randSeed = seed;
+void	srand( unsigned seed ) {
+	randSeed = seed;
 }
 
-int rand(void) {
+int		rand( void ) {
 	randSeed = (69069 * randSeed + 1);
 	return randSeed & 0x7fff;
 }
 
-double atof(const char* string) {
+double atof( const char *string ) {
 	float sign;
 	float value;
-	int   c;
+	int		c;
+
 
 	// skip whitespace
-	while (*string <= ' ') {
-		if (!*string) {
+	while ( *string <= ' ' ) {
+		if ( !*string ) {
 			return 0;
 		}
 		string++;
 	}
 
 	// check sign
-	switch (*string) {
+	switch ( *string ) {
 	case '+':
 		string++;
 		sign = 1;
@@ -589,36 +605,35 @@ double atof(const char* string) {
 
 	// read digits
 	value = 0;
-	c     = string[0];
-	if (c != '.') {
+	c = string[0];
+	if ( c != '.' ) {
 		do {
-			c = *string;
-			string++;
-			if (c < '0' || c > '9') {
+			c = *string; string++;
+			if ( c < '0' || c > '9' ) {
 				break;
 			}
 			c -= '0';
 			value = value * 10 + c;
-		} while (1);
+		} while ( 1 );
 	} else {
 		string++;
 	}
 
 	// check for decimal point
-	if (c == '.') {
+	if ( c == '.' ) {
 		double fraction;
 
 		fraction = 0.1;
 		do {
-			c = *string;
-			string++;
-			if (c < '0' || c > '9') {
+			c = *string; string++;
+			if ( c < '0' || c > '9' ) {
 				break;
 			}
 			c -= '0';
 			value += c * fraction;
 			fraction *= 0.1;
-		} while (1);
+		} while ( 1 );
+
 	}
 
 	// not handling 10e10 notation...
@@ -626,17 +641,17 @@ double atof(const char* string) {
 	return value * sign;
 }
 
-double _atof(const char** stringPtr) {
-	const char* string;
-	float       sign;
-	float       value;
-	int         c = '0';  // bk001211 - uninitialized use possible
+double _atof( const char **stringPtr ) {
+	const char	*string;
+	float sign;
+	float value;
+	int		c = '0'; // bk001211 - uninitialized use possible
 
 	string = *stringPtr;
 
 	// skip whitespace
-	while (*string <= ' ') {
-		if (!*string) {
+	while ( *string <= ' ' ) {
+		if ( !*string ) {
 			*stringPtr = string;
 			return 0;
 		}
@@ -644,7 +659,7 @@ double _atof(const char** stringPtr) {
 	}
 
 	// check sign
-	switch (*string) {
+	switch ( *string ) {
 	case '+':
 		string++;
 		sign = 1;
@@ -660,33 +675,32 @@ double _atof(const char** stringPtr) {
 
 	// read digits
 	value = 0;
-	if (string[0] != '.') {
+	if ( string[0] != '.' ) {
 		do {
-			c = *string;
-			string++;
-			if (c < '0' || c > '9') {
+			c = *string; string++;
+			if ( c < '0' || c > '9' ) {
 				break;
 			}
 			c -= '0';
 			value = value * 10 + c;
-		} while (1);
+		} while ( 1 );
 	}
 
 	// check for decimal point
-	if (c == '.') {
+	if ( c == '.' ) {
 		double fraction;
 
 		fraction = 0.1;
 		do {
-			c = *string;
-			string++;
-			if (c < '0' || c > '9') {
+			c = *string; string++;
+			if ( c < '0' || c > '9' ) {
 				break;
 			}
 			c -= '0';
 			value += c * fraction;
 			fraction *= 0.1;
-		} while (1);
+		} while ( 1 );
+
 	}
 
 	// not handling 10e10 notation...
@@ -695,22 +709,24 @@ double _atof(const char** stringPtr) {
 	return value * sign;
 }
 
-#if defined(Q3_VM)
-int atoi(const char* string) {
-	int sign;
-	int value;
-	int c;
+
+#if defined ( Q3_VM )
+int atoi( const char *string ) {
+	int		sign;
+	int		value;
+	int		c;
+
 
 	// skip whitespace
-	while (*string <= ' ') {
-		if (!*string) {
+	while ( *string <= ' ' ) {
+		if ( !*string ) {
 			return 0;
 		}
 		string++;
 	}
 
 	// check sign
-	switch (*string) {
+	switch ( *string ) {
 	case '+':
 		string++;
 		sign = 1;
@@ -727,25 +743,24 @@ int atoi(const char* string) {
 	// read digits
 	value = 0;
 	do {
-		c = *string;
-		string++;
-		if (c < '0' || c > '9') {
+		c = *string; string++;
+		if ( c < '0' || c > '9' ) {
 			break;
 		}
 		c -= '0';
 		value = value * 10 + c;
-	} while (1);
+	} while ( 1 );
 
 	// not handling 10e10 notation...
 
 	return value * sign;
 }
 
-int abs(int n) {
+int abs( int n ) {
 	return n < 0 ? -n : n;
 }
 
-double fabs(double x) {
+double fabs( double x ) {
 	return x < 0 ? -x : x;
 }
 #endif
