@@ -62,6 +62,7 @@ extern float phy_slick_accel;
 
 // Initialize
 void phy_init(int movetype);  // Calls all other initializer functions
+void phy_reset(void);
 void cpm_init(void);
 void vq3_init(void);
 void cq3_init(void);

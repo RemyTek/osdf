@@ -44,7 +44,6 @@ qboolean PM_CheckJump(void);
 qboolean PM_CheckWaterJump(void);
 void     PM_WaterJumpMove(void);
 void     PM_WaterMove(void);
-void    phy_reset(void);
 
 #ifdef TEAMARENA
 void PM_InvulnerabilityMove(void);
