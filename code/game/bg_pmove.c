@@ -63,6 +63,8 @@ float phy_airstrafe_basespeed;  // Maxspeed on air when in VQ3, or when strafing
 qboolean phy_aircontrol;         // Turns aircontrol on or off
 float    phy_aircontrol_amount;  // Amount you can control yourself with W/S
 float    phy_aircontrol_power;   // Aircontrol formula exponent
+float	phy_airstopaccelerate = 1;
+float phy_wishspeed = 400;
 // Stepup
 int phy_step_size;    // Distance that will be moved up/down for step behavior. (default = STEPSIZE = 18)
 int phy_step_maxvel;  // When set, it limits the maximum vertical speed at which you can multi/double jump. Prevents stairs-climb crazyness
@@ -631,6 +633,10 @@ void PM_AirMove(void) {
 	float     wishspeed;
 	float     scale;
 	usercmd_t cmd;
+	float		accel; // CPM
+    float		wishspeed2; // CPM
+	qboolean  doAircontrol = qfalse;
+	qboolean  doSideMove, doForwMove;
 
 	PM_Friction();
 
@@ -659,7 +665,36 @@ void PM_AirMove(void) {
 	wishspeed *= scale;
 
 	// not on ground, so little effect on velocity
-	PM_Accelerate(wishdir, wishspeed, pm_airaccelerate);
+	//PM_Accelerate(wishdir, wishspeed, pm_airaccelerate);
+	// CPM: Air Control
+    wishspeed2 = wishspeed;
+    if (DotProduct(pm->ps->velocity, wishdir) < 0)
+        accel = phy_airstopaccelerate;
+    else
+        accel = pm_airaccelerate;
+    if (pm->ps->movementDir == 2 || pm->ps->movementDir == 6)
+    {
+        if (wishspeed > phy_wishspeed)
+            wishspeed = phy_wishspeed;
+        accel = phy_airstrafe_accel;
+    }
+	// CPM specific
+	doSideMove = (smove > 0.1 || smove < -0.1) ? qtrue : qfalse;
+	doForwMove = (fmove > 0.1 || fmove < -0.1) ? qtrue : qfalse;
+    // !CPM
+	if (phy_aircontrol && doForwMove && !doSideMove) {
+		doAircontrol = qtrue;
+	}
+
+	// not on ground, so little effect on velocity
+	// PM_Accelerate (wishdir, wishspeed, pm_airaccelerate);
+
+    // CPM: Air control
+    PM_Accelerate(wishdir, wishspeed, accel);
+    if (doAircontrol) {
+        q3a_AirControl(wishdir, wishspeed2);
+    }
+    // !CPM
 
 	// we may have a ground plane that is very steep, even
 	// though we don't have a groundentity
@@ -2745,6 +2780,8 @@ void phy_reset(void) {
 	// Air
 	phy_air_basespeed = 320;
 	phy_air_accel     = 1;
+	phy_airstopaccelerate = 1;
+	phy_wishspeed = 400;
 	// Air deceleration.
 	phy_air_decel      = 0;
 	phy_air_decelAngle = 0;
@@ -2971,6 +3008,7 @@ void q3a_AirMove(void) {
 	float     wishspeed;  //, wishspeed_c;
 	usercmd_t cmd;
 	qboolean  doSideMove, doForwMove;
+	float		wishspeed2; // CPM
 
 	qboolean  doAircontrol = qfalse;
 	float     realAccel;    // Acceleration to apply
@@ -3050,11 +3088,46 @@ void q3a_AirMove(void) {
 	}  // Undefined physics
 	//::::::::::::::::::
 
-	// not on ground, so little effect on velocity
-	core_Accelerate(wishdir, realWishSpd, realAccel, realSpeed);
-	if (doAircontrol) {
-		q3a_AirControl(wishdir, realWishSpd);
+	
+	// CPM: Air Control
+    wishspeed2 = wishspeed;
+    if (DotProduct(pm->ps->velocity, wishdir) < 0)
+        realAccel = phy_airstopaccelerate;
+    else
+        realAccel = pm_airaccelerate;
+    if (pm->ps->movementDir == 2 || pm->ps->movementDir == 6)
+    {
+        if (wishspeed > phy_wishspeed)
+            wishspeed = phy_wishspeed;
+        realAccel = phy_airstrafe_accel;
+    }
+	// CPM specific
+	doSideMove = (smove > 0.1 || smove < -0.1) ? qtrue : qfalse;
+	doForwMove = (fmove > 0.1 || fmove < -0.1) ? qtrue : qfalse;
+    // !CPM
+	if (phy_aircontrol && doForwMove && !doSideMove) {
+		doAircontrol = qtrue;
 	}
+
+	// not on ground, so little effect on velocity
+	// PM_Accelerate (wishdir, wishspeed, pm_airaccelerate);
+
+    // CPM: Air control
+    core_Accelerate(wishdir, realWishSpd, realAccel, realSpeed);
+    if (doAircontrol) {
+		phy_airstopaccelerate = 2.5;
+		phy_wishspeed = 30;
+        q3a_AirControl(wishdir, wishspeed2);
+    }
+    // !CPM
+
+	// not on ground, so little effect on velocity
+	//core_Accelerate(wishdir, realWishSpd, realAccel, realSpeed);
+	/* if (doAircontrol) {
+		phy_airstopaccelerate = 2.5;
+		phy_wishspeed = 30;
+		q3a_AirControl(wishdir, realWishSpd);
+	} */
 
 	// we may have a ground plane that is very steep, even though we don't have a
 	// groundentity. slide along the steep plane
