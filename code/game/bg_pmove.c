@@ -692,6 +692,7 @@ void PM_AirMove(void) {
     // CPM: Air control
     PM_Accelerate(wishdir, wishspeed, accel);
     if (doAircontrol) {
+		phy_airstopaccelerate = 2.5;
         q3a_AirControl(wishdir, wishspeed2);
     }
     // !CPM
