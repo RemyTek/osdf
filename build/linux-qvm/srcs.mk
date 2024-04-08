@@ -12,7 +12,7 @@ CG_SRC = \
  cg_consolecmds cg_draw cg_drawtools cg_effects cg_ents cg_event cg_info \
  cg_localents cg_marks cg_players cg_playerstate cg_predict cg_scoreboard \
  cg_servercmds cg_snapshot cg_view cg_weapons \
- bg_slidemove bg_pmove bg_lib bg_misc \
+ bg_slidemove bg_phy bg_lib bg_misc \
  q_math q_shared \
 
 UI_SRC = \
