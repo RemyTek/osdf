@@ -4,6 +4,9 @@
 // takes a playerstate and a usercmd as input and returns a modifed playerstate
 
 #include "bg_pmove.h"
+//#include "q_shared.h"
+//#include "bg_public.h"
+//#include "bg_local.h"
 
 pmove_t* pm;
 pml_t    pml;
@@ -1394,14 +1397,29 @@ void PM_Footsteps(void) {
 				PM_ContinueLegsAnim(LEGS_WALK);
 			}
 		}
-		
-		phy_PmoveSingle;
-		PM_AddEvent(EV_SWIM);
-		
-		} //else if (pm->waterlevel == 3) {
+	}
+
+	// check for footstep / splash sounds
+	old              = pm->ps->bobCycle;
+	pm->ps->bobCycle = (int)(old + bobmove * pml.msec) & 255;
+
+	// if we just crossed a cycle boundary, play an apropriate footstep event
+	if (((old + 64) ^ (pm->ps->bobCycle + 64)) & 128) {
+		if (pm->waterlevel == 0) {
+			// on ground will only play sounds if running
+			if (footstep) {
+				PM_AddEvent(PM_FootstepForSurface());
+			}
+		} else if (pm->waterlevel == 1) {
+			// splashing
+			PM_AddEvent(EV_FOOTSPLASH);
+		} else if (pm->waterlevel == 2) {
+			// wading / swimming at surface
+			PM_AddEvent(EV_SWIM);
+		} else if (pm->waterlevel == 3) {
 			// no sound when completely underwater
-		//}
-	//}
+		}
+	}
 }
 
 /*
