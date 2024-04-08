@@ -578,6 +578,7 @@ void PM_AirMove(void) {
 	float     wishspeed;
 	float     scale;
 	usercmd_t cmd;
+
 	PM_Friction();
 
 	fmove = pm->cmd.forwardmove;

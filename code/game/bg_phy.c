@@ -53,9 +53,10 @@ float phy_water_scale;  // phy_swimScale;
 float       phy_water_friction;
 float       phy_slick_accel;
 
+static void phy_reset(void);  // bottom of this file
+
 // Initialize Physics Values
 qboolean phy_initialized = qfalse;
-
 void     phy_init(int movetype) {
 		// Reset all values, in case each init function is missing any
     phy_reset();
@@ -949,24 +950,551 @@ static void q3a_AirControl(vec3_t wishdir, float wishspeed) {
 	pm->ps->velocity[2] = zVel;  // Restore starting vertical velocity
 }
 
-void q3a_AirMove(void) {void     phy_init(int movetype) {
-		// Reset all values, in case each init function is missing any
-    phy_reset();
-    // Initialize physics variables.
-    switch (movetype) {
-    case VQ3:
-        vq3_init();
-        break;
-    case CPM:
-        cpm_init();
-        break;
-    case CQ3:
-        cq3_init();
-        break;
-    default:
-        Com_Printf("::ERR physics not initialized:  phy_movetype %i not recognized\n", movetype);
-        break;
+void q3a_AirMove(void) {
+	int       i;
+	vec3_t    wishvel;  //, wishvel_c;
+	float     fmove, smove;
+	vec3_t    wishdir;
+	float     wishspeed;  //, wishspeed_c;
+	usercmd_t cmd;
+	qboolean  doSideMove, doForwMove;
+	float		wishspeed2; // CPM
+
+	qboolean  doAircontrol = qfalse;
+	float     realAccel;    // Acceleration to apply
+	float     realSpeed;    // Called maxspeed. Actually just baseSpeed (320ups)
+	float     realWishSpd;  // Wishpeed to apply in each case
+
+	// float angle;
+	// vec3_t vel2D;
+
+	core_Friction();
+
+	// fmove & smove = -127 to 127
+	// upmove        =    0 to  20
+	fmove = pm->cmd.forwardmove;  // AKA: finput, forward_cmd
+	smove = pm->cmd.rightmove;    //      sinput
+	cmd   = pm->cmd;              // Inputs for this AirMove = current inputs
+	PM_SetMovementDir();          // set the movementDir so clients can rotate the legs for strafing
+
+	// Project moves down to flat plane. Zero out z components of movement vectors
+	// Forward & Right x/y ranges are 0/640 and 0/480 //??Not convinced
+	pml.forward[2] = 0;  // AKA: forward_viewangle
+	pml.right[2]   = 0;
+	VectorNormalize(pml.forward);
+	VectorNormalize(pml.right);
+
+	// Calculate player desired velocity vector (wishvel)
+	for (i = 0; i < 2; i++) {  // Determine x and y parts of velocity
+		wishvel[i] = pml.forward[i] * fmove + pml.right[i] * smove;
+	}
+	wishvel[2] = 0;  // Zero out z part of velocity
+
+	// Calculate desired direction (aka normalized wishvel)
+	VectorCopy(wishvel, wishdir);  // Store wishvel in wishdir
+	VectorNormalize(wishdir);      // Normalize wishvel so its actually a 'dir'
+
+	// Calculate desired speed amount, based on wishvel (aka wishpeed)
+	wishspeed = VectorLength(wishvel);  // wishspeed = normalized speed (aka wishvel.length). Because speed = velocity.length
+
+	// CPM specific
+	doSideMove = (smove > 0.1 || smove < -0.1) ? qtrue : qfalse;
+	doForwMove = (fmove > 0.1 || fmove < -0.1) ? qtrue : qfalse;
+
+	if (phy_aircontrol && doForwMove && !doSideMove) {
+		doAircontrol = qtrue;
+	}
+	if (pm->movetype == CPM) {
+		// We do haste in xxx_move. Default is: pm->ps->speed , which comes from g_active.c and has haste factor included in it.
+		if (doSideMove && !doForwMove) {
+			realAccel   = phy_airstrafe_accel;
+			realSpeed   = phy_airstrafe_basespeed;
+			realWishSpd = wishspeed * core_CmdScale(&cmd, qfalse);
+		} else {
+			realAccel   = phy_air_accel;
+			realSpeed   = pm->ps->speed;
+			realWishSpd = wishspeed * core_CmdScale(&cmd, qfalse);
+
+			// Deceleration behavior
+			/*
+			VectorCopy(pm->ps->velocity, vel2D);    // Store velocity in 2D vector
+			vel2D[0] = 0;                           // Zero out its vertical velocity
+			angle = acos_alt(DotProduct(wishdir, vel2D) /
+			                (VectorLength(wishdir) * VectorLength2D(vel2D)));
+			angle *= (180 / M_PI);                  // Convert radians to degrees
+			if (angle > phy_air_decelAngle){        // If the angle is over the decel angle
+			  realAccel *= phy_air_decel;           // Scale down air accel by decel factor
+			}
+			*/
+		}
+	} else if (pm->movetype == VQ3 || pm->movetype == CQ3) {
+		realAccel   = phy_air_accel;
+		realSpeed   = pm->ps->speed;
+		realWishSpd = wishspeed * core_CmdScale(&cmd, qfalse);
+
+	} else {
+		//Com_Printf("Undefined movetype in %s. pm->movetype = %i", pm->movetype, __func__);
+		return;
+	}  // Undefined physics
+	//::::::::::::::::::
+
+	
+	// CPM: Air Control
+    wishspeed2 = wishspeed;
+    if (DotProduct(pm->ps->velocity, wishdir) < 0)
+        realAccel = phy_airstopaccelerate;
+    else
+        realAccel = pm_airaccelerate;
+    if (pm->ps->movementDir == 2 || pm->ps->movementDir == 6)
+    {
+        if (wishspeed > phy_wishspeed)
+            wishspeed = phy_wishspeed;
+        realAccel = phy_airstrafe_accel;
     }
-    Com_Printf("Initialized: phy_movetype %i\n", movetype);
-    phy_initialized = qtrue;
+	// CPM specific
+	doSideMove = (smove > 0.1 || smove < -0.1) ? qtrue : qfalse;
+	doForwMove = (fmove > 0.1 || fmove < -0.1) ? qtrue : qfalse;
+    // !CPM
+	if (phy_aircontrol && doForwMove && !doSideMove) {
+		doAircontrol = qtrue;
+	}
+
+	// not on ground, so little effect on velocity
+	// PM_Accelerate (wishdir, wishspeed, pm_airaccelerate);
+
+    // CPM: Air control
+    core_Accelerate(wishdir, realWishSpd, realAccel, realSpeed);
+    if (doAircontrol) {
+		phy_airstopaccelerate = 2.5;
+		phy_wishspeed = 30;
+        q3a_AirControl(wishdir, wishspeed2);
+    }
+    // !CPM
+
+	// not on ground, so little effect on velocity
+	//core_Accelerate(wishdir, realWishSpd, realAccel, realSpeed);
+	/* if (doAircontrol) {
+		phy_airstopaccelerate = 2.5;
+		phy_wishspeed = 30;
+		q3a_AirControl(wishdir, realWishSpd);
+	} */
+
+	// we may have a ground plane that is very steep, even though we don't have a
+	// groundentity. slide along the steep plane
+	if (pml.groundPlane) {
+		VectorReflect(pm->ps->velocity, pml.groundTrace.plane.normal, pm->ps->velocity, OVERCLIP);
+	}
+	// Do the movement
+	core_StepSlideMove(qtrue);
+}
+
+void q3a_WalkMove(void) {
+	int       i;
+	vec3_t    wishvel;
+	float     fmove, smove;
+	vec3_t    wishdir;
+	float     wishspeed;
+	float     scale;
+	usercmd_t cmd;
+	float     accelerate;
+	float     vel;
+
+	if (pm->waterlevel > 2 && DotProduct(pml.forward, pml.groundTrace.plane.normal) > 0) {
+		PM_WaterMove();  // begin swimming
+		return;
+	}
+
+	if (q3a_CheckJump()) {
+		if (pm->waterlevel > 1) {
+			PM_WaterMove();
+		}  // jumped away
+		else {
+			q3a_AirMove();
+		}
+		return;
+	}
+
+	PM_Friction();
+
+	fmove = pm->cmd.forwardmove;
+	smove = pm->cmd.rightmove;
+	cmd   = pm->cmd;
+	scale = core_CmdScale(&cmd, qfalse);
+
+	// set the movementDir so clients can rotate the legs for strafing
+	PM_SetMovementDir();
+	// project moves down to flat plane
+	pml.forward[2] = 0;
+	pml.right[2]   = 0;
+	// project the forward and right directions onto the ground plane
+	VectorReflect(pml.forward, pml.groundTrace.plane.normal, pml.forward, OVERCLIP);
+	VectorReflect(pml.right, pml.groundTrace.plane.normal, pml.right, OVERCLIP);
+	VectorNormalize(pml.forward);
+	VectorNormalize(pml.right);
+
+	for (i = 0; i < 3; i++) {
+		wishvel[i] = pml.forward[i] * fmove + pml.right[i] * smove;
+	}
+	// when going up or down slopes the wish velocity should Not be zero
+	//	wishvel[2] = 0;
+	VectorCopy(wishvel, wishdir);  // Determine magnitude of speed of move
+	wishspeed = VectorNormalize(wishdir);
+	wishspeed *= scale;
+	// clamp the speed lower if ducking
+	if (pm->ps->pm_flags & PMF_DUCKED) {
+		if (wishspeed > pm->ps->speed * phy_crouch_scale) {
+			wishspeed = pm->ps->speed * phy_crouch_scale;
+		}
+	}
+	// clamp the speed lower if wading or walking on the bottom
+	if (pm->waterlevel) {
+		float waterScale;
+		waterScale = pm->waterlevel / 3.0;
+		waterScale = 1.0 - (1.0 - phy_water_scale) * waterScale;
+		if (wishspeed > pm->ps->speed * waterScale) {
+			wishspeed = pm->ps->speed * waterScale;
+		}
+	}
+	// when a player gets hit, they temporarily lose full control, which allows them to be moved a bit
+	if ((pml.groundTrace.surfaceFlags & SURF_SLICK || pm->ps->pm_flags & PMF_TIME_KNOCKBACK) && pm->movetype != CPM) {
+		switch (pm->movetype) {
+		default: /* fall through */
+		case VQ3:
+			accelerate = phy_air_accel;
+			break;
+		case CQ3:
+			accelerate = phy_slick_accel;
+			break;
+		}
+	} else {
+		accelerate = phy_ground_accel;
+	}
+	core_Accelerate(wishdir, wishspeed, accelerate, pm->ps->speed);
+	if ((pml.groundTrace.surfaceFlags & SURF_SLICK) || pm->ps->pm_flags & PMF_TIME_KNOCKBACK) {
+		pm->ps->velocity[2] -= pm->ps->gravity * pml.frametime;
+	} else {  // pm->ps->velocity[2] = 0; // don't reset the z velocity for slopes
+	}
+
+	vel = VectorLength(pm->ps->velocity);
+	// slide along the ground plane
+	VectorReflect(pm->ps->velocity, pml.groundTrace.plane.normal, pm->ps->velocity, OVERCLIP);
+	// don't decrease velocity when going up or down a slope
+	VectorNormalize(pm->ps->velocity);
+	VectorScale(pm->ps->velocity, vel, pm->ps->velocity);
+	// don't do anything if standing still
+	if (!pm->ps->velocity[0] && !pm->ps->velocity[1]) {
+		return;
+	}
+	// Do the movement
+	core_StepSlideMove(qtrue);
+}
+
+void q3a_move(pmove_t* pmove) {
+	// set mins, maxs, and viewheight
+	PM_CheckDuck();
+	// set groundentity
+	core_GroundTrace();
+
+	// do deadmove  :moved to top
+	// drop timers
+	PM_DropTimers();
+
+	if (pm->ps->powerups[PW_FLIGHT]) {
+		PM_FlyMove();  // flight powerup doesn't allow jump and has different friction
+	} else if (pm->ps->pm_flags & PMF_GRAPPLE_PULL) {
+		PM_GrappleMove();
+		PM_AirMove();  // We can wiggle a bit
+	} else if (pm->ps->pm_flags & PMF_TIME_WATERJUMP) {
+		PM_WaterJumpMove();
+	} else if (pm->waterlevel > 1) {
+		PM_WaterMove();  // swimming
+	} else if (pml.walking) {
+		q3a_WalkMove();  // walking on ground
+	} else {
+		q3a_AirMove();  // airborne
+	}
+	// animations
+	PM_Animate();
+	// set groundentity, watertype, and waterlevel
+	core_GroundTrace();
+	PM_SetWaterLevel();
+	// weapons
+	core_Weapon();
+	// torso animation
+	PM_TorsoAnimation();
+	// footstep events / legs animations
+	PM_Footsteps();
+	// entering / leaving water splashes
+	PM_WaterEvents();
+	// Snapzones: Snap some parts of playerstate to save network bandwidth
+	trap_SnapVector(pm->ps->velocity);
+}
+void cpm_move(pmove_t* pmove) {
+	q3a_move(pmove);
+}
+void vq3_move(pmove_t* pmove) {
+	q3a_move(pmove);
+}
+void cq3_move(pmove_t* pmove) {
+	q3a_move(pmove);
+}
+
+#define MAX_CLIP_PLANES 5
+qboolean core_SlideMove(qboolean gravity) {
+	int     bumpcount, numbumps;
+	vec3_t  dir;
+	float   d;
+	int     numplanes;
+	vec3_t  planes[MAX_CLIP_PLANES];
+	vec3_t  primal_velocity;
+	vec3_t  clipVelocity;
+	int     i, j, k;
+	trace_t trace;
+	vec3_t  end;
+	float   time_left;
+	float   into;
+	vec3_t  endVelocity;
+	vec3_t  endClipVelocity;
+
+	numbumps = 4;
+
+	VectorCopy(pm->ps->velocity, primal_velocity);
+
+	if (gravity) {
+		VectorCopy(pm->ps->velocity, endVelocity);
+		endVelocity[2] -= pm->ps->gravity * pml.frametime;
+		pm->ps->velocity[2] = (pm->ps->velocity[2] + endVelocity[2]) * 0.5;
+		primal_velocity[2]  = endVelocity[2];
+		if (pml.groundPlane) {
+			// slide along the ground plane
+			VectorReflect(pm->ps->velocity, pml.groundTrace.plane.normal, pm->ps->velocity, OVERCLIP);
+		}
+	}
+
+	time_left = pml.frametime;
+
+	// never turn against the ground plane
+	if (pml.groundPlane) {
+		numplanes = 1;
+		VectorCopy(pml.groundTrace.plane.normal, planes[0]);
+	} else {
+		numplanes = 0;
+	}
+
+	// never turn against original velocity
+	VectorNormalize2(pm->ps->velocity, planes[numplanes]);
+	numplanes++;
+
+	for (bumpcount = 0; bumpcount < numbumps; bumpcount++) {
+		// calculate position we are trying to move to
+		VectorMA(pm->ps->origin, time_left, pm->ps->velocity, end);
+		// see if we can make it there
+		pm->trace(&trace, pm->ps->origin, pm->mins, pm->maxs, end, pm->ps->clientNum, pm->tracemask);
+
+		// entity is completely trapped in another solid
+		if (trace.allsolid) {
+			pm->ps->velocity[2] = 0;  // don't build up falling damage, but allow sideways acceleration
+			return qtrue;
+		}
+
+		// actually covered some distance
+		if (trace.fraction > 0) {
+			VectorCopy(trace.endpos, pm->ps->origin);
+		}
+		// moved the entire distance
+		if (trace.fraction == 1) {
+			break;
+		}
+		// save entity for contact
+		PM_AddTouchEnt(trace.entityNum);
+
+		time_left -= time_left * trace.fraction;
+
+		if (numplanes >= MAX_CLIP_PLANES) {
+			// this shouldn't really happen
+			VectorClear(pm->ps->velocity);
+			return qtrue;
+		}
+
+		//
+		// if this is the same plane we hit before, nudge velocity
+		// out along it, which fixes some epsilon issues with
+		// non-axial planes
+		//
+		for (i = 0; i < numplanes; i++) {
+			if (DotProduct(trace.plane.normal, planes[i]) > 0.99) {
+				VectorAdd(trace.plane.normal, pm->ps->velocity, pm->ps->velocity);
+				break;
+			}
+		}
+		if (i < numplanes) {
+			continue;
+		}
+		VectorCopy(trace.plane.normal, planes[numplanes]);
+		numplanes++;
+		//
+		// modify velocity so it parallels all of the clip planes
+		//
+		// find a plane that it enters
+		for (i = 0; i < numplanes; i++) {
+			into = DotProduct(pm->ps->velocity, planes[i]);
+			if (into >= 0.1) {
+				continue;
+			}  // move doesn't interact with the plane
+			// see how hard we are hitting things
+			if (-into > pml.impactSpeed) {
+				pml.impactSpeed = -into;
+			}
+			// slide along the plane
+			VectorReflect(pm->ps->velocity, planes[i], clipVelocity, OVERCLIP);
+			// slide along the plane
+			VectorReflect(endVelocity, planes[i], endClipVelocity, OVERCLIP);  // IoQuake3 Wrapped this behind a gravity check. This version is default q3a
+
+			// see if there is a second plane that the new move enters
+			for (j = 0; j < numplanes; j++) {
+				if (j == i) {
+					continue;
+				}
+				if (DotProduct(clipVelocity, planes[j]) >= 0.1) {
+					continue;
+				}  // move doesn't interact with the plane
+				// try clipping the move to the plane
+				VectorReflect(clipVelocity, planes[j], clipVelocity, OVERCLIP);
+				VectorReflect(
+					endClipVelocity, planes[j], endClipVelocity, OVERCLIP);  // IoQuake3 wrapped this inside a gravity check. This version is default q3a-1.32
+				// see if it goes back into the first clip plane
+				if (DotProduct(clipVelocity, planes[i]) >= 0) {
+					continue;
+				}
+				// slide the original velocity along the crease
+				CrossProduct(planes[i], planes[j], dir);
+				VectorNormalize(dir);
+				d = DotProduct(dir, pm->ps->velocity);
+				VectorScale(dir, d, clipVelocity);
+
+				if (gravity) {
+					CrossProduct(planes[i], planes[j], dir);
+					VectorNormalize(dir);
+					d = DotProduct(dir, endVelocity);
+					VectorScale(dir, d, endClipVelocity);
+				}
+
+				// see if there is a third plane the the new move enters
+				for (k = 0; k < numplanes; k++) {
+					if (k == i || k == j) {
+						continue;
+					}
+					if (DotProduct(clipVelocity, planes[k]) >= 0.1) {
+						continue;
+					}  // move doesn't interact with the plane
+					// stop dead at a tripple plane interaction
+					VectorClear(pm->ps->velocity);
+					return qtrue;
+				}
+			}
+			// if we have fixed all interactions, try another move
+			VectorCopy(clipVelocity, pm->ps->velocity);
+			VectorCopy(endClipVelocity, endVelocity);  // IoQuake3 wrapped this inside a gravity check. This version is default q3a-1.32
+			break;
+		}
+	}
+
+	if (gravity) {
+		VectorCopy(endVelocity, pm->ps->velocity);
+	}
+	// don't change velocity if in a timer (aka do skimming)
+	if (pm->ps->pm_time) {
+		VectorCopy(primal_velocity, pm->ps->velocity);
+	}
+	return (bumpcount != 0);
+}
+
+//::::::::::::::::
+// StepSlideMove
+//   Handles stepmove behavior
+//::::::::::::::::
+void core_StepSlideMove(qboolean gravity) {
+	vec3_t start_o, start_v;
+	// vec3_t    down_o, down_v;
+	trace_t trace;
+	// float     down_dist, up_dist;
+	// vec3_t    delta, delta2;
+	vec3_t   up, down;
+	float    stepSize;
+	float    delta;
+	qboolean timerActive, cantDoubleJump, isSteepRamp;
+	int      max_jumpvel;
+
+	VectorCopy(pm->ps->origin, start_o);
+	VectorCopy(pm->ps->velocity, start_v);
+
+	if (core_SlideMove(gravity) == 0) {
+		return;
+	}  // we got exactly where we wanted to go first try
+	VectorCopy(start_o, down);
+	down[2] -= STEPSIZE;
+	pm->trace(&trace, start_o, pm->mins, pm->maxs, down, pm->ps->clientNum, pm->tracemask);
+	// Step up
+	max_jumpvel    = phy_jump_velocity + phy_jump_dj_velocity;
+	timerActive    = (pm->cmd.serverTime - pm->ps->stats[STAT_TIME_LASTJUMP] < phy_jump_timebuffer) ? qtrue : qfalse;
+	cantDoubleJump = (pm->movetype == VQ3 || !timerActive || pm->ps->velocity[2] > max_jumpvel) ? qtrue : qfalse;
+	VectorSet(up, 0, 0, 1);
+	isSteepRamp = DotProduct(trace.plane.normal, up) < MIN_WALK_NORMAL ? qtrue : qfalse;
+	// never step up when:
+	//   Step-down trace moved all the way down, (or) we are in a steepramp
+	//   (and) still have up velocity
+	//   (and) You can't doublejump (vq3 or dj-timer is not active)
+	//   (and) Vertical speed is bigger than the maximum possible dj speed (prevent stairs-climb crazyness) (included in cantDoubleJump)
+	if (((trace.fraction == 1.0 || isSteepRamp) && pm->ps->velocity[2] > 0) && cantDoubleJump) {
+		return;
+	}
+
+	// VectorCopy (pm->ps->origin, down_o);
+	// VectorCopy (pm->ps->velocity, down_v);
+
+	VectorCopy(start_o, up);
+	up[2] += STEPSIZE;
+	// test the player position if they were a stepheight higher
+	pm->trace(&trace, start_o, pm->mins, pm->maxs, up, pm->ps->clientNum, pm->tracemask);
+	if (trace.allsolid) {
+		if (pm->debugLevel) {
+			Com_Printf("%i:bend can't step\n", c_pmove);
+		}
+		VectorClear(pm->ps->velocity);  // Wallbug fix
+		return;                         // can't step up
+	}
+
+	stepSize = trace.endpos[2] - start_o[2];
+	// try slidemove from this position
+	VectorCopy(trace.endpos, pm->ps->origin);
+	VectorCopy(start_v, pm->ps->velocity);
+
+	core_SlideMove(gravity);
+
+	// push down the final amount
+	VectorCopy(pm->ps->origin, down);
+	down[2] -= stepSize;
+	pm->trace(&trace, pm->ps->origin, pm->mins, pm->maxs, down, pm->ps->clientNum, pm->tracemask);
+	if (!trace.allsolid) {
+		VectorCopy(trace.endpos, pm->ps->origin);
+	}
+	if (trace.fraction < 1.0) {
+		VectorReflect(pm->ps->velocity, trace.plane.normal, pm->ps->velocity, OVERCLIP);
+	}  // VectorReflect2D for CPM ??
+	// use the step move
+	delta = pm->ps->origin[2] - start_o[2];
+	if (delta > 2) {
+		if (delta < 7) {
+			PM_AddEvent(EV_STEP_4);
+		} else if (delta < 11) {
+			PM_AddEvent(EV_STEP_8);
+		} else if (delta < 15) {
+			PM_AddEvent(EV_STEP_12);
+		} else {
+			PM_AddEvent(EV_STEP_16);
+		}
+	}
+	if (pm->debugLevel) {
+		Com_Printf("%i:stepped\n", c_pmove);
+	}
 }
