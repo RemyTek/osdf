@@ -731,7 +731,7 @@ void phy_reset(void) {
 	phy_air_accel     = 1;
 	phy_wishspeed = 400;
 	// Air deceleration.
-	phy_air_decel = 1;
+	phy_air_decel = 2.5;
 	phy_air_decelAngle = 0;
 	// AirStrafe (aka AD turning)
 	phy_airstrafe_accel     = 0;
@@ -781,7 +781,7 @@ void cpm_init(void) {
 	// Air movement
 	phy_air_basespeed  = 320;
 	phy_air_accel      = 1;
-	phy_air_decel      = 1;
+	phy_air_decel      = 2.5;
 	phy_air_decelAngle = 100;
 	// W turning
 	phy_aircontrol        = qtrue;
@@ -840,7 +840,7 @@ void cq3_init(void) {
 	// Air movement
 	phy_air_basespeed  = 320;
 	phy_air_accel      = 1;
-	phy_air_decel      = 1;
+	phy_air_decel      = 2.5;
 	phy_air_decelAngle = 100;
 	// W turning
 	phy_aircontrol        = qfalse;
@@ -937,9 +937,9 @@ static void q3a_AirControl(vec3_t wishdir, float wishspeed) {
 
 	// Calculate turning amount
 	dot = DotProduct(pm->ps->velocity, wishdir);
-	if ( dot < 0 ) {
+	/* if ( dot < 0 ) {
 		phy_air_decel = 2.5;
-	}
+	} */
 	if (dot > 0) {
 		k = k * phy_aircontrol_amount * Q_powf(dot, phy_aircontrol_power) * pml.frametime;
 		VectorMAM(speed, pm->ps->velocity, k, wishdir, pm->ps->velocity);
