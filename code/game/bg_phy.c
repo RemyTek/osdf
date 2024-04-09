@@ -33,7 +33,6 @@ float phy_airstrafe_basespeed;  // Maxspeed on air when in VQ3, or when strafing
 qboolean phy_aircontrol;         // Turns aircontrol on or off
 float    phy_aircontrol_amount;  // Amount you can control yourself with W/S
 float    phy_aircontrol_power;   // Aircontrol formula exponent
-float	phy_airstopaccelerate = 1;
 float phy_wishspeed = 400;
 // Stepup
 int phy_step_size;    // Distance that will be moved up/down for step behavior. (default = STEPSIZE = 18)
@@ -730,10 +729,9 @@ void phy_reset(void) {
 	// Air
 	phy_air_basespeed = 320;
 	phy_air_accel     = 1;
-	phy_airstopaccelerate = 1;
 	phy_wishspeed = 400;
 	// Air deceleration.
-	phy_air_decel      = 0;
+	phy_air_decel = 1;
 	phy_air_decelAngle = 0;
 	// AirStrafe (aka AD turning)
 	phy_airstrafe_accel     = 0;
@@ -783,7 +781,7 @@ void cpm_init(void) {
 	// Air movement
 	phy_air_basespeed  = 320;
 	phy_air_accel      = 1;
-	phy_air_decel      = 2.5;
+	phy_air_decel      = 1;
 	phy_air_decelAngle = 100;
 	// W turning
 	phy_aircontrol        = qtrue;
@@ -842,7 +840,7 @@ void cq3_init(void) {
 	// Air movement
 	phy_air_basespeed  = 320;
 	phy_air_accel      = 1;
-	phy_air_decel      = 2.5;
+	phy_air_decel      = 1;
 	phy_air_decelAngle = 100;
 	// W turning
 	phy_aircontrol        = qfalse;
@@ -939,6 +937,9 @@ static void q3a_AirControl(vec3_t wishdir, float wishspeed) {
 
 	// Calculate turning amount
 	dot = DotProduct(pm->ps->velocity, wishdir);
+	if ( dot < 0 ) {
+		phy_air_decel = 2.5;
+	}
 	if (dot > 0) {
 		k = k * phy_aircontrol_amount * Q_powf(dot, phy_aircontrol_power) * pml.frametime;
 		VectorMAM(speed, pm->ps->velocity, k, wishdir, pm->ps->velocity);
@@ -1042,7 +1043,7 @@ void q3a_AirMove(void) {
 	// CPM: Air Control
     wishspeed2 = wishspeed;
     if (DotProduct(pm->ps->velocity, wishdir) < 0)
-        realAccel = phy_airstopaccelerate;
+        realAccel = phy_air_decel;
     else
         realAccel = pm_airaccelerate;
     if (pm->ps->movementDir == 2 || pm->ps->movementDir == 6)
@@ -1065,7 +1066,6 @@ void q3a_AirMove(void) {
     // CPM: Air control
     core_Accelerate(wishdir, realWishSpd, realAccel, realSpeed);
     if (doAircontrol) {
-		phy_airstopaccelerate = 2.5;
 		phy_wishspeed = 30;
         q3a_AirControl(wishdir, wishspeed2);
     }
@@ -1074,7 +1074,7 @@ void q3a_AirMove(void) {
 	// not on ground, so little effect on velocity
 	//core_Accelerate(wishdir, realWishSpd, realAccel, realSpeed);
 	/* if (doAircontrol) {
-		phy_airstopaccelerate = 2.5;
+		phy_air_decel = 2.5;
 		phy_wishspeed = 30;
 		q3a_AirControl(wishdir, realWishSpd);
 	} */
