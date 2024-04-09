@@ -458,6 +458,26 @@ static void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	// parse the key/value pairs and spawn gentities
 	G_SpawnEntitiesFromString();
 
+	//::::::::::::::::
+	// Search for trigger_multiple in the map, with wait -1, and hardcode its wait to 0.5
+	//   FIXME: This shouldn't exist. Needs to be changed to reset wait time individually per client on ClientRespawn()
+	//   Temp Hack until client-based entities are implemented.
+	{
+		gentity_t* ent;
+		qboolean   isTriggerOnce;
+
+		int id;
+		// Loop through all gentities
+		for (id = 0; id < MAX_GENTITIES; id++) {
+			ent           = &g_entities[id];
+			isTriggerOnce = (!Q_stricmp(ent->classname, "trigger_multiple") && ent->wait < 0) ? qtrue : qfalse;
+			if (isTriggerOnce) {
+				ent->wait = 0.5;
+			}
+		}
+	}
+	//::::::::::::::::
+
 	// general initialization
 	G_FindTeams();
 

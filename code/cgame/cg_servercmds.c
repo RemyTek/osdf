@@ -1002,6 +1002,41 @@ static void CG_RemoveChatEscapeChar( char *text ) {
 	text[l] = '\0';
 }
 
+//:::::::::::::::::::::::::::::::::::::::::
+// Basic Start/End timer support
+static void CG_TimerStart(int timer) {
+	// Time started by trigger
+	cg.timer_start = timer;  // Set timer_start as the commandTime when start trigger was hit (comes from servercommand)
+	cg.timer_stop  = -1;     // Disable timer_stop, so we can draw timer_start
+}
+//..............................................
+static void CG_TimerStop(int timer) {
+	// Time stopped/canceled without trigger
+	cg.timer_stop  = cg.timer_stop < 0 ? timer - cg.timer_start : 0;  // Servertime - startTime at the moment of stopping the clock (comes from servercommand)
+	cg.timer_start = -1;                                              // disable timer_start, so we can draw timer_stop
+}
+//..............................................
+static void CG_TimerEnd(int timer) {
+	// Time ended by trigger
+	if (cg.timer_stop >= 0) {
+		return;
+	}                                        // Only update timer_end when the timer is not stopped (aka trigger once)
+	cg.timer_end  = timer - cg.timer_start;  // Servertime - startTime when end trigger was hit (comes from servercommand)
+	cg.timer_stop = cg.timer_end;            // Stop the active timer
+	if (!cg.timer_best) {
+		cg.timer_best = cg.timer_end;
+	}  // If there is no best timer yet, mark timer_end as current best time
+	else {
+		cg.timer_best = cg.timer_end < cg.timer_best ? cg.timer_end : cg.timer_best;
+	}  // Replace best time if timer_end is lower than best time, and replace it if
+	   // Com_Printf("timer_end= %i :: timer_best= %i\n", cg.timer_end, cg.timer_best);
+}
+//..............................................
+static void CG_TimerCheckpoint(int timer) {
+	// do timer cp here
+}
+//:::::::::::::::::::::::::::::::::::::::::
+
 
 /*
 =================

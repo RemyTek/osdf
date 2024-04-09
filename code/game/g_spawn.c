@@ -145,6 +145,9 @@ void SP_target_position (gentity_t *ent);
 void SP_target_location (gentity_t *ent);
 void SP_target_push (gentity_t *ent);
 
+void SP_target_startTimer(gentity_t* ent);
+void SP_target_stopTimer(gentity_t* ent);
+
 void SP_light (gentity_t *self);
 void SP_info_null (gentity_t *self);
 void SP_info_notnull (gentity_t *self);
@@ -220,6 +223,10 @@ spawn_t	spawns[] = {
 	{"target_position", SP_target_position},
 	{"target_location", SP_target_location},
 	{"target_push", SP_target_push},
+
+	// Start/Stop timer entities
+	{"target_startTimer",        SP_target_startTimer       },
+	{"target_stopTimer",         SP_target_stopTimer        },
 
 	{"light", SP_light},
 	{"path_corner", SP_path_corner},
@@ -406,7 +413,7 @@ void G_SpawnGEntityFromSpawnVars( void ) {
 			return;
 		}
 	}
-	// check for "notteam" flag (GT_FFA, GT_TOURNAMENT, GT_SINGLE_PLAYER)
+	// check for "notteam" flag (GT_RUN, GT_TOURNAMENT, GT_SINGLE_PLAYER)
 	if ( g_gametype.integer >= GT_TEAM ) {
 		G_SpawnInt( "notteam", "0", &i );
 		if ( i ) {
@@ -436,7 +443,7 @@ void G_SpawnGEntityFromSpawnVars( void ) {
 #endif
 
 	if( G_SpawnString( "gametype", NULL, &value ) ) {
-		if( g_gametype.integer >= GT_FFA && g_gametype.integer < GT_MAX_GAME_TYPE ) {
+		if( g_gametype.integer >= GT_RUN && g_gametype.integer < GT_MAX_GAME_TYPE ) {
 			gametypeName = gametypeNames[g_gametype.integer];
 
 			s = strstr( value, gametypeName );

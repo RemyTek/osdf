@@ -1342,14 +1342,14 @@ static qboolean ValidVoteCommand( int clientNum, char *command )
 
 	if ( Q_stricmp( buf, "g_gametype" ) == 0 )
 	{
-		if ( !Q_stricmp( command, "ffa" ) ) i = GT_FFA;
+		if ( !Q_stricmp( command, "ffa" ) ) i = GT_RUN;
 		else if ( !Q_stricmp( command, "duel" ) ) i = GT_TOURNAMENT;
 		else if ( !Q_stricmp( command, "tdm" ) ) i = GT_TEAM;
 		else if ( !Q_stricmp( command, "ctf" ) ) i = GT_CTF;
 		else 
 		{
 			i = atoi( command );
-			if( i == GT_SINGLE_PLAYER || i < GT_FFA || i >= GT_MAX_GAME_TYPE ) {
+			if( i == GT_SINGLE_PLAYER || i < GT_RUN || i >= GT_MAX_GAME_TYPE ) {
 				trap_SendServerCommand( clientNum, va( "print \"Invalid gametype %i.\n\"", i ) );
 				return qfalse;
 			}

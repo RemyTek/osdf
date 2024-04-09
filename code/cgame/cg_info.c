@@ -243,8 +243,8 @@ void CG_DrawInformation( void ) {
 
 	// game type
 	switch ( cgs.gametype ) {
-	case GT_FFA:
-		s = "Free For All";
+	case GT_RUN:
+		s = "Defrag Race";
 		break;
 	case GT_SINGLE_PLAYER:
 		s = "Single Player";

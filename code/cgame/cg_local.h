@@ -686,6 +686,12 @@ typedef struct {
 	int				followClient;
 
 	qboolean		skipDFshaders;
+
+	// Basic Start/End timer support
+	int timer_start;  // cg.snap->servertime at the moment of hitting start trigger
+	int timer_stop;   // cg.snap->servertime - timer_start at the moment of stopping the timer (no trigger)
+	int timer_end;    // cg.snap->servertime - timer_start achieved on hitting end trigger
+	int timer_best;   // best cg.snap->servertime - timer_start achieved on hitting end trigger
 } cg_t;
 
 

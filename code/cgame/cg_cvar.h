@@ -130,6 +130,19 @@ CG_CVAR( cg_teamColors, "cg_teamColors", "", CVAR_ARCHIVE )
 CG_CVAR( cg_deadBodyDarken, "cg_deadBodyDarken", "1", CVAR_ARCHIVE )
 CG_CVAR( cg_fovAdjust, "cg_fovAdjust", "0", CVAR_ARCHIVE )
 CG_CVAR( cg_followKiller, "cg_followKiller", "0", CVAR_ARCHIVE )
+
+CG_CVAR( cg_speed_x, "cg_speed_x", "0.5", CVAR_USERINFO )
+CG_CVAR( cg_speed_y, "cg_speed_y", "0.55", CVAR_USERINFO )
+
+CG_CVAR( cg_timerActive_x, "cg_timerActive_x", "0.5", CVAR_USERINFO )
+CG_CVAR( cg_timerActive_y, "cg_timerActive_y", "0", CVAR_USERINFO )
+
+CG_CVAR( cg_timerBest_x, "cg_timerBest_x", "0.8", CVAR_USERINFO )
+CG_CVAR( cg_timerBest_y, "cg_timerBest_y", "0", CVAR_USERINFO )
+
+CG_CVAR( cg_timerSkim_x, "cg_timerSkim_x", "0.5", CVAR_USERINFO )
+CG_CVAR( cg_timerSkim_y, "cg_timerSkim_y", "0.7", CVAR_USERINFO )
+
 CG_CVAR( phy_movetype, "phy_movetype", "0", CVAR_ARCHIVE)
 
 #undef CG_CVAR

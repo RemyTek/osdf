@@ -334,6 +334,10 @@ struct gclient_s {
 		int		enemy;
 		int		amount;
 	} damage;
+
+	// Basic Start/End timer support
+	int timer_start;  // servertime at the moment of hitting start trigger
+	int timer_end;    // servertime at the moment of hitting end trigger
 };
 
 

@@ -77,7 +77,7 @@ static const char *gametype_items[] = {
 	NULL
 };
 
-static int gametype_remap[] = { GT_FFA, GT_TOURNAMENT, GT_TEAM, GT_CTF };
+static int gametype_remap[] = { GT_RUN, GT_TOURNAMENT, GT_TEAM, GT_CTF };
 static int gametype_remap2[] = {0, 1, 0, 2, 3};
 
 // use ui_servers2.c definition
@@ -105,7 +105,7 @@ static int GametypeBits( char *string ) {
 		}
 
 		if( Q_stricmp( token, "ffa" ) == 0 ) {
-			bits |= 1 << GT_FFA;
+			bits |= 1 << GT_RUN;
 			continue;
 		}
 
@@ -240,7 +240,7 @@ static void StartServer_GametypeEvent( void* ptr, int event ) {
 	count = UI_GetNumArenas();
 	s_startserver.nummaps = 0;
 	matchbits = 1 << gametype_remap[s_startserver.gametype.curvalue];
-	if( gametype_remap[s_startserver.gametype.curvalue] == GT_FFA ) {
+	if( gametype_remap[s_startserver.gametype.curvalue] == GT_RUN ) {
 		matchbits |= ( 1 << GT_SINGLE_PLAYER );
 	}
 	for( i = 0; i < count; i++ ) {
@@ -733,7 +733,7 @@ static void ServerOptions_Start( void ) {
 	}
 
 	switch( s_serveroptions.gametype ) {
-	case GT_FFA:
+	case GT_RUN:
 	default:
 		trap_Cvar_SetValue( "ui_ffa_fraglimit", fraglimit );
 		trap_Cvar_SetValue( "ui_ffa_timelimit", timelimit );
@@ -1109,7 +1109,7 @@ static void ServerOptions_SetMenuItems( void ) {
 	const char	*info;
 
 	switch( s_serveroptions.gametype ) {
-	case GT_FFA:
+	case GT_RUN:
 	default:
 		Com_sprintf( s_serveroptions.fraglimit.field.buffer, 4, "%i", (int)Com_Clamp( 0, 999, trap_Cvar_VariableValue( "ui_ffa_fraglimit" ) ) );
 		Com_sprintf( s_serveroptions.timelimit.field.buffer, 4, "%i", (int)Com_Clamp( 0, 999, trap_Cvar_VariableValue( "ui_ffa_timelimit" ) ) );
