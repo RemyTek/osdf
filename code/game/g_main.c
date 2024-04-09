@@ -1639,7 +1639,7 @@ static void CheckTournament( void ) {
 			if (counts[TEAM_RED] < 1 || counts[TEAM_BLUE] < 1) {
 				notEnough = qtrue;
 			}
-		} else if ( level.numPlayingClients < 2 ) {
+		} else if ( level.numPlayingClients < 1 ) {
 			notEnough = qtrue;
 		}
 
