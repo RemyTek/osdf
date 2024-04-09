@@ -1177,6 +1177,24 @@ static void CG_ServerCommand( void ) {
 		}
 	}
 
+	// Basic Start/End timer support. Server command bindings
+	if (!Q_stricmp(cmd, "timerStart")) {
+		CG_TimerStart(atoi(CG_Argv(1)));
+		return;
+	}
+	if (!Q_stricmp(cmd, "timerStop")) {
+		CG_TimerStop(atoi(CG_Argv(1)));
+		return;
+	}
+	if (!Q_stricmp(cmd, "timerEnd")) {
+		CG_TimerEnd(atoi(CG_Argv(1)));
+		return;
+	}
+	if (!Q_stricmp(cmd, "timerCheckpoint")) {
+		CG_TimerCheckpoint(atoi(CG_Argv(1)));
+		return;
+	}
+
 	CG_Printf( "Unknown client game command: %s\n", cmd );
 }
 
