@@ -30,6 +30,9 @@ Adds score to both the client and his team
 ============
 */
 void AddScore( gentity_t *ent, vec3_t origin, int score ) {
+	if ( g_gametype.integer == GT_RUN ) {
+		return;
+	}
 	if ( !ent->client ) {
 		return;
 	}

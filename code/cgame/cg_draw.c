@@ -1413,7 +1413,9 @@ static void CG_DrawLowerRight( void ) {
 		y = CG_DrawTeamOverlay( y, qtrue, qfalse );
 	} 
 
-	y = CG_DrawScores( y );
+	if ( cgs.gametype != GT_RUN ) {
+		y = CG_DrawScores( y );
+	}
 	y = CG_DrawPowerups( y );
 }
 #endif // MISSIONPACK
