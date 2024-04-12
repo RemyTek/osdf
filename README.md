@@ -1,5 +1,8 @@
 # Opensource defrag
 
+## IMPORTANT!
+Make sure you upate osdf.bat in build/win32-msvc/  With a few modifications, this solution file will build perfectly for you and copy both your dll and symbol files to your mod directory.  Note if you have an ioquake install, you'll have to take some additional steps.  I'll be sorting this out soon.
+
 Opensource Defrag is a project that aims to remake defrag, true to the original mod, using modern id-Tech3 engine and technology.  
 ## Goals:
 ### Improvement & Modernizing:
