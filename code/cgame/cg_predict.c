@@ -1147,7 +1147,7 @@ void CG_PredictPlayerState( void ) {
 		} else 
 #endif
 		//osdf
-		cg_pmove.movetype = cgs.pro_physics;  // Set movetype based on Cvar
+		cg_pmove.movetype = cgs.df_promode;  // Set movetype based on Cvar
 		if ( /*cg_optimizePrediction.integer && */ ( cmdNum >= predictCmd || ( stateIndex + 1 ) % NUM_SAVED_STATES == cg.stateHead ) ) {
 
 			Pmove( &cg_pmove );

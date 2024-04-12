@@ -16,7 +16,7 @@ extern float phy_spectator_friction;
 
 // New variables
 extern float phy_crouch_scale;  // Default renamed
-// extern int   pro_physics;             // pm->movetype; // Physics type selection
+// extern int   df_promode;             // pm->movetype; // Physics type selection
 // Ground
 extern float phy_ground_basespeed;  // Movement speed on the ground (aka maxspeed). Equivalent to the default g_speed
 extern float phy_ground_accel;      // Acceleration when on the ground. sv_accelerate

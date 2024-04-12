@@ -16,7 +16,7 @@ float phy_spectator_friction;
 
 // New variables
 float phy_crouch_scale;  // Default renamed
-// int   pro_physics;             // pm->movetype; // Physics type selection
+// int   df_promode;             // pm->movetype; // Physics type selection
 // Ground
 float phy_ground_basespeed;  // Movement speed on the ground (aka maxspeed). Equivalent to the default g_speed
 float phy_ground_accel;      // Acceleration when on the ground. sv_accelerate
@@ -99,7 +99,7 @@ void     phy_init(int movetype) {
 		vq3_init();
         break;
     }
-    Com_Printf("Initialized: pro_physics %i\n", movetype);
+    Com_Printf("Initialized: df_promode %i\n", movetype);
     phy_initialized = qtrue;
 }
 
@@ -724,7 +724,7 @@ void phy_move(pmove_t* pmove) {
 		cq3_move(pmove);
 		break;
 	default:
-		Com_Printf("::ERR pro_physics %i not recognized\n", pmove->movetype);
+		Com_Printf("::ERR df_promode %i not recognized\n", pmove->movetype);
 		break;
 	}
 }

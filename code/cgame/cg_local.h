@@ -1091,7 +1091,7 @@ typedef struct {
 	int				flagStatus;
 
 	//physics
-	int				pro_physics;
+	int				df_promode;
 
 	qboolean  newHud;
 
