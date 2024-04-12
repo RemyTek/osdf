@@ -143,6 +143,4 @@ CG_CVAR( cg_timerBest_y, "cg_timerBest_y", "0", CVAR_USERINFO )
 CG_CVAR( cg_timerSkim_x, "cg_timerSkim_x", "0.5", CVAR_USERINFO )
 CG_CVAR( cg_timerSkim_y, "cg_timerSkim_y", "0.7", CVAR_USERINFO )
 
-CG_CVAR( phy_movetype, "phy_movetype", "0", CVAR_ARCHIVE)
-
 #undef CG_CVAR

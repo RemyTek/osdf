@@ -2770,9 +2770,6 @@ static void CG_Draw2D( stereoFrame_t stereoFrame )
 		CG_DrawCenterString();
 		CG_DrawTimerActive(cg_timerActive_x.value, cg_timerActive_y.value, 1.0F);
 		CG_DrawTimerBest(cg_timerBest_x.value, cg_timerBest_y.value, 1.0F);
-		if (cg.snap->ps.pm_time) {
-			CG_DrawPMTime(cg_timerSkim_x.value, cg_timerSkim_y.value, 1.0F);
-		}
 	}
 
 	if ( cgs.score_catched ) {
