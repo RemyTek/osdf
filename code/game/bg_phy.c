@@ -753,6 +753,8 @@ void cpm_init(void) {
 	phy_jump_timebuffer  = 400;
 	phy_jump_dj_velocity = 100;
 	phy_step_maxvel      = phy_jump_velocity + phy_jump_dj_velocity;
+	
+	//Print init function
 	Com_Printf("cpm_init()\n");
 }
 
@@ -780,6 +782,9 @@ void vq3_init(void) {
 	phy_jump_timebuffer = 0;
 	phy_jump_dj_velocity = 0;
 	phy_step_maxvel = JUMP_VELOCITY;
+
+	//Print init function
+	Com_Printf("vq3_init()\n");
 }
 
 void cq3_init(void) {
@@ -805,6 +810,9 @@ void cq3_init(void) {
 	phy_jump_timebuffer = 400;
 	phy_jump_dj_velocity = 100;
 	phy_step_maxvel = phy_jump_velocity + phy_jump_dj_velocity;
+
+	//Print init function
+	Com_Printf("cq3_init()\n");
 }
 
 static qboolean q3a_CheckJump(void) {
