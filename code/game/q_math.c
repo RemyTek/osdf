@@ -1313,6 +1313,7 @@ acos(*(float*) &i) == -1.#IND0
 float Q_acos(float c) {
 	float angle;
 
+	//Probably needs fixing
 	angle = acos(c);
 
 	if (angle > M_PI) {
