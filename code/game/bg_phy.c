@@ -16,7 +16,7 @@ float phy_spectator_friction;
 
 // New variables
 float phy_crouch_scale;  // Default renamed
-// int   phy_movetype;             // pm->movetype; // Physics type selection
+// int   pro_physics;             // pm->movetype; // Physics type selection
 // Ground
 float phy_ground_basespeed;  // Movement speed on the ground (aka maxspeed). Equivalent to the default g_speed
 float phy_ground_accel;      // Acceleration when on the ground. sv_accelerate
@@ -71,10 +71,10 @@ void     phy_init(int movetype) {
         cq3_init();
         break;
     default:
-        Com_Printf("::ERR physics not initialized:  phy_movetype %i not recognized\n", movetype);
+        Com_Printf("::ERR physics not initialized:  pro_physics %i not recognized\n", movetype);
         break;
     }
-    Com_Printf("Initialized: phy_movetype %i\n", movetype);
+    Com_Printf("Initialized: pro_physics %i\n", movetype);
     phy_initialized = qtrue;
 }
 
@@ -699,7 +699,7 @@ void phy_move(pmove_t* pmove) {
 		cq3_move(pmove);
 		break;
 	default:
-		Com_Printf("::ERR phy_movetype %i not recognized\n", pmove->movetype);
+		Com_Printf("::ERR pro_physics %i not recognized\n", pmove->movetype);
 		break;
 	}
 }
@@ -796,6 +796,7 @@ void cpm_init(void) {
 	phy_jump_dj_velocity = 100;
 	phy_jump_velocity    = JUMP_VELOCITY;
 	phy_step_maxvel      = phy_jump_velocity + phy_jump_dj_velocity;
+	Com_Printf("cpm_init()\n");
 }
 
 void vq3_init(void) {
@@ -817,6 +818,7 @@ void vq3_init(void) {
 	phy_aircontrol    = qfalse;
 	phy_jump_type     = VQ3;
 	phy_jump_velocity = JUMP_VELOCITY;
+	Com_Printf("vq3_init()\n");
 }
 
 void cq3_init(void) {
@@ -855,6 +857,7 @@ void cq3_init(void) {
 	phy_jump_dj_velocity = 100;
 	phy_jump_velocity    = JUMP_VELOCITY;
 	phy_step_maxvel      = phy_jump_velocity + phy_jump_dj_velocity;
+	Com_Printf("cq3_init()\n");
 }
 
 static qboolean q3a_CheckJump(void) {

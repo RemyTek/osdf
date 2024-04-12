@@ -1090,6 +1090,9 @@ typedef struct {
 	int				redflag, blueflag;		// flag status from configstrings
 	int				flagStatus;
 
+	//physics
+	int				pro_physics;
+
 	qboolean  newHud;
 
 	//
