@@ -918,6 +918,7 @@ void q3a_AirMove(void) {
 	usercmd_t cmd;
 	qboolean  doSideMove, doForwMove;
 	float		wishspeed2; // CPM
+    float accel;
 
 	qboolean  doAircontrol = qfalse;
 	float     realAccel;    // Acceleration to apply
@@ -985,6 +986,19 @@ void q3a_AirMove(void) {
 			  realAccel *= phy_air_decel;           // Scale down air accel by decel factor
 			}
 			*/
+            // CPM: Air Control Deceleration
+            wishspeed2 = wishspeed;
+            if (DotProduct(pm->ps->velocity, wishdir) < 0)
+                accel = phy_air_decel;
+            else
+                accel = pm_airaccelerate;
+            if (pm->ps->movementDir == 2 || pm->ps->movementDir == 6)
+            {
+                if (wishspeed > phy_wishspeed)
+                    wishspeed = phy_wishspeed;
+                accel = phy_airstrafe_accel;
+            }
+            // !CPM
 		}
 	} else if (pm->movetype == VQ3 || pm->movetype == CQ3) {
 		realAccel   = phy_air_accel;
@@ -1000,6 +1014,7 @@ void q3a_AirMove(void) {
 	
 	// CPM: Air Control
     wishspeed2 = wishspeed;
+
     if (DotProduct(pm->ps->velocity, wishdir) < 0)
         realAccel = phy_air_decel;
     else

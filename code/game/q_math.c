@@ -1297,7 +1297,7 @@ void PerpendicularVector( vec3_t dst, const vec3_t src )
 
 //added by Kr3m
 
-#ifndef Q3_VM
+//#ifndef Q3_VM
 /*
 =====================
 Q_acos
@@ -1310,7 +1310,7 @@ acos(*(float*) &i) == -1.#IND0
 
 =====================
 */
-float Q_acos(float c) {
+/*float Q_acos(float c) {
 	float angle;
 
 	//Probably needs fixing
@@ -1323,7 +1323,7 @@ float Q_acos(float c) {
 		return (float)M_PI;
 	}
 	return angle;
-}
+}*/
 
 /*
 =====================
@@ -1341,5 +1341,5 @@ float Q_powf ( float x, int y )
 	return r;
 }
 
-#endif
+//#endif
 

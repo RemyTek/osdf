@@ -536,7 +536,7 @@ float AngleDelta ( float angle1, float angle2 );
 
 //added by Kr3m
 float Q_powf ( float x, int y );
-float Q_acos ( float c );
+//float Q_acos ( float c );
 
 qboolean PlaneFromPoints( vec4_t plane, const vec3_t a, const vec3_t b, const vec3_t c );
 void ProjectPointOnPlane( vec3_t dst, const vec3_t p, const vec3_t normal );
