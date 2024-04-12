@@ -1297,6 +1297,42 @@ void PerpendicularVector( vec3_t dst, const vec3_t src )
 
 //added by Kr3m
 
+#ifndef Q3_VM
+/*
+=====================
+Q_acos
+
+the msvc acos doesn't always return a value between -PI and PI:
+
+int i;
+i = 1065353246;
+acos(*(float*) &i) == -1.#IND0
+
+=====================
+*/
+float Q_acos(float c) {
+	float angle;
+
+	//Probably needs fixing
+	angle = acos(c);
+
+	if (angle > M_PI) {
+		return (float)M_PI;
+	}
+	if (angle < -M_PI) {
+		return (float)M_PI;
+	}
+	return angle;
+}
+
+/*
+=====================
+Q_powf
+
+return float x power of y
+
+=====================
+*/
 float Q_powf ( float x, int y )
 {
 	float r = x;
@@ -1304,4 +1340,6 @@ float Q_powf ( float x, int y )
 		r *= x;
 	return r;
 }
+
+#endif
 
