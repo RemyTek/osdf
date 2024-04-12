@@ -509,8 +509,6 @@ void VectorMAM(float scale1, vec3_t b1, float scale2, vec3_t b2, vec3_t c);
 void VectorRotate( vec3_t in, vec3_t matrix[3], vec3_t out );
 int Q_log2(int val);
 
-float Q_acos(float c);
-
 int		Q_rand( int *seed );
 float	Q_random( int *seed );
 float	Q_crandom( int *seed );
@@ -538,6 +536,7 @@ float AngleDelta ( float angle1, float angle2 );
 
 //added by Kr3m
 float Q_powf ( float x, int y );
+float Q_acos ( float c );
 
 qboolean PlaneFromPoints( vec4_t plane, const vec3_t a, const vec3_t b, const vec3_t c );
 void ProjectPointOnPlane( vec3_t dst, const vec3_t p, const vec3_t normal );
