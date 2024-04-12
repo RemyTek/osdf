@@ -307,7 +307,7 @@ void target_laser_start (gentity_t *self)
 	self->think = target_laser_think;
 
 	if ( !self->damage ) {
-		self->damage = 1;
+		self->damage = 0;
 	}
 
 	if (self->spawnflags & 1)

@@ -52,14 +52,37 @@ float phy_water_scale;  // phy_swimScale;
 float       phy_water_friction;
 float       phy_slick_accel;
 
-static void phy_reset(void);  // bottom of this file
-
 // Initialize Physics Values
 qboolean phy_initialized = qfalse;
 void     phy_init(int movetype) {
-		// Reset all values, in case each init function is missing any
-    phy_reset();
     // Initialize physics variables.
+    phy_stopspeed = pm_stopspeed;
+    // Crouch
+    phy_crouch_scale = pm_duckScale;
+    // Acceleration
+    phy_fly_accel    = pm_flyaccelerate;
+    // Friction
+    phy_friction           = pm_friction;
+    phy_fly_friction       = pm_flightfriction;
+    phy_spectator_friction = pm_spectatorfriction;
+    // New variables
+    // Ground
+    phy_ground_basespeed = 320;
+    // Air
+    phy_air_basespeed = 320;
+    phy_wishspeed = 400;
+    // Jump
+    phy_jump_velocity    = JUMP_VELOCITY;
+    // Powerups
+    // phy_haste_factor        = 0;
+    // phy_quad_factor         = 0;
+    // Water
+    phy_water_accel    = pm_wateraccelerate;
+    phy_water_scale    = pm_swimScale;
+
+    phy_step_size = STEPSIZE;
+    //Com_Printf("Physics Init\n");
+
     switch (movetype) {
     case VQ3:
         vq3_init();
@@ -71,7 +94,7 @@ void     phy_init(int movetype) {
         cq3_init();
         break;
     default:
-        Com_Printf("::ERR physics not initialized:  pro_physics %i not recognized\n", movetype);
+		vq3_init();
         break;
     }
     Com_Printf("Initialized: pro_physics %i\n", movetype);
@@ -704,82 +727,17 @@ void phy_move(pmove_t* pmove) {
 	}
 }
 
-//:::::::::::::
-// phy_reset
-//  Reset all values to vq3 behavior, in case some init function is missing one of them
-//:::::::::::::
-void phy_reset(void) {
-	phy_stopspeed = pm_stopspeed;
-	// Crouch
-	phy_crouch_scale = pm_duckScale;
-	// Slick
-	phy_slick_accel = 1;
-	// Acceleration
-	phy_ground_accel = pm_accelerate;
-	phy_air_accel    = pm_airaccelerate;
-	phy_fly_accel    = pm_flyaccelerate;
-	// Friction
-	phy_friction           = pm_friction;
-	phy_fly_friction       = pm_flightfriction;
-	phy_spectator_friction = pm_spectatorfriction;
-	// New variables
-	// Ground
-	phy_ground_basespeed = 320;
-	phy_ground_accel     = 10;
-	// Air
-	phy_air_basespeed = 320;
-	phy_air_accel     = 1;
-	phy_wishspeed = 400;
-	// Air deceleration.
-	phy_air_decel = 2.5;
-	phy_air_decelAngle = 0;
-	// AirStrafe (aka AD turning)
-	phy_airstrafe_accel     = 0;
-	phy_airstrafe_basespeed = 0;
-	// AirControl (aka W turning)
-	phy_aircontrol        = qfalse;
-	phy_aircontrol_amount = 0;
-	phy_aircontrol_power  = 0;
-	// Stepup
-	phy_step_size   = STEPSIZE;
-	phy_step_maxvel = JUMP_VELOCITY;
-	// Jump
-	phy_jump_type        = VQ3;
-	phy_jump_velocity    = JUMP_VELOCITY;
-	phy_jump_timebuffer  = 0;
-	phy_jump_dj_velocity = 0;
-	// Powerups
-	// phy_haste_factor        = 0;
-	// phy_quad_factor         = 0;
-	// Water
-	phy_water_accel    = pm_wateraccelerate;
-	phy_water_scale    = pm_swimScale;
-	phy_water_friction = pm_waterfriction;
-	Com_Printf("Physics Reset\n");
-}
-//:::::::::::::::::::::::::::::::::::::::::::::::::::::
-
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::
 // Initialize physics values
 //::::::::::::::::::::::
 void cpm_init(void) {
-	phy_stopspeed    = pm_stopspeed;
-	phy_crouch_scale = pm_duckScale;
-	// Acceleration
-	phy_fly_accel = pm_flyaccelerate;
-	// Friction
-	phy_friction           = pm_friction;
-	phy_fly_friction       = pm_flightfriction;
-	phy_spectator_friction = pm_spectatorfriction;
+	// Slick
+	phy_slick_accel = 15;  // CPM groundaccel value
 	// Water
-	phy_water_accel    = pm_wateraccelerate;
-	phy_water_scale    = pm_swimScale;
 	phy_water_friction = 0.5;
 	// New
-	phy_ground_basespeed = 320;
 	phy_ground_accel     = 15;
 	// Air movement
-	phy_air_basespeed  = 320;
 	phy_air_accel      = 1;
 	phy_air_decel      = 2.5;
 	phy_air_decelAngle = 100;
@@ -794,70 +752,59 @@ void cpm_init(void) {
 	phy_jump_type        = CPM;
 	phy_jump_timebuffer  = 400;
 	phy_jump_dj_velocity = 100;
-	phy_jump_velocity    = JUMP_VELOCITY;
 	phy_step_maxvel      = phy_jump_velocity + phy_jump_dj_velocity;
 	Com_Printf("cpm_init()\n");
 }
 
 void vq3_init(void) {
-	phy_stopspeed    = pm_stopspeed;
-	phy_crouch_scale = pm_duckScale;
-	// Acceleration
-	phy_ground_accel = pm_accelerate;
-	phy_air_accel    = pm_airaccelerate;
-	phy_fly_accel    = pm_flyaccelerate;
-	// Friction
-	phy_friction           = pm_friction;
-	phy_fly_friction       = pm_flightfriction;
-	phy_spectator_friction = pm_spectatorfriction;
+	// Slick
+	phy_slick_accel = 1;  // CPM groundaccel value
 	// Water
-	phy_water_accel    = pm_wateraccelerate;
-	phy_water_scale    = pm_swimScale;
 	phy_water_friction = pm_waterfriction;
 	// New
-	phy_aircontrol    = qfalse;
-	phy_jump_type     = VQ3;
-	phy_jump_velocity = JUMP_VELOCITY;
-	Com_Printf("vq3_init()\n");
+	phy_ground_accel = pm_accelerate;
+	// Air movement
+	phy_air_accel = pm_airaccelerate;
+	phy_air_decel = 1;
+	//phy_air_decel = 1;
+	phy_air_decelAngle = 0;
+	// W turning
+	phy_aircontrol = qfalse;
+	phy_aircontrol_amount = 0;
+	phy_aircontrol_power = 0;
+	// AD turning
+	phy_airstrafe_basespeed = 0;
+	phy_airstrafe_accel = 0;
+	// Jump
+	phy_jump_type = VQ3;
+	phy_jump_timebuffer = 0;
+	phy_jump_dj_velocity = 0;
+	phy_step_maxvel = JUMP_VELOCITY;
 }
 
 void cq3_init(void) {
-	phy_stopspeed    = pm_stopspeed;
-	phy_crouch_scale = pm_duckScale;
 	// Slick
-	phy_slick_accel = 15;  // CPM groundaccel value
-	// Acceleration
-	phy_fly_accel = pm_flyaccelerate;
-	// Friction
-	phy_friction           = pm_friction;
-	phy_fly_friction       = pm_flightfriction;
-	phy_spectator_friction = pm_spectatorfriction;
+	phy_slick_accel = 15; // CPM groundaccel value
 	// Water
-	phy_water_accel    = pm_wateraccelerate;
-	phy_water_scale    = pm_swimScale;
 	phy_water_friction = 0.5;
-	// Ground movement
-	phy_ground_basespeed = 320;
-	phy_ground_accel     = 10;
+	// New
+	phy_ground_accel = 10;
 	// Air movement
-	phy_air_basespeed  = 320;
-	phy_air_accel      = 1;
-	phy_air_decel      = 2.5;
+	phy_air_accel = 1;
+	phy_air_decel = 2.5;
 	phy_air_decelAngle = 100;
 	// W turning
-	phy_aircontrol        = qfalse;
+	phy_aircontrol = qfalse;
 	phy_aircontrol_amount = 0;
-	phy_aircontrol_power  = 0;
+	phy_aircontrol_power = 0;
 	// AD turning
 	phy_airstrafe_basespeed = 0;
-	phy_airstrafe_accel     = 0;
+	phy_airstrafe_accel = 0;
 	// Jump
-	phy_jump_type        = CPM;
-	phy_jump_timebuffer  = 400;
+	phy_jump_type = CPM;
+	phy_jump_timebuffer = 400;
 	phy_jump_dj_velocity = 100;
-	phy_jump_velocity    = JUMP_VELOCITY;
-	phy_step_maxvel      = phy_jump_velocity + phy_jump_dj_velocity;
-	Com_Printf("cq3_init()\n");
+	phy_step_maxvel = phy_jump_velocity + phy_jump_dj_velocity;
 }
 
 static qboolean q3a_CheckJump(void) {
@@ -940,9 +887,7 @@ static void q3a_AirControl(vec3_t wishdir, float wishspeed) {
 
 	// Calculate turning amount
 	dot = DotProduct(pm->ps->velocity, wishdir);
-	/* if ( dot < 0 ) {
-		phy_air_decel = 2.5;
-	} */
+
 	if (dot > 0) {
 		k = k * phy_aircontrol_amount * Q_powf(dot, phy_aircontrol_power) * pml.frametime;
 		VectorMAM(speed, pm->ps->velocity, k, wishdir, pm->ps->velocity);

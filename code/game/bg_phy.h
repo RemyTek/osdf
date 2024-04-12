@@ -56,13 +56,12 @@ extern float phy_water_friction;
 extern float phy_slick_accel;
 
 // Physics indexes
-#define CPM 0  // CPM
-#define VQ3 1  // VQ3
+#define VQ3 0  // VQ3
+#define CPM 1  // CPM
 #define CQ3 2  // CQ3
 
 // Initialize
 void phy_init(int movetype);  // Calls all other initializer functions
-void phy_reset(void);
 void cpm_init(void);
 void vq3_init(void);
 void cq3_init(void);
