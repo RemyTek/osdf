@@ -902,6 +902,9 @@ void ClientThink_real( gentity_t *ent ) {
 
 	VectorCopy( client->ps.origin, client->oldOrigin );
 
+	//pass pro_phyiscs through pm
+	pm.movetype = pro_physics.integer;
+
 #ifdef MISSIONPACK
 		if (level.intermissionQueued != 0 && g_singlePlayer.integer) {
 			if ( level.time - level.intermissionQueued >= 1000  ) {
