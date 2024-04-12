@@ -52,6 +52,8 @@ float phy_water_scale;  // phy_swimScale;
 float       phy_water_friction;
 float       phy_slick_accel;
 
+void phy_PmoveSingle(pmove_t* pmove);
+
 // Initialize Physics Values
 qboolean phy_initialized = qfalse;
 void     phy_init(int movetype) {

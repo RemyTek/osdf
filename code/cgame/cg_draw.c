@@ -2613,7 +2613,7 @@ void CG_DrawTimedMenus( void ) {
 		ten = sec / 10;
 		sec -= ten * 10;
 
-		s = (min > 0) ? va("%i:%i%i:%03i", min, ten, sec, msec) : va("%i%i:%03i", ten, sec, msec);
+		s = (min > 0) ? va("%i:%i%i.%03i", min, ten, sec, msec) : va("%i%i.%03i", ten, sec, msec);
 		w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH * 0.5;
 		CG_DrawString(x+w, y, s, colorWhite, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0, DS_SHADOW | DS_RIGHT | DS_PROPORTIONAL);
 	}
@@ -2647,7 +2647,7 @@ void CG_DrawTimedMenus( void ) {
 		ten = sec / 10;
 		sec -= ten * 10;
 
-		s = (min > 0) ? va("%i:%i%i:%03i", min, ten, sec, msec) : va("%i%i:%03i", ten, sec, msec);
+		s = (min > 0) ? va("%i:%i%i.%03i", min, ten, sec, msec) : va("%i%i.%03i", ten, sec, msec);
 		w = CG_DrawStrlen(s) * SMALLCHAR_WIDTH * 0.5;
 		CG_DrawString(x+w, y, s, colorWhite, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0, DS_SHADOW | DS_RIGHT | DS_PROPORTIONAL);
 	}

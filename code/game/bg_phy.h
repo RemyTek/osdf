@@ -67,7 +67,7 @@ void vq3_init(void);
 void cq3_init(void);
 
 // Movement
-extern void phy_PmoveSingle(pmove_t* pmove);  // Core movement entrypoint
+void phy_PmoveSingle(pmove_t* pmove);  // Core movement entrypoint
 void phy_move(pmove_t* pmove);         // Calls all other movement functions
 void cpm_move(pmove_t* pmove);
 void vq3_move(pmove_t* pmove);
