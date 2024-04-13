@@ -8,6 +8,7 @@ Make sure you upate osdf.bat in build/win32-msvc/  With a few modifications, thi
 * Let's not try to sort the scoreboard, but rather edit the rank so the correct person is in the lead.  If ranks are fixed, the scoreboard should reflect that anyway.
 * Set score to your best time in i:s:v format.
 * Add cgaz HUD.
+* Fine tune the physics.
 
 Opensource Defrag is a project that aims to remake defrag, true to the original mod, using modern id-Tech3 engine and technology.  
 ## Goals:
