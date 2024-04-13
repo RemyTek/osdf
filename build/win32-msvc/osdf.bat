@@ -1,5 +1,7 @@
 set QUAKE3DIR=C:\quake3
 set QUAKE3EXE=quake3e-debug.x64.exe
+set RMODE=-1
+set FULLSCREEN=0
 set MOD=osdf
 set MAP=st1
 set WIDTH=800
