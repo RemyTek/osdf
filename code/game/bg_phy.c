@@ -987,7 +987,7 @@ void q3a_AirMove(void) {
 			}
 			*/
             // CPM: Air Control Deceleration
-            wishspeed2 = wishspeed;
+            /*wishspeed2 = wishspeed;
             if (DotProduct(pm->ps->velocity, wishdir) < 0)
                 accel = phy_air_decel;
             else
@@ -997,7 +997,7 @@ void q3a_AirMove(void) {
                 if (wishspeed > phy_wishspeed)
                     wishspeed = phy_wishspeed;
                 accel = phy_airstrafe_accel;
-            }
+            }*/
             // !CPM
 		}
 	} else if (pm->movetype == VQ3 || pm->movetype == CQ3) {
