@@ -30,14 +30,16 @@ Adds score to both the client and his team
 ============
 */
 void AddScore( gentity_t *ent, vec3_t origin, int score ) {
-	if ( g_gametype.integer == GT_RUN ) {
-		return;
-	}
 	if ( !ent->client ) {
 		return;
 	}
 	// no scoring during pre-match warmup
 	if ( level.warmupTime ) {
+		return;
+	}
+	if ( g_gametype.integer == GT_RUN ) {
+		ent->client->ps.persistant[PERS_SCORE] = score;
+		CalculateRanks();
 		return;
 	}
 	// show score plum
