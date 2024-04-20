@@ -9,7 +9,7 @@
 //==================================================================
 
 // the "gameversion" client command will print this plus compile date
-#define	GAMEVERSION	"osdf"
+#define	GAMEVERSION	"osdf-mod"
 
 #define BODY_QUEUE_SIZE		8
 
